@@ -5,8 +5,7 @@ import java.util.concurrent.*;
 // Server class
 public class GymServer {
     private static final int PORT = 5000;
-    private static final int THREAD_POOL_SIZE = 10;
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+    private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public static void main(String[] args) throws IOException {
         // Create server socket
