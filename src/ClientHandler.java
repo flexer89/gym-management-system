@@ -1,13 +1,16 @@
 import java.net.*;
+import java.sql.SQLException;
 import java.io.*;
 import java.util.concurrent.*;
 
 // Client handler class
 class ClientHandler implements Callable<String> {
     private Socket clientSocket;
+    private SQLEngine sqlEngine;
 
-    public ClientHandler(Socket clientSocket) {
+    public ClientHandler(Socket clientSocket, SQLEngine sqlEngine) {
         this.clientSocket = clientSocket;
+        this.sqlEngine = sqlEngine;
     }
 
     @Override
@@ -22,7 +25,10 @@ class ClientHandler implements Callable<String> {
             while ((inputLine = in.readLine()) != null) {
                 // Process client request
                 String outputLine = processRequest(inputLine);
-
+                boolean flag = true;
+                while (flag != false) {
+                    
+                }
                 // Send response to client
                 out.println(outputLine);
             }
@@ -39,7 +45,7 @@ class ClientHandler implements Callable<String> {
     }
 
     private String processRequest(String request) {
-        // TODO: Implement request processing logic
+        // Execute query
         return "Response to client request";
     }
 }

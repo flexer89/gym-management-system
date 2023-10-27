@@ -7,6 +7,13 @@ public class GymClient {
         Socket clientSocket = new Socket("localhost", 5000);
         System.out.println("Connected to server");
 
+        // Sleep for 10s
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // Create input and output streams
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
