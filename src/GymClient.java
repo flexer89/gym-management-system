@@ -5,24 +5,28 @@ public class GymClient {
     public static void main(String[] args) throws IOException {
         // Create client socket
         Socket clientSocket = new Socket("localhost", 5000);
-        System.out.println("Connected to server");
-
-        // Sleep for 10s
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        System.out.println(Color.ColorString("Connected to server", Color.ANSI_GREEN));
+        String response = "";
 
         // Create input and output streams
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        
+        // TODO: need to create nice way to get text from buffer
+        for (int i = 0; i < 4; i++) {
+            // Receive response from server
+            response = in.readLine();
+            System.out.println(response);
+        }
 
         // Send request to server
-        out.println("Client request");
+        int menuSelection = Integer.parseInt(System.console().readLine("Enter your selection: "));
+
+        // Send the menu selection to the server
+        out.println(menuSelection);
 
         // Receive response from server
-        String response = in.readLine();
+        response = in.readLine();
         System.out.println("Server response: " + response);
 
         // Close streams and socket

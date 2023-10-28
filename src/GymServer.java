@@ -1,5 +1,4 @@
 import java.net.*;
-import java.nio.channels.AsynchronousChannel;
 import java.sql.SQLException;
 import java.io.*;
 import java.util.concurrent.*;
@@ -20,13 +19,21 @@ public class GymServer {
     private static ServerSocket serverSocket;
 
     public static void main(String[] args) throws IOException {
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+        scheduledExecutorService.scheduleAtFixedRate(() -> {
+            // Log the server state
+            // TODO: Create guide to server log messages
+            String message = "  Number of active tasks: " + ((ThreadPoolExecutor) executorService).getActiveCount();
+            System.out.println(Color.ColorString("Server state:", Color.ANSI_GREEN));
+            System.out.println(Color.ColorString(message, Color.ANSI_YELLOW));
+        }, 0, 5, TimeUnit.SECONDS);
+
         // Create server socket
         try {
-            // Create asynchronous server socket
-            serverSocket = new Asyn
+            serverSocket = new ServerSocket(SERVER_PORT);
             System.out.println("Server started on port " + SERVER_PORT);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Could not listen on port " + SERVER_PORT);
             System.exit(-1);
         }
@@ -51,14 +58,6 @@ public class GymServer {
             // Submit new task to thread pool
             FutureTask<String> task = new FutureTask<>(new ClientHandler(clientSocket, sqlEngine));
             executorService.submit(task);
-
-            // Get result from task
-            try {
-                String result = task.get();
-                System.out.println("Result: " + result);
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
