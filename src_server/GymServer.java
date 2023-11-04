@@ -10,11 +10,11 @@ public class GymServer {
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     // DB properties
-    private static final String host = "sql.freedb.tech";
+    private static final String host = "localhost";
     private static final int DBPort = 3306;
-    private static final String DBName = "freedb_jodatabase";
-    private static final String username = "freedb_jolszak";
-    private static final String password = "5Mz4t#?&AbwX@wF";
+    private static final String DBName = "GMS";
+    private static final String username = "root";
+    private static final String password = "root";
     private static SQLEngine sqlEngine;
     private static ServerSocket serverSocket;
 
