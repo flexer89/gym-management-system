@@ -19,16 +19,8 @@ public class GymServer {
     private static ServerSocket serverSocket;
 
     public static void main(String[] args) throws IOException {
-        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
-        scheduledExecutorService.scheduleAtFixedRate(() -> {
-            // Log the server state
-            // TODO: Create guide to server log messages
-            String message = "  Number of active tasks: " + ((ThreadPoolExecutor) executorService).getActiveCount();
-            System.out.println(Color.ColorString("Server state:", Color.ANSI_GREEN));
-            System.out.println(Color.ColorString(message, Color.ANSI_YELLOW));
-        }, 0, 5, TimeUnit.SECONDS);
-
+        // TODO: is it better to move server socket and db connecitos seperate functions/SQLEngine?
         // Create server socket
         try {
             serverSocket = new ServerSocket(SERVER_PORT);
@@ -41,14 +33,30 @@ public class GymServer {
         try {
             // Create DB engine
             sqlEngine = new SQLEngine(host, DBPort, DBName, username, password);
-            System.out.println("DB engine created");
+            System.out.println(Color.ColorString("DB engine created", Color.ANSI_GREEN));
 
             // Connect to DB
             sqlEngine.getConnection();
-            System.out.println("DB connection established");
-        } catch (SQLException e) {
+            System.out.println(Color.ColorString("DB connection established", Color.ANSI_GREEN));
+
+        } 
+        catch (Exception e) 
+        {
+            System.out.println(Color.ColorString(e.getMessage(), Color.ANSI_RED));
             e.printStackTrace();
+            System.exit(-1);
         }
+
+        // TODO: imo its better to run this after succesfull db connection
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+        scheduledExecutorService.scheduleAtFixedRate(() -> {
+            // Log the server state
+            // TODO: Create guide to server log messages
+            String message = "  Number of active tasks: " + ((ThreadPoolExecutor) executorService).getActiveCount();
+            System.out.println(Color.ColorString("Server state:", Color.ANSI_GREEN));
+            System.out.println(Color.ColorString(message, Color.ANSI_YELLOW));
+        }, 0, 5, TimeUnit.SECONDS);
 
         // Listen for client connections
         while (true) {

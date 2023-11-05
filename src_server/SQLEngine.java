@@ -1,6 +1,8 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class SQLEngine {
 
@@ -31,11 +33,39 @@ public class SQLEngine {
         connection.close();
     }
 
-    public void executeQuery(String query) throws SQLException {
-        connection.createStatement().executeQuery(query);
+    public int executeQuery(String query, String columnName) throws SQLException {
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            return resultSet.getInt(columnName);
+        } else {
+            throw new SQLException("No result found");
+        }
     }
 
     public void executeUpdate(String query) throws SQLException {
         connection.createStatement().executeUpdate(query);
+    }
+
+    public String getEmployeeName(int userID) throws SQLException {
+        String query = "SELECT first_name, last_name FROM employee WHERE id = " + userID;
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            return resultSet.getString("first_name") + " " + resultSet.getString("last_name");
+        } else {
+            throw new SQLException("No employee found with id " + userID);
+        }
+    }
+    
+    public void loginToAccount(String username, String password) throws SQLException {
+        try {
+            String query = "SELECT id FROM employee_credentials WHERE login = '" + username + "' AND password = '" + password + "'";
+            int userID = executeQuery(query, "id");
+            String employeeName = getEmployeeName(userID);
+            System.out.println("Successfully logged in as: " + employeeName);
+        } catch (SQLException e) {
+            System.out.println("Error executing query: " + e.getMessage());
+        }
     }
 }

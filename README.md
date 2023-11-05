@@ -20,8 +20,10 @@ The `JAVA PROJECTS` view allows you to manage your dependencies. More details ca
 
 
 ## STARTING LOCAL DB
+- `cd database`
 - `docker compose up -d`
 
 ## RESTARTING LOCAL DB
 for now data is not persisted, so if you want have clear db schema just restart docker compose
+- `cd database`
 - `docker compose restart`

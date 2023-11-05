@@ -9,29 +9,40 @@ public class GymClient {
         String response = "";
 
         // Create input and output streams
-        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        BufferedReader ReadFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        PrintWriter SendToServer = new PrintWriter(clientSocket.getOutputStream(), true);
+
+
+        System.out.println(ReadFromServer.readLine());
+        System.out.println(ReadFromServer.readLine());
+        //read username
+        String username = System.console().readLine();
+        SendToServer.println(username);
+        System.out.println(ReadFromServer.readLine());
+        String password = System.console().readLine();
+        SendToServer.println(password);
+
         
-        // TODO: need to create nice way to get text from buffer
-        for (int i = 0; i < 4; i++) {
-            // Receive response from server
-            response = in.readLine();
-            System.out.println(response);
-        }
+        // // TODO: need to create nice way to get text from buffer
+        // for (int i = 0; i < 4; i++) {
+        //     // Receive response from server
+        //     response = in.readLine();
+        //     System.out.println(response);
+        // }
 
-        // Send request to server
-        int menuSelection = Integer.parseInt(System.console().readLine("Enter your selection: "));
+        // // Send request to server
+        // int menuSelection = Integer.parseInt(System.console().readLine("Enter your selection: "));
 
-        // Send the menu selection to the server
-        out.println(menuSelection);
+        // // Send the menu selection to the server
+        // out.println(menuSelection);
 
-        // Receive response from server
-        response = in.readLine();
-        System.out.println("Server response: " + response);
+        // // Receive response from server
+        // response = in.readLine();
+        // System.out.println("Server response: " + response);
 
         // Close streams and socket
-        in.close();
-        out.close();
+        ReadFromServer.close();
+        SendToServer.close();
         clientSocket.close();
     }
 }
