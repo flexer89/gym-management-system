@@ -7,12 +7,10 @@ import java.util.concurrent.*;
 class ClientHandler implements Callable<String> {
     private Socket clientSocket;
     private SQLEngine sqlEngine;
-    private int menuSelection;
 
     public ClientHandler(Socket clientSocket, SQLEngine sqlEngine) {
         this.clientSocket = clientSocket;
         this.sqlEngine = sqlEngine;
-        this.menuSelection = 0;
     }
 
     @Override
@@ -22,46 +20,42 @@ class ClientHandler implements Callable<String> {
             BufferedReader ReadFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter SendToClient = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            sendPrintMessage(SendToClient, "Welcome to GMS!");
-            sendInputMessage(SendToClient, "Please enter your username: ");
-            String username = ReadFromClient.readLine();
-            sendInputMessage(SendToClient, "Please enter your password: ");
-            String password = ReadFromClient.readLine();
-            System.out.println("Username: " + username + " Password: " + password);
-            try {
-                int userID = sqlEngine.loginToAccount(username, password);
-                sendPrintMessage(SendToClient, "Successfully logged in as user ID: " + userID);
-            } catch (SQLException e) {
-                System.out.println("Error logging in: " + e.getMessage());
-                sendPrintMessage(SendToClient, "Error logging in: " + e.getMessage());
-                return "Error";
+            String serverMessage;
+            while (true) {
+                serverMessage = ReadFromClient.readLine();
+                if (serverMessage.startsWith("PRINT:")) {
+                    // Print the message, excluding the "PRINT:" prefix
+                    System.out.println(serverMessage.substring(6));
+                } else if (serverMessage.startsWith("SEND:")) {
+                    // Send data to the server
+                    System.out.println(serverMessage.substring(5));
+                    String clientMessage = System.console().readLine();
+                    SendToClient.println(clientMessage);
+                } else if (serverMessage.startsWith("EXIT:")) {
+                    // Exit the loop
+                    System.out.println(serverMessage.substring(5));
+                    break;
+                }
+                else if (serverMessage.startsWith("LOGIN:")) {
+                    // TODO move this to separate function
+                    // Login to account
+                    String[] loginInfo = serverMessage.substring(6).split(",");
+                    String username = loginInfo[0];
+                    String password = loginInfo[1];
+                    SendToClient.println("LOGIN:Success");
+                    // try {
+                    //     int userID = sqlEngine.loginToAccount(username, password);
+                    //     if (userID > 0 ) {
+                    //         SendToClient.println("LOGIN:Success");
+                    //     } else {
+                    //         SendToClient.println("LOGIN:Failed");
+                    //     }
+                    // } catch (SQLException e) {
+                    //     System.out.println("Error logging in: " + e.getMessage());
+                    //     SendToClient.println("EXIT:Error logging in: " + e.getMessage());
+                    // }
+                }
             }
-
-
-
-            // Send menu options to client
-            // out.println(Menu.getMenuOptions());
-            // menuSelection = Integer.parseInt(in.readLine());
-
-            // // TODO - prepare all features for client and organize them in a menu
-            // // Handle menu selection
-            // switch (menuSelection) {
-            //     case Menu.OPTION_1:
-            //         out.println("Login To GMS");
-            //         break;
-            //     case Menu.OPTION_2:
-            //         out.println("Selected option 2");
-            //         break;
-            //     case Menu.OPTION_3:
-            //         out.println("Selected option 3");
-            //         break;
-            //     case Menu.EXIT:
-            //         out.println("Selected option exit");
-            //         break;
-            //     default:
-            //         out.println("Invalid selection. Please try again.");
-            //         break;
-            // }
 
             // Close streams and socket
             ReadFromClient.close();
@@ -74,11 +68,4 @@ class ClientHandler implements Callable<String> {
         return "Task completed";
     }
 
-    public void sendPrintMessage(PrintWriter SendToClient, String message) {
-        SendToClient.println("PRINT:" + message);
-    }
-    
-    public void sendInputMessage(PrintWriter SendToClient, String message) {
-        SendToClient.println("SEND:" + message);
-    }
 }
