@@ -22,16 +22,18 @@ class ClientHandler implements Callable<String> {
             BufferedReader ReadFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter SendToClient = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            SendToClient.println("Welcome to GMS!");
-            SendToClient.println("Please enter your username: ");
+            sendPrintMessage(SendToClient, "Welcome to GMS!");
+            sendInputMessage(SendToClient, "Please enter your username: ");
             String username = ReadFromClient.readLine();
-            SendToClient.println("Please enter your password: ");
+            sendInputMessage(SendToClient, "Please enter your password: ");
             String password = ReadFromClient.readLine();
             System.out.println("Username: " + username + " Password: " + password);
             try {
-                sqlEngine.loginToAccount(username, password);
+                int userID = sqlEngine.loginToAccount(username, password);
+                sendPrintMessage(SendToClient, "Successfully logged in as user ID: " + userID);
             } catch (SQLException e) {
                 System.out.println("Error logging in: " + e.getMessage());
+                sendPrintMessage(SendToClient, "Error logging in: " + e.getMessage());
                 return "Error";
             }
 
@@ -70,5 +72,13 @@ class ClientHandler implements Callable<String> {
         }
 
         return "Task completed";
+    }
+
+    public void sendPrintMessage(PrintWriter SendToClient, String message) {
+        SendToClient.println("PRINT:" + message);
+    }
+    
+    public void sendInputMessage(PrintWriter SendToClient, String message) {
+        SendToClient.println("SEND:" + message);
     }
 }

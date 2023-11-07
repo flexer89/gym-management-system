@@ -58,14 +58,14 @@ public class SQLEngine {
         }
     }
     
-    public void loginToAccount(String username, String password) throws SQLException {
-        try {
-            String query = "SELECT id FROM employee_credentials WHERE login = '" + username + "' AND password = '" + password + "'";
-            int userID = executeQuery(query, "id");
-            String employeeName = getEmployeeName(userID);
-            System.out.println("Successfully logged in as: " + employeeName);
-        } catch (SQLException e) {
-            System.out.println("Error executing query: " + e.getMessage());
+    public int loginToAccount(String username, String password) throws SQLException {
+        String query = "SELECT id FROM employee_credentials WHERE login = '" + username + "' AND password = '" + password + "'";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            return resultSet.getInt("id");
+        } else {
+            throw new SQLException("Invalid login credentials");
         }
     }
 }
