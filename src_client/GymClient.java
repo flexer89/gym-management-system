@@ -171,6 +171,21 @@ public class GymClient {
         loginRegisterWindow.add(exitButton);
 
         // Add action listeners to the buttons
+        exitButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            try {
+                // Close streams and socket
+                ReadFromServer.close();
+                SendToServer.close();
+                clientSocket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            // Close the window
+            loginRegisterWindow.dispose();
+        }
+        });
+
         loginButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             // Create the login window
@@ -325,29 +340,7 @@ public class GymClient {
         }
         });
 
-
-        exitButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            try {
-                // Close streams and socket
-                ReadFromServer.close();
-                SendToServer.close();
-                clientSocket.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            // Close the window
-            loginRegisterWindow.dispose();
-        }
-        });
-
         // Show the window
         loginRegisterWindow.setVisible(true);
-
-        // TODO sockets should be closed when the user exits the program (e.g. by clicking the exit button) ONLY
-        // Close streams and socket
-        // ReadFromServer.close();
-        // SendToServer.close();
-        // clientSocket.close();
     }
 }

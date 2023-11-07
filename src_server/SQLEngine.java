@@ -57,14 +57,14 @@ public class SQLEngine {
         }
     }
     public int registerAccount(String username, String password, String firstName, String lastName, LocalDate birthDate, String phoneNumber, String email ) throws SQLException {
-        String query = "INSERT INTO client_credentials (login, password) VALUES ('" + username + "', '" + password + "')";
+        String query = "INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES ('" + firstName + "', '" + lastName + "', '" + birthDate + "', '" + phoneNumber + "', '" + email + "')";
         Statement statement = connection.createStatement();
         statement.executeUpdate(query);
-        query = "SELECT id FROM client_credentials WHERE login = '" + username + "' AND password = '" + password + "'";
+        query = "SELECT id FROM client WHERE first_name = '" + firstName + "' AND last_name = '" + lastName + "' AND date_of_birth = '" + birthDate + "' AND phone_number = '" + phoneNumber + "' AND email = '" + email + "'";
         ResultSet resultSet = statement.executeQuery(query);
         if (resultSet.next()) {
             int userID = resultSet.getInt("id");
-            query = "INSERT INTO client (id, first_name, last_name, date_of_birth, phone_number, email) VALUES (" + userID + ", '" + firstName + "', '" + lastName + "', '" + birthDate + "', '" + phoneNumber + "', '" + email + "')";
+            query = "INSERT INTO client_credentials (login, password, client_id) VALUES ('" + username + "', '" + password + "', '" + userID + "')";
             statement.executeUpdate(query);
             return userID;
         } else {
