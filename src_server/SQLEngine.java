@@ -33,20 +33,6 @@ public class SQLEngine {
         connection.close();
     }
 
-    public int executeQuery(String query, String columnName) throws SQLException {
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
-        if (resultSet.next()) {
-            return resultSet.getInt(columnName);
-        } else {
-            throw new SQLException("No result found");
-        }
-    }
-
-    public void executeUpdate(String query) throws SQLException {
-        connection.createStatement().executeUpdate(query);
-    }
-
     public String getEmployeeName(int userID) throws SQLException {
         String query = "SELECT first_name, last_name FROM employee WHERE id = " + userID;
         Statement statement = connection.createStatement();
