@@ -3,6 +3,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.Date;
 
 public class SQLEngine {
 
@@ -45,13 +47,28 @@ public class SQLEngine {
     }
     
     public int loginToAccount(String username, String password) throws SQLException {
-        String query = "SELECT id FROM employee_credentials WHERE login = '" + username + "' AND password = '" + password + "'";
+        String query = "SELECT id FROM client_credentials WHERE login = '" + username + "' AND password = '" + password + "'";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
         if (resultSet.next()) {
             return resultSet.getInt("id");
         } else {
             throw new SQLException("Invalid login credentials");
+        }
+    }
+    public int registerAccount(String username, String password, String firstName, String lastName, LocalDate birthDate, String phoneNumber, String email ) throws SQLException {
+        String query = "INSERT INTO client_credentials (login, password) VALUES ('" + username + "', '" + password + "')";
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(query);
+        query = "SELECT id FROM client_credentials WHERE login = '" + username + "' AND password = '" + password + "'";
+        ResultSet resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            int userID = resultSet.getInt("id");
+            query = "INSERT INTO client (id, first_name, last_name, date_of_birth, phone_number, email) VALUES (" + userID + ", '" + firstName + "', '" + lastName + "', '" + birthDate + "', '" + phoneNumber + "', '" + email + "')";
+            statement.executeUpdate(query);
+            return userID;
+        } else {
+            throw new SQLException("Invalid register credentials");
         }
     }
 }

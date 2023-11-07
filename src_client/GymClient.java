@@ -210,7 +210,7 @@ public class GymClient {
                         String password = new String(passwordField.getPassword());
 
                         // Send the username and password to the server
-                        message.sendPrintMessage(SendToServer, "LOGIN:" + username + "," + password);
+                        message.sendLoginMessage(SendToServer, username + "," + password);
                         mainWindow.setVisible(true);
                         loginRegisterWindow.dispose();
                         loginWindow.dispose();
@@ -228,7 +228,100 @@ public class GymClient {
 
         registerButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-        // TODO register
+
+            // Create the register window
+            JFrame registerWindow = new JFrame("Register");
+            registerWindow.setSize(400, 300);
+            registerWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            registerWindow.setLayout(new GridLayout(8, 1));
+            registerWindow.setVisible(true);
+
+            JPanel registerPanel = new JPanel(new GridLayout(1, 1));
+            JButton registerButton = new JButton("Register");
+
+            JPanel usernamePanel = new JPanel(new GridLayout(1, 2));
+            JLabel usernameLabel = new JLabel("Username:");
+            JTextField usernameTextField = new JTextField();
+
+            JPanel passwordPanel = new JPanel(new GridLayout(1, 2));
+            JLabel passwordLabel = new JLabel("Password:");
+            JPasswordField passwordField = new JPasswordField();
+
+            JPanel namePanel = new JPanel(new GridLayout(1, 2));
+            JLabel nameLabel = new JLabel("Name:");
+            JTextField nameTextField = new JTextField();
+
+            JPanel surnamePanel = new JPanel(new GridLayout(1, 2));
+            JLabel surnameLabel = new JLabel("Surname:");
+            JTextField surnameTextField = new JTextField();
+
+            JPanel dateOfBirthPanel = new JPanel(new GridLayout(1, 2));
+            JLabel dateOfBirthLabel = new JLabel("Date of birth:");
+            JTextField dateOfBirthTextField = new JTextField();
+
+            JPanel phonePanel = new JPanel(new GridLayout(1, 2));
+            JLabel phoneLabel = new JLabel("Phone:");
+            JTextField phoneTextField = new JTextField();
+
+            JPanel emailPanel = new JPanel(new GridLayout(1, 2));
+            JLabel emailLabel = new JLabel("Email:");
+            JTextField emailTextField = new JTextField();
+
+            usernamePanel.add(usernameLabel);
+            usernamePanel.add(usernameTextField);
+
+            passwordPanel.add(passwordLabel);
+            passwordPanel.add(passwordField);
+
+            namePanel.add(nameLabel);
+            namePanel.add(nameTextField);
+
+            surnamePanel.add(surnameLabel);
+            surnamePanel.add(surnameTextField);
+
+            dateOfBirthPanel.add(dateOfBirthLabel);
+            dateOfBirthPanel.add(dateOfBirthTextField);
+
+            phonePanel.add(phoneLabel);
+            phonePanel.add(phoneTextField);
+
+            emailPanel.add(emailLabel);
+            emailPanel.add(emailTextField);
+
+            registerPanel.add(registerButton);
+
+            registerWindow.add(usernamePanel);
+            registerWindow.add(passwordPanel);
+            registerWindow.add(namePanel);
+            registerWindow.add(surnamePanel);
+            registerWindow.add(dateOfBirthPanel);
+            registerWindow.add(phonePanel);
+            registerWindow.add(emailPanel);
+            registerWindow.add(registerPanel);
+
+            registerButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        // Get the username and password
+                        String username = usernameTextField.getText();
+                        String password = new String(passwordField.getPassword());
+                        String name = nameTextField.getText();
+                        String surname = surnameTextField.getText();
+                        String dateOfBirth = dateOfBirthTextField.getText();
+                        String phone = phoneTextField.getText();
+                        String email = emailTextField.getText();
+
+                        // Send the username and password to the server
+                        message.sendRegisterMessage(SendToServer, username + "," + password + "," + name + "," + surname + "," + dateOfBirth + "," + phone + "," + email);
+                        ReadFromServer.readLine();
+
+                    } catch (Exception ex) {
+                        message.sendPrintMessage(SendToServer, ex.getMessage());
+                    }
+                }
+            });
+
+
         }
         });
 
@@ -253,8 +346,8 @@ public class GymClient {
 
         // TODO sockets should be closed when the user exits the program (e.g. by clicking the exit button) ONLY
         // Close streams and socket
-        ReadFromServer.close();
-        SendToServer.close();
-        clientSocket.close();
+        // ReadFromServer.close();
+        // SendToServer.close();
+        // clientSocket.close();
     }
 }
