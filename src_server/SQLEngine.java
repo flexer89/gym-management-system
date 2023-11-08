@@ -47,7 +47,7 @@ public class SQLEngine {
     }
     
     public int loginToAccount(String username, String password) throws SQLException {
-        String query = "SELECT id FROM client_credentials WHERE login = '" + username + "' AND password = '" + password + "'";
+        String query = "SELECT id FROM credentials WHERE login = '" + username + "' AND password = '" + password + "'";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
         if (resultSet.next()) {
@@ -64,7 +64,7 @@ public class SQLEngine {
         ResultSet resultSet = statement.executeQuery(query);
         if (resultSet.next()) {
             int userID = resultSet.getInt("id");
-            query = "INSERT INTO client_credentials (login, password, client_id) VALUES ('" + username + "', '" + password + "', '" + userID + "')";
+            query = "INSERT INTO credentials (login, password, client_id) VALUES ('" + username + "', '" + password + "', '" + userID + " ')";
             statement.executeUpdate(query);
             return userID;
         } else {

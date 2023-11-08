@@ -1,11 +1,8 @@
 import java.net.*;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.io.*;
 import java.util.concurrent.*;
-
-import javax.swing.JOptionPane;
 
 // Client handler class
 class ClientHandler implements Callable<String> {
@@ -42,17 +39,15 @@ class ClientHandler implements Callable<String> {
                 }
                 else if (serverMessage.startsWith("LOGIN:")) {
                     // TODO move this to separate function
-                    // Login to account
                     String[] loginInfo = serverMessage.substring(6).split(",");
                     String username = loginInfo[0];
                     String password = loginInfo[1];
                     try {
                         int userID = sqlEngine.loginToAccount(username, password);
-                        SendToClient.println("LOGIN:Success");
-                        JOptionPane.showMessageDialog(null, "Login successful!", "Success", userID);
+                        System.out.println("User " + userID + " logged in");
+                        SendToClient.println(userID);
                     } catch (SQLException e) {
                         System.out.println("Error logging in: " + e.getMessage());
-                        JOptionPane.showMessageDialog(null, "Invalid login credentials!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 else if (serverMessage.startsWith("REGISTER:"))
@@ -67,14 +62,12 @@ class ClientHandler implements Callable<String> {
                     LocalDate birthDate = LocalDate.parse(registerInfo[4]);
                     String phoneNumber = registerInfo[5];
                     String email = registerInfo[6];
-                    System.out.println(username + " " + password + " " + firstName + " " + lastName + " " + birthDate + " " + phoneNumber + " " + email);
                     try {
                         int userID = sqlEngine.registerAccount(username, password, firstName, lastName, birthDate, phoneNumber, email);
-                        SendToClient.println("REGISTER:Success");
-                        JOptionPane.showMessageDialog(null, "Account registered successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        System.out.println("User " + userID + " registered");
+                        SendToClient.println(-5);
                     } catch (SQLException e) {
                         System.out.println("Error registering account: " + e.getMessage());
-                        JOptionPane.showMessageDialog(null, "Error registering account!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

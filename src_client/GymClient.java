@@ -219,19 +219,29 @@ public class GymClient {
             // Add action listener to the login button
             loginButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    // Get the username and password
+                    String username = usernameTextField.getText();
+                    String password = new String(passwordField.getPassword());
+                    int userID;
+    
+                    // Send the username and password to the server
+                    message.sendLoginMessage(SendToServer, username + "," + password);
+
+                    // Close the login window
+                    loginWindow.dispose();
+
+                    // Get the response from the server (the user ID)
                     try {
-                        // Get the username and password
-                        String username = usernameTextField.getText();
-                        String password = new String(passwordField.getPassword());
-
-                        // Send the username and password to the server
-                        message.sendLoginMessage(SendToServer, username + "," + password);
-                        mainWindow.setVisible(true);
-                        loginRegisterWindow.dispose();
-                        loginWindow.dispose();
-
-                    } catch (Exception ex) {
-                        message.sendPrintMessage(SendToServer, ex.getMessage());
+                        userID = Integer.parseInt(ReadFromServer.readLine());
+                        if (userID > 0) {
+                            JOptionPane.showMessageDialog(null, "Login successful!", "Success", userID);
+                            System.out.println(userID);
+                            mainWindow.setVisible(true);
+                            loginRegisterWindow.dispose();
+                        }
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(null, "Invalid login credentials!", "Error", JOptionPane.ERROR_MESSAGE);
+                        e1.printStackTrace();
                     }
                 }
             });
@@ -316,27 +326,35 @@ public class GymClient {
 
             registerButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    // Get the username and password
+                    String username = usernameTextField.getText();
+                    String password = new String(passwordField.getPassword());
+                    String name = nameTextField.getText();
+                    String surname = surnameTextField.getText();
+                    String dateOfBirth = dateOfBirthTextField.getText();
+                    String phone = phoneTextField.getText();
+                    String email = emailTextField.getText();
+                    int userID;
+
+                    // Send the username and password to the server
+                    message.sendRegisterMessage(SendToServer, username + "," + password + "," + name + "," + surname + "," + dateOfBirth + "," + phone + "," + email);
+
+                    // Close the register window
+                    registerWindow.dispose();
+                    
+                    // Get the response from the server (the user ID)
                     try {
-                        // Get the username and password
-                        String username = usernameTextField.getText();
-                        String password = new String(passwordField.getPassword());
-                        String name = nameTextField.getText();
-                        String surname = surnameTextField.getText();
-                        String dateOfBirth = dateOfBirthTextField.getText();
-                        String phone = phoneTextField.getText();
-                        String email = emailTextField.getText();
-
-                        // Send the username and password to the server
-                        message.sendRegisterMessage(SendToServer, username + "," + password + "," + name + "," + surname + "," + dateOfBirth + "," + phone + "," + email);
-                        ReadFromServer.readLine();
-
-                    } catch (Exception ex) {
-                        message.sendPrintMessage(SendToServer, ex.getMessage());
+                        userID = Integer.parseInt(ReadFromServer.readLine());
+                        if (userID > 0) {
+                            JOptionPane.showMessageDialog(null, "Account registered successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            System.out.println(userID);
+                        }
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(null, "Error registering account!", "Error", JOptionPane.ERROR_MESSAGE);
+                        e1.printStackTrace();
                     }
                 }
             });
-
-
         }
         });
 
