@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.Date;
 
 public class SQLEngine {
 
@@ -46,15 +45,36 @@ public class SQLEngine {
         }
     }
     
-    public int loginToAccount(String username, String password) throws SQLException {
-        String query = "SELECT id FROM credentials WHERE login = '" + username + "' AND password = '" + password + "'";
+    public String loginToAccount(String username, String password) throws SQLException {
+        String query = "SELECT client_id FROM credentials WHERE login = '" + username + "' AND password = '" + password + "'";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
+
+        if (resultSet.next() && resultSet.getInt("client_id") != 0) {
+            return "client," + resultSet.getInt("client_id");
+        } 
+        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND is_manager = 0";
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(query);
+
         if (resultSet.next()) {
-            return resultSet.getInt("id");
-        } else {
-            throw new SQLException("Invalid login credentials");
+            int employeeId = resultSet.getInt("employee_id");
+            if (employeeId != 0) {
+                return "employee," + employeeId;
+            }
         }
+        
+        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND is_manager = 1";
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(query);
+
+        if (resultSet.next()) {
+            int employeeId = resultSet.getInt("employee_id");
+            if (employeeId != 0) {
+                return "admin," + employeeId;
+            }
+        }
+        return query;
     }
     public int registerAccount(String username, String password, String firstName, String lastName, LocalDate birthDate, String phoneNumber, String email ) throws SQLException {
         String query = "INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES ('" + firstName + "', '" + lastName + "', '" + birthDate + "', '" + phoneNumber + "', '" + email + "')";

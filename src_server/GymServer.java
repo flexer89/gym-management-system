@@ -2,7 +2,8 @@ import java.net.*;
 import java.io.*;
 import java.util.concurrent.*;
 
-// Server class
+import utils.Color;
+
 public class GymServer {
     // Server properties
     private static final int SERVER_PORT = 5000;
