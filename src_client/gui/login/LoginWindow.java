@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import gui.dashboard.AdminDashboard;
 import gui.dashboard.ClientDashboard;
 import gui.dashboard.EmployeeDashboard;
+import gui.dashboard.TrainerDashboard;
 import utils.Message;
 
 public class LoginWindow extends JFrame{
@@ -77,6 +78,8 @@ public class LoginWindow extends JFrame{
                             ClientDashboard clientDashboard = new ClientDashboard();
                         } else if (type.equals("employee")) {
                             EmployeeDashboard employeeDashboard = new EmployeeDashboard();
+                        } else if (type.equals("trainer")) {
+                            TrainerDashboard trainerDashboard = new TrainerDashboard();
                         }
                     }
                 } catch (IOException e1) {

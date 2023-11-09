@@ -53,7 +53,7 @@ public class SQLEngine {
         if (resultSet.next() && resultSet.getInt("client_id") != 0) {
             return "client," + resultSet.getInt("client_id");
         } 
-        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND is_manager = 0";
+        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND position = 'employee'";
         statement = connection.createStatement();
         resultSet = statement.executeQuery(query);
 
@@ -64,7 +64,7 @@ public class SQLEngine {
             }
         }
         
-        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND is_manager = 1";
+        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND position = 'admin'";
         statement = connection.createStatement();
         resultSet = statement.executeQuery(query);
 
@@ -72,6 +72,17 @@ public class SQLEngine {
             int employeeId = resultSet.getInt("employee_id");
             if (employeeId != 0) {
                 return "admin," + employeeId;
+            }
+        }
+
+        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND position = 'trainer'";
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(query);
+
+        if (resultSet.next()) {
+            int employeeId = resultSet.getInt("employee_id");
+            if (employeeId != 0) {
+                return "trainer," + employeeId;
             }
         }
         return query;
