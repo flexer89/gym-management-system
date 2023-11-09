@@ -16,7 +16,7 @@ CREATE TABLE employee (
   id INT NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
-  position ENUM('admin', 'employee', 'trainer', 'manager') NOT NULL,
+  position ENUM('admin', 'trainer', 'manager') NOT NULL,
   date_of_employment DATE NOT NULL,
   PRIMARY KEY (id)
 );
@@ -28,16 +28,6 @@ CREATE TABLE employee_card (
   employee_id INT,
   PRIMARY KEY (id)
 );
-
-CREATE TABLE employee_credentials (
-  id INT NOT NULL AUTO_INCREMENT,
-  login VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
-  employee_id INT,
-  PRIMARY KEY (id)
-);
-
-
 
 CREATE TABLE employee_work_time (
   id INT NOT NULL AUTO_INCREMENT,
@@ -60,13 +50,15 @@ CREATE TABLE client (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE client_credentials (
+CREATE TABLE credentials (
   id INT NOT NULL AUTO_INCREMENT,
-  login VARCHAR(255) NOT NULL UNIQUE,
+  login VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
-  client_id INT,
+  employee_id INT DEFAULT NULL,
+  client_id INT DEFAULT NULL,
   PRIMARY KEY (id)
 );
+
 
 CREATE TABLE membership_card (
   id INT NOT NULL AUTO_INCREMENT,
@@ -100,7 +92,7 @@ CREATE TABLE reservation (
 
 CREATE TABLE payment (
   id INT NOT NULL AUTO_INCREMENT,
-  until DATE NOT NULL,
+  payment_date DATE NOT NULL,
   amount DECIMAL NOT NULL,
   payment_method ENUM('cash', 'card', 'blik'),
   client_id INT,
@@ -139,14 +131,10 @@ ALTER TABLE employee_work_time ADD FOREIGN KEY (employee_id) REFERENCES employee
 ALTER TABLE gym_visits ADD FOREIGN KEY (gym_id) REFERENCES gym (id);
 
 ALTER TABLE membership_card ADD FOREIGN KEY (original_gym_id) REFERENCES gym (id);
-
-ALTER TABLE employee_credentials ADD FOREIGN KEY (employee_id) REFERENCES employee (id);
-
-ALTER TABLE client_credentials ADD FOREIGN KEY (client_id) REFERENCES client (id);
+ALTER TABLE credentials
+ADD CONSTRAINT chk_person_id_exists
+CHECK (employee_id IS NOT NULL OR client_id IS NOT NULL);
 
 -- insert admin lol
 INSERT INTO employee (id, first_name, last_name, position, date_of_employment, is_manager)
 VALUES (1, 'Admin', 'Admin', 'Administrator', '2023-11-05', 1);
-
-INSERT INTO employee_credentials (login, password, employee_id)
-VALUES ('admin', 'admin', 1);

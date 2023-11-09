@@ -3,6 +3,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 
 public class SQLEngine {
 
@@ -33,20 +34,6 @@ public class SQLEngine {
         connection.close();
     }
 
-    public int executeQuery(String query, String columnName) throws SQLException {
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
-        if (resultSet.next()) {
-            return resultSet.getInt(columnName);
-        } else {
-            throw new SQLException("No result found");
-        }
-    }
-
-    public void executeUpdate(String query) throws SQLException {
-        connection.createStatement().executeUpdate(query);
-    }
-
     public String getEmployeeName(int userID) throws SQLException {
         String query = "SELECT first_name, last_name FROM employee WHERE id = " + userID;
         Statement statement = connection.createStatement();
@@ -58,14 +45,61 @@ public class SQLEngine {
         }
     }
     
-    public int loginToAccount(String username, String password) throws SQLException {
-        String query = "SELECT id FROM employee_credentials WHERE login = '" + username + "' AND password = '" + password + "'";
+    public String loginToAccount(String username, String password) throws SQLException {
+        String query = "SELECT client_id FROM credentials WHERE login = '" + username + "' AND password = '" + password + "'";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
+
+        if (resultSet.next() && resultSet.getInt("client_id") != 0) {
+            return "client," + resultSet.getInt("client_id");
+        } 
+        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND position = 'employee'";
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(query);
+
         if (resultSet.next()) {
-            return resultSet.getInt("id");
+            int employeeId = resultSet.getInt("employee_id");
+            if (employeeId != 0) {
+                return "employee," + employeeId;
+            }
+        }
+        
+        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND position = 'admin'";
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(query);
+
+        if (resultSet.next()) {
+            int employeeId = resultSet.getInt("employee_id");
+            if (employeeId != 0) {
+                return "admin," + employeeId;
+            }
+        }
+
+        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND position = 'trainer'";
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(query);
+
+        if (resultSet.next()) {
+            int employeeId = resultSet.getInt("employee_id");
+            if (employeeId != 0) {
+                return "trainer," + employeeId;
+            }
+        }
+        return query;
+    }
+    public int registerAccount(String username, String password, String firstName, String lastName, LocalDate birthDate, String phoneNumber, String email ) throws SQLException {
+        String query = "INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES ('" + firstName + "', '" + lastName + "', '" + birthDate + "', '" + phoneNumber + "', '" + email + "')";
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(query);
+        query = "SELECT id FROM client WHERE first_name = '" + firstName + "' AND last_name = '" + lastName + "' AND date_of_birth = '" + birthDate + "' AND phone_number = '" + phoneNumber + "' AND email = '" + email + "'";
+        ResultSet resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            int userID = resultSet.getInt("id");
+            query = "INSERT INTO credentials (login, password, client_id) VALUES ('" + username + "', '" + password + "', '" + userID + " ')";
+            statement.executeUpdate(query);
+            return userID;
         } else {
-            throw new SQLException("Invalid login credentials");
+            throw new SQLException("Invalid register credentials");
         }
     }
 }
