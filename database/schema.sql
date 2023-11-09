@@ -16,7 +16,7 @@ CREATE TABLE employee (
   id INT NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
-  position ENUM('admin', 'trainer', 'manager') NOT NULL,
+  position enum('admin', 'employee', 'trainer') NOT NULL,
   date_of_employment DATE NOT NULL,
   PRIMARY KEY (id)
 );
