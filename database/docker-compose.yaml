@@ -1,0 +1,24 @@
+version: "2.1"
+services:
+  mysql:
+    image: mysql:8.2.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    ports:
+      - 0.0.0.0:3306:3306
+    volumes:
+      # For now we don't need to persist data 
+      # - ./mysql:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: cloudbeaver
+    ports:
+      - "0.0.0.0:8888:8978"
+    volumes:
+      - ./cloudbeaver/workspace:/opt/cloudbeaver/workspace
