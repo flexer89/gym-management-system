@@ -83,10 +83,8 @@ CREATE TABLE training (
 
 CREATE TABLE reservation (
   id INT NOT NULL AUTO_INCREMENT,
-  client_id INT,
-  training_id INT,
-  date DATE NOT NULL,
-  hour TIME NOT NULL,
+  client_id INT NOT NULL,
+  training_id INT NOT NULL,
   PRIMARY KEY (id)
 );
 
