@@ -77,6 +77,7 @@ CREATE TABLE training (
   date DATE NOT NULL,
   hour TIME NOT NULL,
   capacity INT NOT NULL,
+  room int NOT NULL,
   trainer_id INT,
   PRIMARY KEY (id)
 );

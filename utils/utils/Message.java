@@ -21,4 +21,7 @@ public class Message {
     public void sendRegisterMessage(PrintWriter writer, String message) {
         writer.println("REGISTER:" + message);
     }
+    public void sendCanEnterTrainingMessage(PrintWriter writer, String message) {
+        writer.println("CAN_ENTER:" + message);
+    }
 }

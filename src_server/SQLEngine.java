@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class SQLEngine {
 
@@ -101,5 +102,31 @@ public class SQLEngine {
         } else {
             throw new SQLException("Invalid register credentials");
         }
+    }
+
+    public boolean canEnterTraining(int clientID, int roomID) throws SQLException {
+        String query = "SELECT training.date, training.hour FROM reservation JOIN training ON training.id = reservation.training_id WHERE client_id = " + clientID + " and room = " + roomID;
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        // Check if client has a reservation for this room
+        if (resultSet.next()) {
+            LocalDate trainingDate = resultSet.getDate("date").toLocalDate();
+            LocalTime trainingHour = resultSet.getTime("hour").toLocalTime();
+
+            // Check if training is today
+            if (trainingDate.equals(LocalDate.now())) {
+                // Check if 10 minutes before training
+                if (LocalTime.now().isBefore(trainingHour) && LocalTime.now().isAfter(trainingHour.minusMinutes(10))) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+
+            }
+        }
+        return false;
+
     }
 }
