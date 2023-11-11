@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import gui.dashboard.AdminDashboard;
 import gui.dashboard.ClientDashboard;
@@ -48,6 +49,8 @@ public class LoginWindow extends JFrame{
         this.add(usernamePanel);
         this.add(passwordPanel);
         this.add(loginButton);
+
+        SwingUtilities.updateComponentTreeUI(getContentPane());
 
         // Add action listener to the login button
         loginButton.addActionListener(new ActionListener() {

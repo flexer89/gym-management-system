@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.GridLayout;
@@ -54,6 +54,8 @@ public class TrainingEntranceWindow extends JFrame{
 
         // Add the panels to the window
         this.add(entrancePanel);
+
+        SwingUtilities.updateComponentTreeUI(getContentPane());
 
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

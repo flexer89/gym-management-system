@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import utils.Message;
 
@@ -86,6 +87,8 @@ public class RegisterWindow extends JFrame{
         this.add(phonePanel);
         this.add(emailPanel);
         this.add(registerPanel);
+
+        SwingUtilities.updateComponentTreeUI(getContentPane());
 
         registerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

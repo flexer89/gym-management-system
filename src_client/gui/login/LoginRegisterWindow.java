@@ -30,6 +30,8 @@ public class LoginRegisterWindow extends JFrame{
         this.add(loginRegisterPanel);
         this.add(exitButton);
 
+        SwingUtilities.updateComponentTreeUI(getContentPane());
+
         // Add event listener for exit button
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
