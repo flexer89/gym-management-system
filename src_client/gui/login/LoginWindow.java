@@ -17,7 +17,6 @@ import javax.swing.SwingUtilities;
 
 import gui.dashboard.AdminDashboard;
 import gui.dashboard.ClientDashboard;
-import gui.dashboard.EmployeeDashboard;
 import gui.dashboard.TrainerDashboard;
 import utils.Message;
 
@@ -79,8 +78,6 @@ public class LoginWindow extends JFrame{
                             AdminDashboard adminDashboard = new AdminDashboard();
                         } else if (type.equals("client")) {
                             ClientDashboard clientDashboard = new ClientDashboard();
-                        } else if (type.equals("employee")) {
-                            EmployeeDashboard employeeDashboard = new EmployeeDashboard();
                         } else if (type.equals("trainer")) {
                             TrainerDashboard trainerDashboard = new TrainerDashboard();
                         }
