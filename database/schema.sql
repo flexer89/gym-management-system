@@ -104,8 +104,8 @@ CREATE TABLE gym_visits (
   client_id INT NOT NULL,
   entrance_date DATE NOT NULL,
   entrance_time TIME NOT NULL,
-  exit_date DATE NOT NULL,
-  exit_time TIME NOT NULL,
+  exit_date DATE,
+  exit_time TIME,
   PRIMARY KEY (id)
 );
 

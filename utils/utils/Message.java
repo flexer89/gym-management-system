@@ -24,4 +24,7 @@ public class Message {
     public void sendCanEnterTrainingMessage(PrintWriter writer, String message) {
         writer.println("CAN_ENTER:" + message);
     }
+    public void sendCanEnterGymMessage(PrintWriter writer, String message) {
+        writer.println("CAN_ENTER_GYM:" + message);
+    }
 }

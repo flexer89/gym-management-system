@@ -6,6 +6,8 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.sound.midi.Soundbank;
+
 public class SQLEngine {
 
     private Connection connection;
@@ -54,16 +56,6 @@ public class SQLEngine {
         if (resultSet.next() && resultSet.getInt("client_id") != 0) {
             return "client," + resultSet.getInt("client_id");
         } 
-        query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND position = 'employee'";
-        statement = connection.createStatement();
-        resultSet = statement.executeQuery(query);
-
-        if (resultSet.next()) {
-            int employeeId = resultSet.getInt("employee_id");
-            if (employeeId != 0) {
-                return "employee," + employeeId;
-            }
-        }
         
         query = "SELECT employee_id FROM credentials JOIN employee on employee.id=credentials.employee_id WHERE login = '" + username + "' AND password = '" + password + "' AND position = 'admin'";
         statement = connection.createStatement();
@@ -128,5 +120,28 @@ public class SQLEngine {
         }
         return false;
 
+    }
+
+    public boolean canEnterGym(int userID, int gymID) throws SQLException {
+        String query = "SELECT expiration_date, all_gyms_access, original_gym_id FROM client join membership_card on client.id = membership_card.client_id WHERE client.id = " + userID;
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        System.out.println("canEnterGym: " + userID + " " + gymID);
+        if (resultSet.next()) {
+            LocalDate expirationDate = resultSet.getDate("expiration_date").toLocalDate();
+            boolean allGymAccess = resultSet.getBoolean("all_gyms_access");
+            int originalGymID = resultSet.getInt("original_gym_id");
+
+            if ((allGymAccess || originalGymID == gymID) && expirationDate.isAfter(LocalDate.now())) {
+                // Log entry
+                query = "INSERT INTO gym_visits (client_id, gym_id, entrance_date, entrance_time) VALUES (" + userID + ", " + gymID + ", '" + LocalDate.now() + "', '" + LocalTime.now() + "')";
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        // Check if client has a membership card
+        return false;
     }
 }

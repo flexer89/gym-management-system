@@ -35,6 +35,19 @@ class ClientHandler implements Callable<String> {
                 } else if (serverMessage.startsWith("EXIT:")) {
                     System.out.println(serverMessage.substring(5));
                     break;
+                } else if (serverMessage.startsWith("CAN_ENTER_GYM:")){
+                    System.out.println(serverMessage.substring(14));
+                    String[] loginInfo = serverMessage.substring(14).split(",");
+
+                    int userID = Integer.parseInt(loginInfo[0]);
+                    int gymID = Integer.parseInt(loginInfo[1]);
+                    System.out.println("User " + userID + " wants to enter gym " + gymID);
+                    try {
+                        boolean canEnterGym = sqlEngine.canEnterGym(userID, gymID);
+                        SendToClient.println(canEnterGym);
+                    } catch (SQLException e) {
+                        System.out.println("Error checking if user can enter gym: " + e.getMessage());
+                    }
                 } else if (serverMessage.startsWith("CAN_ENTER:")){
                     System.out.println(serverMessage.substring(10));
                     String[] loginInfo = serverMessage.substring(10).split(",");
