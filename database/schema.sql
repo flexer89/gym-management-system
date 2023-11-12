@@ -134,6 +134,46 @@ ALTER TABLE credentials
 ADD CONSTRAINT chk_person_id_exists
 CHECK (employee_id IS NOT NULL OR client_id IS NOT NULL);
 
--- insert admin lol
-INSERT INTO employee (id, first_name, last_name, position, date_of_employment, is_manager)
-VALUES (1, 'Admin', 'Admin', 'Administrator', '2023-11-05', 1);
+-- Insert a client
+INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email)
+VALUES ('John', 'Doe', '1980-01-01', '1234567890', 'john.doe@example.com');
+
+-- Get the ID of the client we just inserted
+SET @client_id = LAST_INSERT_ID();
+
+-- Insert a client's credentials
+INSERT INTO credentials (login, password, client_id)
+VALUES ('johndoe', 'password', @client_id);
+
+-- Insert an admin
+INSERT INTO employee (first_name, last_name, position, date_of_employment)
+VALUES ('Admin', 'User', 'admin', '2020-01-01');
+
+-- Get the ID of the admin we just inserted
+SET @admin_id = LAST_INSERT_ID();
+
+-- Insert an admin's credentials
+INSERT INTO credentials (login, password, employee_id)
+VALUES ('adminuser', 'password', @admin_id);
+
+-- Insert an employee
+INSERT INTO employee (first_name, last_name, position, date_of_employment)
+VALUES ('Employee', 'User', 'employee', '2020-01-01');
+
+-- Get the ID of the employee we just inserted
+SET @employee_id = LAST_INSERT_ID();
+
+-- Insert an employee's credentials
+INSERT INTO credentials (login, password, employee_id)
+VALUES ('employeeuser', 'password', @employee_id);
+
+-- Insert a trainer
+INSERT INTO employee (first_name, last_name, position, date_of_employment)
+VALUES ('Trainer', 'User', 'trainer', '2020-01-01');
+
+-- Get the ID of the trainer we just inserted
+SET @trainer_id = LAST_INSERT_ID();
+
+-- Insert a trainer's credentials
+INSERT INTO credentials (login, password, employee_id)
+VALUES ('traineruser', 'password', @trainer_id);

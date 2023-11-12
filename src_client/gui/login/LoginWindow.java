@@ -68,6 +68,7 @@ public class LoginWindow extends JFrame{
                     // Read the response from the server (type to know which dashboard should be created and userID to know the user's ID)
                     userID = Integer.parseInt(ReadFromServer.readLine());
                     type = ReadFromServer.readLine();
+                    System.out.println(type);
 
                     if (userID > 0) {
                         JOptionPane.showMessageDialog(null, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -81,6 +82,7 @@ public class LoginWindow extends JFrame{
                         } else if (type.equals("trainer")) {
                             TrainerDashboard trainerDashboard = new TrainerDashboard();
                         }
+                        
                     }
                 } catch (IOException e1) {
                     JOptionPane.showMessageDialog(null, "Invalid login credentials!", "Error", JOptionPane.ERROR_MESSAGE);
