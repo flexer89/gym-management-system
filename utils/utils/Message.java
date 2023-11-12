@@ -22,9 +22,13 @@ public class Message {
         writer.println("REGISTER:" + message);
     }
     public void sendCanEnterTrainingMessage(PrintWriter writer, String message) {
-        writer.println("CAN_ENTER:" + message);
+        writer.println("CAN_ENTER_TRAINING:" + message);
     }
     public void sendCanEnterGymMessage(PrintWriter writer, String message) {
         writer.println("CAN_ENTER_GYM:" + message);
+    }
+
+    public void sendCanExitGymMessage(PrintWriter writer, String message) {
+        writer.println("CAN_EXIT_GYM:" + message);
     }
 }

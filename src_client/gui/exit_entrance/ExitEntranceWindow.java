@@ -32,13 +32,19 @@ public class ExitEntranceWindow extends JFrame{
         this.setTitle("Gym Management System | Entrance Manager | Gym no " + gymID);
         this.setLayout(new GridLayout(1, 2));
 
+        // Create Exit Button
+        JButton exitButton = new JButton("Exit the gym");
+
+        // Create Enter Button
+        JButton entranceButton = new JButton("Enter the gym");
+
         // Create Entrance panel
         JPanel entrancePanel = new JPanel(new GridLayout(5, 1));
         entrancePanel.setBorder(new EmptyBorder(10, 40, 10, 40));
 
         // Create Entrance Label
-        JLabel entranceLabel = new JLabel("Enter your ID");
-        entranceLabel.setFont(entranceLabel.getFont().deriveFont(30.0f));
+        JLabel entranceLabel = new JLabel("Enter your card number");
+        entranceLabel.setFont(entranceLabel.getFont().deriveFont(20.0f));
         entranceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // Create Entrance Text Field
@@ -47,11 +53,9 @@ public class ExitEntranceWindow extends JFrame{
 
         // Create Entrance Button
         JButton enterButton = new JButton("Enter");
-        enterButton.setMargin(new Insets(10, 10, 10, 10));
 
         // Create Back Button
         JButton backButton = new JButton("Back");
-        backButton.setMargin(new Insets(10, 10, 10, 10));
 
         // Create buy ticket button
         JButton buyTicketButton = new JButton("Buy a ticket");
@@ -64,13 +68,29 @@ public class ExitEntranceWindow extends JFrame{
         entrancePanel.add(backButton);
 
         // Create Exit Panel
-        JPanel exitPanel = new JPanel(new GridLayout(2, 1));
+        JPanel exitPanel = new JPanel(new GridLayout(4, 1));
+        exitPanel.setBorder(new EmptyBorder(10, 40, 10, 40));
+
+        // Create Exit Label
+        JLabel exitLabel = new JLabel("Enter your card number:");
+        exitLabel.setFont(exitLabel.getFont().deriveFont(20.0f));
+        exitLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Create Exit Text Field
+        JTextField exitTextField = new JTextField();
+        exitTextField.setFont(exitLabel.getFont().deriveFont(30.0f));
 
         // Create Exit Button
-        JButton exitButton = new JButton("Exit the gym");
+        JButton exitGymButton = new JButton("Exit");
 
-        // Create Enter Button
-        JButton entranceButton = new JButton("Enter the gym");
+        // Create Back Button
+        JButton exitBackButton = new JButton("Back");
+
+        // Add the label and the button to the panel
+        exitPanel.add(exitLabel);
+        exitPanel.add(exitTextField);
+        exitPanel.add(exitGymButton);
+        exitPanel.add(exitBackButton);
 
         add(entranceButton);
         add(exitButton);
@@ -96,6 +116,17 @@ public class ExitEntranceWindow extends JFrame{
             }
         });
 
+        // Add event listener for buy ticket button
+        exitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Clear the window
+                getContentPane().removeAll();
+                add(exitPanel);
+                revalidate();
+                SwingUtilities.updateComponentTreeUI(getContentPane());
+            }
+        });
+
         // Add event listener for back button
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -105,6 +136,42 @@ public class ExitEntranceWindow extends JFrame{
                 add(exitButton);
                 revalidate();
                 SwingUtilities.updateComponentTreeUI(getContentPane());
+            }
+        });
+
+        // Add event listener for exit button
+        exitBackButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Clear the window
+                getContentPane().removeAll();
+                add(entranceButton);
+                add(exitButton);
+                revalidate();
+                SwingUtilities.updateComponentTreeUI(getContentPane());
+            }
+        });
+
+        // Add event listener for exitBackButton button
+        exitGymButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Get the ID
+                String card_number = exitTextField.getText();
+                // Send the ID to the server
+                message.sendCanExitGymMessage(SendToServer, card_number + "," + gymID);
+                try {
+                    // Get the response from the server
+                    String response = ReadFromServer.readLine();
+                    if (response.equals("true")) {
+                        // If the response is true, the user can exit the gym
+                        JOptionPane.showMessageDialog(null, "Have a nice day!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        // If the response is false, the user cannot exit the gym
+                        JOptionPane.showMessageDialog(null, "You haven't even entered the gym yet!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (IOException e1) {
+                    System.out.println("Error reading from server: " + e1.getMessage());
+                
+                }
             }
         });
 

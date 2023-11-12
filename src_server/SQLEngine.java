@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.sound.midi.Soundbank;
 
@@ -122,26 +123,60 @@ public class SQLEngine {
 
     }
 
-    public boolean canEnterGym(int userID, int gymID) throws SQLException {
-        String query = "SELECT expiration_date, all_gyms_access, original_gym_id FROM client join membership_card on client.id = membership_card.client_id WHERE client.id = " + userID;
+    public boolean canEnterGym(int card_number, int gymID) throws SQLException {
+        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.card_number = " + card_number;
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
-        System.out.println("canEnterGym: " + userID + " " + gymID);
         if (resultSet.next()) {
             LocalDate expirationDate = resultSet.getDate("expiration_date").toLocalDate();
             boolean allGymAccess = resultSet.getBoolean("all_gyms_access");
             int originalGymID = resultSet.getInt("original_gym_id");
+            int clientID = resultSet.getInt("client_id");
+            System.out.println(expirationDate + " " + allGymAccess + " " + originalGymID);
+
+            // Format time
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            LocalTime now = LocalTime.now();
+            String formattedTime = formatter.format(now);
 
             if ((allGymAccess || originalGymID == gymID) && expirationDate.isAfter(LocalDate.now())) {
-                // Log entry
-                query = "INSERT INTO gym_visits (client_id, gym_id, entrance_date, entrance_time) VALUES (" + userID + ", " + gymID + ", '" + LocalDate.now() + "', '" + LocalTime.now() + "')";
+                // Check if client entered already
+                query = "SELECT * FROM gym_visits WHERE client_id = " + clientID + " AND gym_id = " + gymID + " AND exit_date IS NULL";
+                resultSet = statement.executeQuery(query);
+                if (resultSet.next()) {
+                    return false;
+                }
+                query = "INSERT INTO gym_visits (client_id, gym_id, entrance_date, entrance_time) VALUES (" + clientID + ", " + gymID + ", '" + LocalDate.now() + "', '" + formattedTime + "')";
+                statement.executeUpdate(query);
                 return true;
             }
             else {
                 return false;
             }
         }
-        // Check if client has a membership card
         return false;
     }
+    public boolean canExitGym(int card_number, int gymID) throws SQLException {
+        String query = "SELECT client_id FROM membership_card WHERE card_number = " + card_number;
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        if (resultSet.next()) {
+            int clientID = resultSet.getInt("client_id");
+            query = "SELECT * FROM gym_visits WHERE client_id = " + clientID + " AND gym_id = " + gymID + " AND exit_date IS NULL";
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                // Format time
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                LocalTime now = LocalTime.now();
+                String formattedTime = formatter.format(now);
+
+                query = "UPDATE gym_visits SET exit_date = '" + LocalDate.now() + "', exit_time = '" + formattedTime + "' WHERE client_id = " + clientID + " AND gym_id = " + gymID + " AND exit_date IS NULL";
+                statement.executeUpdate(query);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

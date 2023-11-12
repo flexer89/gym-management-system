@@ -39,18 +39,32 @@ class ClientHandler implements Callable<String> {
                     System.out.println(serverMessage.substring(14));
                     String[] loginInfo = serverMessage.substring(14).split(",");
 
-                    int userID = Integer.parseInt(loginInfo[0]);
+                    int card_number = Integer.parseInt(loginInfo[0]);
                     int gymID = Integer.parseInt(loginInfo[1]);
-                    System.out.println("User " + userID + " wants to enter gym " + gymID);
+                    System.out.println("User with card " + card_number + " wants to enter gym " + gymID);
                     try {
-                        boolean canEnterGym = sqlEngine.canEnterGym(userID, gymID);
+                        boolean canEnterGym = sqlEngine.canEnterGym(card_number, gymID);
                         SendToClient.println(canEnterGym);
                     } catch (SQLException e) {
                         System.out.println("Error checking if user can enter gym: " + e.getMessage());
                     }
-                } else if (serverMessage.startsWith("CAN_ENTER:")){
-                    System.out.println(serverMessage.substring(10));
-                    String[] loginInfo = serverMessage.substring(10).split(",");
+                } else if (serverMessage.startsWith("CAN_EXIT_GYM:")){
+                    System.out.println(serverMessage.substring(13));
+                    String[] loginInfo = serverMessage.substring(13).split(",");
+
+                    int userID = Integer.parseInt(loginInfo[0]);
+                    int gymID = Integer.parseInt(loginInfo[1]);
+                    System.out.println("User " + userID + " wants to exit gym " + gymID);
+                    try {
+                        boolean canExitGym = sqlEngine.canExitGym(userID, gymID);
+                        SendToClient.println(canExitGym);
+                    } catch (SQLException e) {
+                        System.out.println("Error checking if user can exit gym: " + e.getMessage());
+                    }
+                }
+                else if (serverMessage.startsWith("CAN_ENTER_TRAINING:")){
+                    System.out.println(serverMessage.substring(19));
+                    String[] loginInfo = serverMessage.substring(19).split(",");
 
                     int userID = Integer.parseInt(loginInfo[0]);
                     int roomID = Integer.parseInt(loginInfo[1]);
