@@ -14,6 +14,19 @@ class ClientHandler implements Callable<String> {
         this.sqlEngine = sqlEngine;
     }
 
+    enum CommandType {
+        PRINT, SEND, EXIT, CAN_ENTER_GYM, CAN_EXIT_GYM, CAN_ENTER_TRAINING, LOGIN, REGISTER, UNKNOWN,SHUTDOWN
+    }
+
+    CommandType getCommandType(String command) {
+        try {
+            return CommandType.valueOf(command.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return CommandType.UNKNOWN;
+        }
+    }
+
+    
     @Override
     public String call() {
         try {
@@ -21,101 +34,52 @@ class ClientHandler implements Callable<String> {
             BufferedReader ReadFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter SendToClient = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            String serverMessage;
+
+            Handlers Handlers = new Handlers(ReadFromClient, SendToClient,clientSocket, sqlEngine);
+
             while (true) {
-                serverMessage = ReadFromClient.readLine();
-                if (serverMessage.startsWith("PRINT:")) {
-                    // Print the message, excluding the "PRINT:" prefix
-                    System.out.println(serverMessage.substring(6));
-                } else if (serverMessage.startsWith("SEND:")) {
-                    // Send data to the server
-                    System.out.println(serverMessage.substring(5));
-                    String clientMessage = System.console().readLine();
-                    SendToClient.println(clientMessage);
-                } else if (serverMessage.startsWith("EXIT:")) {
-                    System.out.println(serverMessage.substring(5));
+                String serverMessage = ReadFromClient.readLine();
+                String[] parts = serverMessage.split(":", 2);
+                String command = parts[0];
+                String data= parts[1];
+                
+                System.out.println("Command: " + command + " Data: " + data);
+                
+                CommandType commandType = getCommandType(command);
+                
+            
+                switch (commandType) {
+                    case PRINT:
+                        Handlers.print(data);
+                        break;
+                    case SEND:
+                        Handlers.send();
+                        break;
+                    case EXIT:
+                        Handlers.exit();
+                        break;
+                    case CAN_ENTER_GYM:
+                        Handlers.canEnterGym(data);
+                        break;
+                    case CAN_EXIT_GYM:
+                        Handlers.canExitGym(data);
+                        break;
+                    case CAN_ENTER_TRAINING:
+                        Handlers.canEnterTraining(data);
+                        break;
+                    case LOGIN:
+                        Handlers.login(data);
+                        break;
+                    case REGISTER:
+                        Handlers.register(data);
+                        break;
+                    default:
+                        System.out.println("Unknown command: " + command);
+                        break;
+                }
+                //TODO how to implement this lol
+                if (commandType == CommandType.SHUTDOWN) {
                     break;
-                } else if (serverMessage.startsWith("CAN_ENTER_GYM:")){
-                    System.out.println(serverMessage.substring(14));
-                    String[] loginInfo = serverMessage.substring(14).split(",");
-
-                    int card_number = Integer.parseInt(loginInfo[0]);
-                    int gymID = Integer.parseInt(loginInfo[1]);
-                    System.out.println("User with card " + card_number + " wants to enter gym " + gymID);
-                    try {
-                        boolean canEnterGym = sqlEngine.canEnterGym(card_number, gymID);
-                        SendToClient.println(canEnterGym);
-                    } catch (SQLException e) {
-                        System.out.println("Error checking if user can enter gym: " + e.getMessage());
-                    }
-                } else if (serverMessage.startsWith("CAN_EXIT_GYM:")){
-                    System.out.println(serverMessage.substring(13));
-                    String[] loginInfo = serverMessage.substring(13).split(",");
-
-                    int userID = Integer.parseInt(loginInfo[0]);
-                    int gymID = Integer.parseInt(loginInfo[1]);
-                    System.out.println("User " + userID + " wants to exit gym " + gymID);
-                    try {
-                        boolean canExitGym = sqlEngine.canExitGym(userID, gymID);
-                        SendToClient.println(canExitGym);
-                    } catch (SQLException e) {
-                        System.out.println("Error checking if user can exit gym: " + e.getMessage());
-                    }
-                }
-                else if (serverMessage.startsWith("CAN_ENTER_TRAINING:")){
-                    System.out.println(serverMessage.substring(19));
-                    String[] loginInfo = serverMessage.substring(19).split(",");
-
-                    int userID = Integer.parseInt(loginInfo[0]);
-                    int roomID = Integer.parseInt(loginInfo[1]);
-                    System.out.println("User " + userID + " wants to enter room " + roomID);
-                    try {
-                        boolean canEnterTraining = sqlEngine.canEnterTraining(userID, roomID);
-                        SendToClient.println(canEnterTraining);
-                    } catch (SQLException e) {
-                        System.out.println("Error checking if user can enter training: " + e.getMessage());
-                    }
-
-                }
-                else if (serverMessage.startsWith("LOGIN:")) {
-                    // TODO move this to separate function
-                    String[] loginInfo = serverMessage.substring(6).split(",");
-                    String username = loginInfo[0];
-                    String password = loginInfo[1];
-                    try {
-                        String data = sqlEngine.loginToAccount(username, password);
-                        String type = data.split(",")[0];
-                        System.out.println(data);
-                        int userID = Integer.parseInt(data.split(",")[1]);
-
-                        System.out.println(type + " " + userID + " logged in");
-                        SendToClient.println(userID);
-                        SendToClient.println(type);
-                    } catch (SQLException e) {
-                        System.out.println("Error logging in: " + e.getMessage());
-                        SendToClient.println(-1);
-                        SendToClient.println("ERROR");
-                    }
-                }
-                else if (serverMessage.startsWith("REGISTER:"))
-                {
-                    // TODO move this to separate function
-                    // Register new account
-                    String[] registerInfo = serverMessage.substring(9).split(",");
-                    String username = registerInfo[0];
-                    String password = registerInfo[1];
-                    String firstName = registerInfo[2];
-                    String lastName = registerInfo[3];
-                    LocalDate birthDate = LocalDate.parse(registerInfo[4]);
-                    String phoneNumber = registerInfo[5];
-                    String email = registerInfo[6];
-                    try {
-                        int userID = sqlEngine.registerAccount(username, password, firstName, lastName, birthDate, phoneNumber, email);
-                        System.out.println("User " + userID + " registered");
-                        SendToClient.println(userID);
-                    } catch (SQLException e) {
-                        System.out.println("Error registering account: " + e.getMessage());
-                    }
                 }
             }
 
@@ -123,7 +87,7 @@ class ClientHandler implements Callable<String> {
             ReadFromClient.close();
             SendToClient.close();
             clientSocket.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
