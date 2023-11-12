@@ -15,6 +15,9 @@ The workspace contains two folders by default, where:
 Meanwhile, the compiled output files will be generated in the `bin` folder by default.
 
   
+## DOCKER COMPOSE DATABASE ON WINDOWS
+- it works kinda weird because dont always delete volume, i think it is because of windows docker desktop
+- to fully restart docker compose you need to run `docker compose down -v` and then `docker compose up` or `docker compose up -d` to run it in background
 
 ## STARTING LOCAL DB AND CBEAVER
 
