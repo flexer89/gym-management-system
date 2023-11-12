@@ -143,7 +143,7 @@ SET @client_id = LAST_INSERT_ID();
 
 -- Insert a client's credentials
 INSERT INTO credentials (login, password, client_id)
-VALUES ('johndoe', 'password', @client_id);
+VALUES ('client', 'passwd', @client_id);
 
 -- Insert an admin
 INSERT INTO employee (first_name, last_name, position, date_of_employment)
@@ -154,7 +154,7 @@ SET @admin_id = LAST_INSERT_ID();
 
 -- Insert an admin's credentials
 INSERT INTO credentials (login, password, employee_id)
-VALUES ('adminuser', 'password', @admin_id);
+VALUES ('admin', 'passwd', @admin_id);
 
 -- Insert an employee
 INSERT INTO employee (first_name, last_name, position, date_of_employment)
@@ -165,7 +165,7 @@ SET @employee_id = LAST_INSERT_ID();
 
 -- Insert an employee's credentials
 INSERT INTO credentials (login, password, employee_id)
-VALUES ('employeeuser', 'password', @employee_id);
+VALUES ('employee', 'passwd', @employee_id);
 
 -- Insert a trainer
 INSERT INTO employee (first_name, last_name, position, date_of_employment)
@@ -176,4 +176,4 @@ SET @trainer_id = LAST_INSERT_ID();
 
 -- Insert a trainer's credentials
 INSERT INTO credentials (login, password, employee_id)
-VALUES ('traineruser', 'password', @trainer_id);
+VALUES ('trainer', 'passwd', @trainer_id);

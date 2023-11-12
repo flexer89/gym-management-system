@@ -58,6 +58,7 @@ class ClientHandler implements Callable<String> {
                     try {
                         String data = sqlEngine.loginToAccount(username, password);
                         String type = data.split(",")[0];
+                        System.out.println(data);
                         int userID = Integer.parseInt(data.split(",")[1]);
 
                         System.out.println(type + " " + userID + " logged in");
@@ -65,6 +66,8 @@ class ClientHandler implements Callable<String> {
                         SendToClient.println(type);
                     } catch (SQLException e) {
                         System.out.println("Error logging in: " + e.getMessage());
+                        SendToClient.println(-1);
+                        SendToClient.println("ERROR");
                     }
                 }
                 else if (serverMessage.startsWith("REGISTER:"))
