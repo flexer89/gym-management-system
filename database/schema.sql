@@ -16,7 +16,7 @@ CREATE TABLE employee (
   id INT NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
-  position enum('admin', 'employee', 'trainer') NOT NULL,
+  position enum('admin', 'trainer') NOT NULL,
   date_of_employment DATE NOT NULL,
   PRIMARY KEY (id)
 );
@@ -134,6 +134,35 @@ ALTER TABLE credentials
 ADD CONSTRAINT chk_person_id_exists
 CHECK (employee_id IS NOT NULL OR client_id IS NOT NULL);
 
--- insert admin lol
-INSERT INTO employee (id, first_name, last_name, position, date_of_employment, is_manager)
-VALUES (1, 'Admin', 'Admin', 'Administrator', '2023-11-05', 1);
+-- Insert a client
+INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email)
+VALUES ('John', 'Doe', '1980-01-01', '1234567890', 'john.doe@example.com');
+
+-- Get the ID of the client we just inserted
+SET @client_id = LAST_INSERT_ID();
+
+-- Insert a client's credentials
+INSERT INTO credentials (login, password, client_id)
+VALUES ('client', 'passwd', @client_id);
+
+-- Insert an admin
+INSERT INTO employee (first_name, last_name, position, date_of_employment)
+VALUES ('Admin', 'User', 'admin', '2020-01-01');
+
+-- Get the ID of the admin we just inserted
+SET @admin_id = LAST_INSERT_ID();
+
+-- Insert an admin's credentials
+INSERT INTO credentials (login, password, employee_id)
+VALUES ('admin', 'passwd', @admin_id);
+
+-- Insert a trainer
+INSERT INTO employee (first_name, last_name, position, date_of_employment)
+VALUES ('Trainer', 'User', 'trainer', '2020-01-01');
+
+-- Get the ID of the trainer we just inserted
+SET @trainer_id = LAST_INSERT_ID();
+
+-- Insert a trainer's credentials
+INSERT INTO credentials (login, password, employee_id)
+VALUES ('trainer', 'passwd', @trainer_id);

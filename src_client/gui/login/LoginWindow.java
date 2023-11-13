@@ -60,6 +60,13 @@ public class LoginWindow extends JFrame{
                 int userID;
                 String type;
 
+                //TODO figure out best way to handle this
+                if (username.isEmpty() || password.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Username or password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+                    throw new IllegalArgumentException("Username or password cannot be empty");
+                }
+
+
                 // Send the username and password to the server
                 message.sendLoginMessage(SendToServer, username + "," + password);
 
@@ -70,20 +77,38 @@ public class LoginWindow extends JFrame{
                     // Read the response from the server (type to know which dashboard should be created and userID to know the user's ID)
                     userID = Integer.parseInt(ReadFromServer.readLine());
                     type = ReadFromServer.readLine();
+                    System.out.println(type + " ID: " + userID);
 
                     if (userID > 0) {
                         JOptionPane.showMessageDialog(null, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         loginRegisterWindow.dispose();
-                        if (type.equals("admin")) {
-                            AdminDashboard adminDashboard = new AdminDashboard();
-                        } else if (type.equals("client")) {
-                            ClientDashboard clientDashboard = new ClientDashboard();
-                        } else if (type.equals("trainer")) {
-                            TrainerDashboard trainerDashboard = new TrainerDashboard();
+
+                        switch (type) {
+                            case "admin":
+                                System.out.println("Admin dashboard opened");
+                                AdminDashboard adminDashboard = new AdminDashboard();
+                                break;
+                            case "client":
+                                System.out.println("Client dashboard opened");
+                                ClientDashboard clientDashboard = new ClientDashboard();
+                                break;
+                            case "trainer":
+                                System.out.println("Trainer dashboard opened");
+                                TrainerDashboard trainerDashboard = new TrainerDashboard();
+                                break;
+                            default:
+                                System.out.println("Unhandled type");
+                                throw new IOException("Unhandled type");
                         }
                     }
-                } catch (IOException e1) {
-                    JOptionPane.showMessageDialog(null, "Invalid login credentials!", "Error", JOptionPane.ERROR_MESSAGE);
+                    else 
+                    {
+                        throw new IOException("Invalid login credentials");
+                    }
+                }
+                catch (IOException e1) 
+                {
+                    JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     e1.printStackTrace();
                 }
             }
