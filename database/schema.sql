@@ -16,8 +16,16 @@ CREATE TABLE employee (
   id INT NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
-  position enum('admin', 'trainer') NOT NULL,
+  position enum('admin', 'employee', 'trainer') NOT NULL,
   date_of_employment DATE NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE employee_credentials (
+  id INT NOT NULL AUTO_INCREMENT,
+  login VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  employee_id INT NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -50,12 +58,11 @@ CREATE TABLE client (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE credentials (
+CREATE TABLE client_credentials (
   id INT NOT NULL AUTO_INCREMENT,
   login VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
-  employee_id INT DEFAULT NULL,
-  client_id INT DEFAULT NULL,
+  client_id INT NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -104,8 +111,8 @@ CREATE TABLE gym_visits (
   client_id INT NOT NULL,
   entrance_date DATE NOT NULL,
   entrance_time TIME NOT NULL,
-  exit_date DATE,
-  exit_time TIME,
+  exit_date DATE NOT NULL,
+  exit_time TIME NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -130,9 +137,6 @@ ALTER TABLE employee_work_time ADD FOREIGN KEY (employee_id) REFERENCES employee
 ALTER TABLE gym_visits ADD FOREIGN KEY (gym_id) REFERENCES gym (id);
 
 ALTER TABLE membership_card ADD FOREIGN KEY (original_gym_id) REFERENCES gym (id);
-ALTER TABLE credentials
-ADD CONSTRAINT chk_person_id_exists
-CHECK (employee_id IS NOT NULL OR client_id IS NOT NULL);
 
 -- Insert a client
 INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email)
@@ -142,7 +146,7 @@ VALUES ('John', 'Doe', '1980-01-01', '1234567890', 'john.doe@example.com');
 SET @client_id = LAST_INSERT_ID();
 
 -- Insert a client's credentials
-INSERT INTO credentials (login, password, client_id)
+INSERT INTO client_credentials (login, password, client_id)
 VALUES ('client', 'passwd', @client_id);
 
 -- Insert an admin
@@ -153,8 +157,19 @@ VALUES ('Admin', 'User', 'admin', '2020-01-01');
 SET @admin_id = LAST_INSERT_ID();
 
 -- Insert an admin's credentials
-INSERT INTO credentials (login, password, employee_id)
+INSERT INTO employee_credentials (login, password, employee_id)
 VALUES ('admin', 'passwd', @admin_id);
+
+-- Insert an employee
+INSERT INTO employee (first_name, last_name, position, date_of_employment)
+VALUES ('Employee', 'User', 'employee', '2020-01-01');
+
+-- Get the ID of the employee we just inserted
+SET @employee_id = LAST_INSERT_ID();
+
+-- Insert an employee's credentials
+INSERT INTO employee_credentials (login, password, employee_id)
+VALUES ('employee', 'passwd', @employee_id);
 
 -- Insert a trainer
 INSERT INTO employee (first_name, last_name, position, date_of_employment)
@@ -164,5 +179,5 @@ VALUES ('Trainer', 'User', 'trainer', '2020-01-01');
 SET @trainer_id = LAST_INSERT_ID();
 
 -- Insert a trainer's credentials
-INSERT INTO credentials (login, password, employee_id)
+INSERT INTO employee_credentials (login, password, employee_id)
 VALUES ('trainer', 'passwd', @trainer_id);
