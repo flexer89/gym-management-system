@@ -16,7 +16,7 @@ CREATE TABLE employee (
   id INT NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
-  position enum('admin', 'employee', 'trainer') NOT NULL,
+  position enum('admin', 'trainer') NOT NULL,
   date_of_employment DATE NOT NULL,
   PRIMARY KEY (id)
 );
@@ -111,8 +111,8 @@ CREATE TABLE gym_visits (
   client_id INT NOT NULL,
   entrance_date DATE NOT NULL,
   entrance_time TIME NOT NULL,
-  exit_date DATE NOT NULL,
-  exit_time TIME NOT NULL,
+  exit_date DATE,
+  exit_time TIME,
   PRIMARY KEY (id)
 );
 
