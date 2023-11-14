@@ -15,6 +15,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import gui.dashboard.trainer_dashboard.training_management.*;
+import gui.dashboard.trainer_dashboard.*;
+
 import gui.login.LoginRegisterWindow;
 import utils.Message;
 
@@ -54,20 +57,25 @@ public class TrainerDashboard extends JFrame {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Create a reports panel
-        JPanel reportsPanel = new JPanel(new GridLayout(1, 1));
+        JPanel reportsPanel = new JPanel(new GridLayout(1, 2));
         reportsPanel.setBorder(BorderFactory.createTitledBorder("Reports"));
         reportsPanel.setBackground(new Color(255, 255, 255));
 
         // Create buttons for the reports panel
         JButton trainingReportButton = new JButton("Training Report");
+        JButton timeSpentReporButton = new JButton("Time Spent Report");
 
         // Set the style of the buttons
         trainingReportButton.setBackground(new Color(238, 242, 247));
         trainingReportButton.setForeground(new Color(51, 51, 51));
         trainingReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        timeSpentReporButton.setBackground(new Color(238, 242, 247));
+        timeSpentReporButton.setForeground(new Color(51, 51, 51));
+        timeSpentReporButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the buttons to the reports panel
         reportsPanel.add(trainingReportButton);
+        reportsPanel.add(timeSpentReporButton);
 
         // Create a gym management panel
         JPanel trainingManagementPanel = new JPanel(new GridLayout(1, 3));
@@ -134,6 +142,52 @@ public class TrainerDashboard extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 dispose();
                 loginRegisterWindow.setVisible(true);
+            }
+        });
+
+        // =============================================================================================================
+        // Add event listener for add training button
+        addTrainingButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                AddTrainingWindow addTrainingWindow = new AddTrainingWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // Add event listener for update training button
+        updateTrainingButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                UpdateTrainingWindow updateTrainingWindow = new UpdateTrainingWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // Add event listener for delete training button
+        deleteTrainingButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                DeleteTrainingWindow deleteTrainingWindow = new DeleteTrainingWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // =============================================================================================================
+        // Add event listener for training report button
+        trainingReportButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                TrainingReportWindow trainingReportWindow = new TrainingReportWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // Add event listener for time spent report button
+        timeSpentReporButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EntranceReportWindow entranceReportWindow = new EntranceReportWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // =============================================================================================================
+
+        // Add event listener for my profile button
+        updateProfileButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ProfileWindow profileWindow = new ProfileWindow(message, ReadFromServer, SendToServer);
             }
         });
     }
