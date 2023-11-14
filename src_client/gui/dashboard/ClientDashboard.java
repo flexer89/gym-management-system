@@ -15,6 +15,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import gui.dashboard.client_dashboard.*;
+
 import gui.login.LoginRegisterWindow;
 import utils.Message;
 
@@ -129,5 +131,50 @@ public class ClientDashboard extends JFrame{
                 loginRegisterWindow.setVisible(true);
             }
         });
+        
+        // ====================================================================================================
+        // Add event listener for payment report button
+        paymentReportButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new PaymentReportWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // Add event listener for time spent report button
+        timeSpentReportButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new TimeSpentReportWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // Add event listener for training report button
+        trainingReportButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new TrainingReportWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // ====================================================================================================
+        // Add event listener for training management button
+        trainingManagementButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new ReservationWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // Add event listener for membership management button
+        membershipManagementButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new MembershipCardWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
+        // Add event listener for profile management button
+        profileManagementButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new ProfileWindow(message, ReadFromServer, SendToServer);
+            }
+        });
+
     }
 }
