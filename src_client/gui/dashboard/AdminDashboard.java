@@ -4,6 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -11,9 +16,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import gui.login.LoginRegisterWindow;
+import utils.Message;
+
 public class AdminDashboard extends JFrame {
 
-    public AdminDashboard() {
+    public AdminDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow) {
         // Create the main window
         this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -152,5 +160,13 @@ public class AdminDashboard extends JFrame {
 
         // Add the main panel to the frame
         this.add(mainPanel);
+
+        // Add event listener for logout button
+        logoutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                loginRegisterWindow.setVisible(true);
+            }
+        });
     }
 }
