@@ -51,33 +51,37 @@ public class SQLEngine {
     }
     
     public String loginToAccount(String username, String password) throws SQLException {
-        String roleQuery = "SELECT position, employee_id FROM credentials JOIN employee ON employee.id=credentials.employee_id " +
-                "WHERE login = ? AND password = ? AND position IN ('client', 'employee', 'admin', 'trainer')";
-        PreparedStatement roleStatement = connection.prepareStatement(roleQuery);
-        roleStatement.setString(1, username);
-        roleStatement.setString(2, password);
-        ResultSet resultSet = roleStatement.executeQuery();
-    
-        if (resultSet.next()) {
-            String position = resultSet.getString("position");
-            int employeeId = resultSet.getInt("employee_id");
-            return position + "," + employeeId;
+        String roleQuery = "SELECT position, employee_id FROM employee_credentials " +
+                "JOIN employee ON employee.id = employee_credentials.employee_id " +
+                "WHERE login = ? AND password = ? AND position IN ('admin', 'employee', 'trainer')";
+        try (PreparedStatement roleStatement = connection.prepareStatement(roleQuery)) {
+            roleStatement.setString(1, username);
+            roleStatement.setString(2, password);
+            try (ResultSet resultSet = roleStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    String position = resultSet.getString("position");
+                    int employeeId = resultSet.getInt("employee_id");
+                    return position + "," + employeeId;
+                }
+            }
         }
     
-        String clientQuery = "SELECT client_id FROM credentials WHERE login = ? AND password = ?";
-        PreparedStatement clientStatement = connection.prepareStatement(clientQuery);
-        clientStatement.setString(1, username);
-        clientStatement.setString(2, password);
-        ResultSet clientResultSet = clientStatement.executeQuery();
     
-        if (clientResultSet.next()) {
-            int clientId = clientResultSet.getInt("client_id");
-            return "client" + "," + clientId;
+        String clientQuery = "SELECT client_id FROM client_credentials WHERE login = ? AND password = ?";
+        try (PreparedStatement clientStatement = connection.prepareStatement(clientQuery)) {
+            clientStatement.setString(1, username);
+            clientStatement.setString(2, password);
+            try (ResultSet clientResultSet = clientStatement.executeQuery()) {
+                if (clientResultSet.next()) {
+                    int clientId = clientResultSet.getInt("client_id");
+                    return "client" + "," + clientId;
+                }
+            }
         }
     
         throw new SQLException("Invalid login credentials");
     }
-
+    
     public int registerAccount(String username, String password, String firstName, String lastName, LocalDate birthDate, String phoneNumber, String email ) throws SQLException {
         String query = "INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES ('" + firstName + "', '" + lastName + "', '" + birthDate + "', '" + phoneNumber + "', '" + email + "')";
         Statement statement = connection.createStatement();
@@ -86,7 +90,7 @@ public class SQLEngine {
         ResultSet resultSet = statement.executeQuery(query);
         if (resultSet.next()) {
             int userID = resultSet.getInt("id");
-            query = "INSERT INTO credentials (login, password, client_id) VALUES ('" + username + "', '" + password + "', '" + userID + " ')";
+            query = "INSERT INTO client_credentials (login, password, client_id) VALUES ('" + username + "', '" + password + "', '" + userID + " ')";
             statement.executeUpdate(query);
             return userID;
         } else {
