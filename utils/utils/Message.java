@@ -31,4 +31,12 @@ public class Message {
     public void sendCanExitGymMessage(PrintWriter writer, String message) {
         writer.println("CAN_EXIT_GYM:" + message);
     }
+
+    public void sendAddGymMessage(PrintWriter writer, String message) {
+        writer.println("ADD_GYM:" + message);
+    }
+
+    public void sendAddEmployeeMessage(PrintWriter writer, String message) {
+        writer.println("ADD_EMPLOYEE:" + message);
+    }
 }

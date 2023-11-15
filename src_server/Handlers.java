@@ -111,6 +111,29 @@ public class Handlers {
         }
     }
 
+    public void addGym(String serverMessage)
+    {
+        String[] gymInfo = serverMessage.split(",");
+        String name = gymInfo[0];
+        String address = gymInfo[1];
+        String postalCode = gymInfo[2];
+        String city = gymInfo[3];
+        String phone = gymInfo[4];
+        String email = gymInfo[5];
+        try {
+            boolean ifAdded = sqlEngine.addGym(name, address, postalCode, city, phone, email);
+            if (ifAdded) {
+                System.out.println("Gym " + name + " added");
+                SendToClient.println("True");
+            } else {
+                System.out.println("Gym " + name + " wasn't added");
+                SendToClient.println("False");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error adding gym: " + e.getMessage());
+        }
+    }
+
     public void print(String serverMessage)
     {
         System.out.println(serverMessage);
@@ -125,5 +148,31 @@ public class Handlers {
     public void exit()
     {
         System.out.println("Exiting");
+    }
+
+
+    public void addEmployee(String data){
+        String[] employeeInfo = data.split(",");
+        String name = employeeInfo[0];
+        String surname = employeeInfo[1];
+        String position = employeeInfo[2];
+        LocalDate dateOfBirth = LocalDate.parse(employeeInfo[3]);
+        String phone = employeeInfo[4];
+        String email = employeeInfo[5];
+        String login = employeeInfo[6];
+        
+        try {
+            boolean ifAdded = sqlEngine.addEmployee(name, surname, position, dateOfBirth, phone, email, login);
+            if (ifAdded) {
+                System.out.println("Employee " + name + " added");
+                SendToClient.println("True");
+            } else {
+                System.out.println("Employee " + name + " wasn't added");
+                SendToClient.println("False");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error adding employee: " + e.getMessage());
+        }
+
     }
 }

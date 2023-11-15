@@ -8,8 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import javax.sound.midi.Soundbank;
-
 public class SQLEngine {
 
     private Connection connection;
@@ -179,5 +177,57 @@ public class SQLEngine {
         }
         return false;
     }
+
+    public boolean addGym(String name, String address, String postalCode, String city, String phone, String email) throws SQLException{
+        String query = "INSERT INTO gym (name, address, postal_code, city, phone, email) VALUES ('" + name + "', '" + address + "', '" + postalCode + "', '" + city + "', '" + phone + "', '" + email + "')";
+        Statement statement = connection.createStatement();
+        int count = statement.executeUpdate(query);
+        if (count > 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean addEmployee(String name, String surname, String position, LocalDate dateOfBirth, String phone,
+            String email, String login) throws SQLException {
+
+        LocalDate dateOfEmployment = LocalDate.now();
+        String query = "INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) VALUES ('" + name + "', '" + surname + "', '" + position + "', '" + dateOfBirth + "', '" + dateOfEmployment + "', '" + phone + "', '" + email + "')";
+        Statement statement = connection.createStatement();
+        int count = statement.executeUpdate(query);
+        if (count > 0) {
+            query = "SELECT id FROM employee WHERE first_name = '" + name + "' AND last_name = '" + surname + "' AND position = '" + position + "' AND date_of_birth = '" + dateOfBirth + "' AND phone_number = '" + phone + "' AND email = '" + email + "' AND date_of_employment = '" + dateOfEmployment + "'";
+            ResultSet resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                int employeeID = resultSet.getInt("id");
+                // Temporary password is inserted, employee can change it after first login
+                query = "INSERT INTO employee_credentials (login, password, employee_id) VALUES ('" + login + "', 'password', '" + employeeID + "')";
+                count = statement.executeUpdate(query);
+                if (count > 0) {
+                    // TODO change employee_number to be unique (add a prefix and 6 random symbols [a-z0-9])
+                    query = "INSERT INTO employee_card (employee_number, expiration_date, employee_id) VALUES ('" + employeeID + "', '" + dateOfEmployment.plusYears(1) + "', '" + employeeID + "')";
+                    count = statement.executeUpdate(query);
+                    if (count > 0) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
 
 }
