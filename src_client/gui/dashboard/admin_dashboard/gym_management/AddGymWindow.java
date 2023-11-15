@@ -10,17 +10,12 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import utils.Message;
 
 public class AddGymWindow extends JFrame {
     private JTextField nameField;
@@ -133,6 +128,22 @@ public class AddGymWindow extends JFrame {
                         || email.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
+                }
+                // Send the data to the server
+                message.sendAddGymMessage(sendToServer, name + "," + address + "," + postalCode + "," + city + "," + phone + "," + email );
+
+                // Read the response from the server
+                try {
+                    String response = readFromServer.readLine();
+                    if (response.equals("True")) {
+                        JOptionPane.showMessageDialog(null, "Gym added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error adding gym!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
                 }
             }
         });

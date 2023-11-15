@@ -1,16 +1,171 @@
 package gui.dashboard.admin_dashboard.employee_management;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-
-import javax.swing.JFrame;
-
 import utils.Message;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class AddEmployeeWindow extends JFrame {
-    public AddEmployeeWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer) {
+    private JTextField nameField;
+    private JTextField surnameField;
+    private JTextField positionField;
+    private JTextField dateOfBirthField;
+    private JTextField phoneField;
+    private JTextField emailField;
+    private JTextField loginField;
+    private JButton addButton;
+    private JButton cancelButton;
+    private BufferedReader readFromServer;
+    private PrintWriter sendToServer;
+
+    public AddEmployeeWindow(Message message, BufferedReader readFromServer, PrintWriter sendToServer) {
         // Create the main window
-        this.setSize(800, 600);
+        this.setSize(400, 300);
         this.setVisible(true);
+        this.setTitle("Add Employee");
+        this.readFromServer = readFromServer;
+        this.sendToServer = sendToServer;
+
+        // Create the panel for the form
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(5, 5, 5, 5);
+
+        // Add the name field
+        c.gridx = 0;
+        c.gridy = 0;
+        formPanel.add(new JLabel("Name:"), c);
+
+        c.gridx = 1;
+        c.gridy = 0;
+        nameField = new JTextField(20);
+        formPanel.add(nameField, c);
+
+        // Add the address field
+        c.gridx = 0;
+        c.gridy = 1;
+        formPanel.add(new JLabel("Surname:"), c);
+
+        c.gridx = 1;
+        c.gridy = 1;
+        surnameField = new JTextField(20);
+        formPanel.add(surnameField, c);
+
+        // Add the postal code field
+        c.gridx = 0;
+        c.gridy = 2;
+        formPanel.add(new JLabel("Position"), c);
+
+        c.gridx = 1;
+        c.gridy = 2;
+        positionField = new JTextField(20);
+        formPanel.add(positionField, c);
+
+        // Add the city field
+        c.gridx = 0;
+        c.gridy = 3;
+        formPanel.add(new JLabel("Date of birth:"), c);
+
+        c.gridx = 1;
+        c.gridy = 3;
+        dateOfBirthField = new JTextField(20);
+        formPanel.add(dateOfBirthField, c);
+
+        // Add the phone field
+        c.gridx = 0;
+        c.gridy = 4;
+        formPanel.add(new JLabel("Phone:"), c);
+
+        c.gridx = 1;
+        c.gridy = 4;
+        phoneField = new JTextField(20);
+        formPanel.add(phoneField, c);
+
+        // Add the email field
+        c.gridx = 0;
+        c.gridy = 5;
+        formPanel.add(new JLabel("Email:"), c);
+
+        c.gridx = 1;
+        c.gridy = 5;
+        emailField = new JTextField(20);
+        formPanel.add(emailField, c);
+
+        // Add the email field
+        c.gridx = 0;
+        c.gridy = 6;
+        formPanel.add(new JLabel("Login:"), c);
+
+        c.gridx = 1;
+        c.gridy = 6;
+        loginField = new JTextField(20);
+        formPanel.add(loginField, c);
+
+        // Create the panel for the buttons
+        JPanel buttonPanel = new JPanel();
+        addButton = new JButton("Add");
+        cancelButton = new JButton("Cancel");
+        buttonPanel.add(addButton);
+        buttonPanel.add(cancelButton);
+
+        // Add the panels to the main window
+        this.add(formPanel, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Add action listeners to the buttons
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Get the data from the fields
+                String name = nameField.getText();
+                String surname = surnameField.getText();
+                String position = positionField.getText();
+                String dateOfBirth = dateOfBirthField.getText();
+                String phone = phoneField.getText();
+                String email = emailField.getText();
+                String login = loginField.getText();
+
+                // Validate the input
+                if (name.isEmpty() || surname.isEmpty() || position.isEmpty() || dateOfBirth.isEmpty() || phone.isEmpty()
+                        || email.isEmpty() || login.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill in all the fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Send the data to the server
+                message.sendAddEmployeeMessage(sendToServer, name + "," + surname + "," + position + "," + dateOfBirth + "," + phone + "," + email + "," + login);
+                // Read the response from the server
+                try {
+                    String response = readFromServer.readLine();
+                    if (response.equals("True")) {
+                        JOptionPane.showMessageDialog(null, "Employee added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error adding Employee!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
     }
+
 }

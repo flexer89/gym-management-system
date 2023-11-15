@@ -17,7 +17,10 @@ CREATE TABLE employee (
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
   position enum('admin', 'trainer') NOT NULL,
+  date_of_birth DATE NOT NULL,
   date_of_employment DATE NOT NULL,
+  phone_number VARCHAR(10) NOT NULL,
+  email VARCHAR(255) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -150,8 +153,7 @@ INSERT INTO client_credentials (login, password, client_id)
 VALUES ('client', 'passwd', @client_id);
 
 -- Insert an admin
-INSERT INTO employee (first_name, last_name, position, date_of_employment)
-VALUES ('Admin', 'User', 'admin', '2020-01-01');
+INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) VALUES ('Admin', 'Admin', 'admin', '2000-01-01', '2020-01-01', '1234567890', 'email')
 
 -- Get the ID of the admin we just inserted
 SET @admin_id = LAST_INSERT_ID();
@@ -161,8 +163,7 @@ INSERT INTO employee_credentials (login, password, employee_id)
 VALUES ('admin', 'passwd', @admin_id);
 
 -- Insert an employee
-INSERT INTO employee (first_name, last_name, position, date_of_employment)
-VALUES ('Employee', 'User', 'employee', '2020-01-01');
+INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) VALUES ('Admin', 'Admin', 'trainer', '2000-01-01', '2020-01-01', '1234567890', 'email')
 
 -- Get the ID of the employee we just inserted
 SET @employee_id = LAST_INSERT_ID();
@@ -171,13 +172,3 @@ SET @employee_id = LAST_INSERT_ID();
 INSERT INTO employee_credentials (login, password, employee_id)
 VALUES ('employee', 'passwd', @employee_id);
 
--- Insert a trainer
-INSERT INTO employee (first_name, last_name, position, date_of_employment)
-VALUES ('Trainer', 'User', 'trainer', '2020-01-01');
-
--- Get the ID of the trainer we just inserted
-SET @trainer_id = LAST_INSERT_ID();
-
--- Insert a trainer's credentials
-INSERT INTO employee_credentials (login, password, employee_id)
-VALUES ('trainer', 'passwd', @trainer_id);
