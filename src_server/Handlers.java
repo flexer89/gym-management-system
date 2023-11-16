@@ -157,12 +157,13 @@ public class Handlers {
         String surname = employeeInfo[1];
         String position = employeeInfo[2];
         LocalDate dateOfBirth = LocalDate.parse(employeeInfo[3]);
-        String phone = employeeInfo[4];
-        String email = employeeInfo[5];
-        String login = employeeInfo[6];
+        LocalDate dateOfEmployment = LocalDate.parse(employeeInfo[4]);
+        String phone = employeeInfo[5];
+        String email = employeeInfo[6];
+        String login = employeeInfo[7];
         
         try {
-            boolean ifAdded = sqlEngine.addEmployee(name, surname, position, dateOfBirth, phone, email, login);
+            boolean ifAdded = sqlEngine.addEmployee(name, surname, position, dateOfBirth,dateOfEmployment, phone, email, login);
             if (ifAdded) {
                 System.out.println("Employee " + name + " added");
                 SendToClient.println("True");

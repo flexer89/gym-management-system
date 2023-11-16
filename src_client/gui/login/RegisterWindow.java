@@ -15,6 +15,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 import utils.Message;
 
 public class RegisterWindow extends JFrame{
@@ -100,10 +103,39 @@ public class RegisterWindow extends JFrame{
                 String dateOfBirth = dateOfBirthTextField.getText();
                 String phone = phoneTextField.getText();
                 String email = emailTextField.getText();
+
                 int userID;
 
-                // Send the username and password to the server
-                message.sendRegisterMessage(SendToServer, username + "," + password + "," + name + "," + surname + "," + dateOfBirth + "," + phone + "," + email);
+                try {
+                    LocalDate.parse(dateOfBirth);
+
+                    // TODO: FINETUNE IT AFTER ADDING HASHING 
+                    if (password.isEmpty() || password.length() > 255) {
+                        throw new IllegalArgumentException("Password is not valid");
+                    }
+
+                    if (username.isEmpty() || username.length() > 255) {
+                        throw new IllegalArgumentException("Username is not valid");
+                    }
+
+                    if (username.isEmpty() || !email.matches("^(.+)@(\\S+)$")) {
+                        throw new IllegalArgumentException("Email is not valid");
+                    }
+                    if (username.isEmpty() || !phone.matches("\\d{9}")) {
+                        throw new IllegalArgumentException("Phone number should only contain 9 digits");
+                    }
+
+                    // Send the username and password to the server
+                    message.sendRegisterMessage(SendToServer, username + "," + password + "," + name + "," + surname + "," + dateOfBirth + "," + phone + "," + email);
+                } catch (DateTimeParseException e2) {
+                    JOptionPane.showMessageDialog(null, "Error registering account!", "Invalid birth date!", JOptionPane.ERROR_MESSAGE);
+                    e2.printStackTrace();
+                } catch (IllegalArgumentException e3) {
+                    JOptionPane.showMessageDialog(null, "Error registering account!", e3.getMessage(), JOptionPane.ERROR_MESSAGE);
+                    e3.printStackTrace();
+                }
+
+
 
                 // Close the register window
                 dispose();

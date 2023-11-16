@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -132,19 +134,43 @@ public class AddEmployeeWindow extends JFrame {
                 String surname = surnameField.getText();
                 String position = positionField.getText();
                 String dateOfBirth = dateOfBirthField.getText();
+                //TODO FIX THIS PLACEHOLDER
+                String dateOfEmployment = dateOfBirthField.getText();
                 String phone = phoneField.getText();
                 String email = emailField.getText();
                 String login = loginField.getText();
 
                 // Validate the input
-                if (name.isEmpty() || surname.isEmpty() || position.isEmpty() || dateOfBirth.isEmpty() || phone.isEmpty()
-                        || email.isEmpty() || login.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Please fill in all the fields!", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
+                try {
+                    LocalDate.parse(dateOfBirth);
+
+                    if (!position.equals("admin") && !position.equals("trainer")) {
+                        throw new IllegalArgumentException("Position must be either 'admin' or 'trainer'");
+                    }
+
+                    if (login.length() > 255) {
+                        throw new IllegalArgumentException("Username is not valid");
+                    }
+
+                    if (!email.matches("^(.+)@(\\S+)$")) {
+                        throw new IllegalArgumentException("Email is not valid");
+                    }
+                    if (!phone.matches("\\d{9}")) {
+                        throw new IllegalArgumentException("Phone number should only contain 9 digits");
+                    }
+
+                    if (name.isEmpty() || surname.isEmpty() || position.isEmpty() || dateOfBirth.isEmpty() || phone.isEmpty()
+                            || email.isEmpty() || login.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Please fill in all the fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                } catch (IllegalArgumentException e2) {
+                    JOptionPane.showMessageDialog(null, "Error registering employee: " + e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
                 // Send the data to the server
-                message.sendAddEmployeeMessage(sendToServer, name + "," + surname + "," + position + "," + dateOfBirth + "," + phone + "," + email + "," + login);
+                message.sendAddEmployeeMessage(sendToServer, name + "," + surname + "," + position + "," + dateOfBirth + "," + dateOfEmployment + "," + phone + "," + email + "," + login);
                 // Read the response from the server
                 try {
                     String response = readFromServer.readLine();
