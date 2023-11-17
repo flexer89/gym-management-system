@@ -176,4 +176,23 @@ public class Handlers {
         }
 
     }
+
+    public void paymentReport(String data) {
+        String[] reportData = data.split(",");
+        LocalDate fromDate = LocalDate.parse(reportData[0]);
+        LocalDate toDate = LocalDate.parse(reportData[1]);
+        int minimumPayment = Integer.parseInt(reportData[2]);
+        int maximumPayment = Integer.parseInt(reportData[3]);
+        String paymentMethod = reportData[4];
+
+        // Generate payment report
+        System.out.println("Generating payment report");
+        System.out.println("From date: " + fromDate + " To date: " + toDate + " Minimum payment: " + minimumPayment + " Maximum payment: " + maximumPayment + " Payment method: " + paymentMethod);
+        try {
+            String report = sqlEngine.paymentReport(fromDate, toDate, minimumPayment, maximumPayment, paymentMethod);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error generating payment report: " + e.getMessage());
+        }
+    }
 }

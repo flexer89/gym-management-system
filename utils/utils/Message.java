@@ -39,4 +39,8 @@ public class Message {
     public void sendAddEmployeeMessage(PrintWriter writer, String message) {
         writer.println("ADD_EMPLOYEE:" + message);
     }
+
+    public void sendPaymentReportMessage(PrintWriter writer, String message) {
+        writer.println("PAYMENT_REPORT:" + message);
+    }
 }
