@@ -141,6 +141,28 @@ ALTER TABLE gym_visits ADD FOREIGN KEY (gym_id) REFERENCES gym (id);
 
 ALTER TABLE membership_card ADD FOREIGN KEY (original_gym_id) REFERENCES gym (id);
 
+-- Insert an admin
+INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) 
+VALUES ('Admin', 'Admin', 'admin', '2000-01-01', '2020-01-01', '1234567890', 'admin@admin.com');
+
+-- Get the ID of the admin we just inserted
+SET @admin_id = LAST_INSERT_ID();
+
+-- Insert an admin's credentials
+INSERT INTO employee_credentials (login, password, employee_id)
+VALUES ('admin', 'passwd', @admin_id);
+
+-- Insert a trainer
+INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) 
+VALUES ('Trainer', 'Trainer', 'trainer', '1980-01-01', '2020-01-01', '1234567890', 'trainer@trainer.com');
+
+-- Get the ID of the trainer we just inserted
+SET @trainer_id = LAST_INSERT_ID();
+
+-- Insert a trainer's credentials
+INSERT INTO employee_credentials (login, password, employee_id)
+VALUES ('trainer', 'passwd', @trainer_id);
+
 -- Insert a client
 INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email)
 VALUES ('John', 'Doe', '1980-01-01', '1234567890', 'john.doe@example.com');
@@ -151,24 +173,4 @@ SET @client_id = LAST_INSERT_ID();
 -- Insert a client's credentials
 INSERT INTO client_credentials (login, password, client_id)
 VALUES ('client', 'passwd', @client_id);
-
--- Insert an admin
-INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) VALUES ('Admin', 'Admin', 'admin', '2000-01-01', '2020-01-01', '1234567890', 'email')
-
--- Get the ID of the admin we just inserted
-SET @admin_id = LAST_INSERT_ID();
-
--- Insert an admin's credentials
-INSERT INTO employee_credentials (login, password, employee_id)
-VALUES ('admin', 'passwd', @admin_id);
-
--- Insert an employee
-INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) VALUES ('Admin', 'Admin', 'trainer', '2000-01-01', '2020-01-01', '1234567890', 'email')
-
--- Get the ID of the employee we just inserted
-SET @employee_id = LAST_INSERT_ID();
-
--- Insert an employee's credentials
-INSERT INTO employee_credentials (login, password, employee_id)
-VALUES ('employee', 'passwd', @employee_id);
 

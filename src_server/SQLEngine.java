@@ -190,10 +190,8 @@ public class SQLEngine {
         }
     }
 
-    public boolean addEmployee(String name, String surname, String position, LocalDate dateOfBirth, String phone,
+    public boolean addEmployee(String name, String surname, String position, LocalDate dateOfBirth,LocalDate dateOfEmployment, String phone,
             String email, String login) throws SQLException {
-
-        LocalDate dateOfEmployment = LocalDate.now();
         String query = "INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) VALUES ('" + name + "', '" + surname + "', '" + position + "', '" + dateOfBirth + "', '" + dateOfEmployment + "', '" + phone + "', '" + email + "')";
         Statement statement = connection.createStatement();
         int count = statement.executeUpdate(query);

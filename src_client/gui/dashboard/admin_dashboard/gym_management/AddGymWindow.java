@@ -124,6 +124,31 @@ public class AddGymWindow extends JFrame {
                 String email = emailField.getText();
 
                 // Validate the input
+                if (name.isEmpty() || name.length() > 255) {
+                    throw new IllegalArgumentException("Name is not valid");
+                }
+                
+                if (address.isEmpty() || address.length() > 255) {
+                    throw new IllegalArgumentException("Address is not valid");
+                }
+                
+                if (!postalCode.matches("\\d{2}-\\d{3}")) {
+                    throw new IllegalArgumentException("Postal code is not valid");
+                }
+                
+                if (city.isEmpty() || city.length() > 255) {
+                    throw new IllegalArgumentException("City is not valid");
+                }
+                
+                if (!phone.matches("\\d{9}")) {
+                    throw new IllegalArgumentException("Phone number should only contain 9 digits");
+                }
+                
+                if (!email.matches("^(.+)@(\\S+)$")) {
+                    throw new IllegalArgumentException("Email is not valid");
+                }
+                
+                // Validate the input
                 if (name.isEmpty() || address.isEmpty() || postalCode.isEmpty() || city.isEmpty() || phone.isEmpty()
                         || email.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
