@@ -227,5 +227,24 @@ public class SQLEngine {
         }
     }
 
+    public String paymentReport(LocalDate fromDate, LocalDate toDate, int minimumPayment, int maximumPayment,
+            String paymentMethod) throws SQLException{
+        // Select payments between fromDate and toDate and between minimumPayment and maximumPayment
+        String query = "SELECT * FROM payment WHERE payment_date BETWEEN '" + fromDate + "' AND '" + toDate + "' AND amount BETWEEN " + minimumPayment + " AND " + maximumPayment;
+
+        if (!paymentMethod.equals("all")) {
+            query += " AND payment_method = '" + paymentMethod + "'";
+        }
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        String report = "";
+        while (resultSet.next()) {
+            report += resultSet.getInt("id") + "," + resultSet.getDate("payment_date") + "," + resultSet.getInt("amount") + "," + resultSet.getString("payment_method") + "," + resultSet.getInt("client_id") + "///";
+        }
+        return report;
+    }
+
 
 }
