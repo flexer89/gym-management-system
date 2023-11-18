@@ -9,18 +9,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -28,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import utils.Message;
+import utils.ValidateData;
 
 public class PaymentReportWindow extends JFrame {
     private JPanel mainPanel;
@@ -135,41 +129,16 @@ public class PaymentReportWindow extends JFrame {
                 String paymentMethod = (String) paymentMethodComboBox.getSelectedItem();
 
                 // validate data
-                if ((!fromDate.matches("\\d{4}-\\d{2}-\\d{2}") && !fromDate.isEmpty()) || (!toDate.matches("\\d{4}-\\d{2}-\\d{2}") && !toDate.isEmpty())) {
-                    JOptionPane.showMessageDialog(null, "Date must be in the format yyyy-mm-dd!", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                // validate payment method
-                if (!paymentMethod.equals("cash") && !paymentMethod.equals("card") && !paymentMethod.equals("blik") && !paymentMethod.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Payment method must be cash, card or blik", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                // validate payment amount
-                if ((!minimumPayment.matches("\\d+") && !minimumPayment.isEmpty()) || (!maximumPayment.matches("\\d+") && !maximumPayment.isEmpty()) || (!minimumPayment.isEmpty() && !maximumPayment.isEmpty() && Integer.parseInt(minimumPayment) > Integer.parseInt(maximumPayment))) {
-                    JOptionPane.showMessageDialog(null, "Invalid payment amount!", "Error", JOptionPane.ERROR_MESSAGE);
+                if (!ValidateData.ValidateDataRange(fromDate, toDate) || !ValidateData.ValidatePaymentOption(paymentMethod) || !ValidateData.ValidatePaymentAmount(minimumPayment, maximumPayment)) {
                     return;
                 }
 
                 // if any value is empty, set it to default
-                if (fromDate.isEmpty()) {
-                    fromDate = "1900-01-01";
-                }
-                
-                if (toDate.isEmpty()) {
-                    toDate = "2100-01-01";
-                }
-
-                if (minimumPayment.isEmpty()) {
-                    minimumPayment = "0";
-                }
-
-                if (maximumPayment.isEmpty()) {
-                    maximumPayment = "999999999";
-                }
-
-                if (paymentMethod.isEmpty()) {
-                    paymentMethod = "all";
-                }
+                fromDate = fromDate.isEmpty() ? "1900-01-01" : fromDate;
+                toDate = toDate.isEmpty() ? "2100-01-01" : toDate;
+                minimumPayment = minimumPayment.isEmpty() ? "0" : minimumPayment;
+                maximumPayment = maximumPayment.isEmpty() ? "999999999" : maximumPayment;
+                paymentMethod = paymentMethod.isEmpty() ? "all" : paymentMethod;
 
                 // Send the report data to the server
                 message.sendPaymentReportMessage(SendToServer, fromDate + "," + toDate + "," + minimumPayment + "," + maximumPayment + "," + paymentMethod);

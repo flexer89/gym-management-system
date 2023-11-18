@@ -246,5 +246,68 @@ public class SQLEngine {
         return report;
     }
 
+    public String gymReport(String name, String address, String postalCode, String city, String phoneNumber,
+            String email) throws SQLException {
+        String query = "SELECT * FROM gym WHERE 1=1";
+
+        if (!name.equals("%")) {
+            query += " AND name = '" + name + "'";
+        }
+        if (!address.equals("%")) {
+            query += " AND address = '" + address + "'";
+        }
+        if (!postalCode.equals("%")) {
+            query += " AND postal_code = '" + postalCode + "'";
+        }
+        if (!city.equals("%")) {
+            query += " AND city = '" + city + "'";
+        }
+        if (!phoneNumber.equals("%")) {
+            query += " AND phone = '" + phoneNumber + "'";
+        }
+        if (!email.equals("%")) {
+            query += " AND email = '" + email + "'";
+        }
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        String report = "";
+        while (resultSet.next()) {
+            report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getString("address") + "," + resultSet.getString("postal_code") + "," + resultSet.getString("city") + "," + resultSet.getString("phone") + "," + resultSet.getString("email") + "///";
+        }
+        return report;
+    }
+
+    public String clientReport(String name, String surname, LocalDate fromDate, LocalDate toDate, String phoneNumber, String email,
+            String membershipCard) throws SQLException {
+        String query = "SELECT * FROM client WHERE date_of_birth BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+
+        if (!name.equals("%")) {
+            query += " AND first_name = '" + name + "'";
+        }
+        if (!surname.equals("%")) {
+            query += " AND last_name = '" + surname + "'";
+        }
+        if (!email.equals("%")) {
+            query += " AND email = '" + email + "'";
+        }
+        if (!phoneNumber.equals("%")) {
+            query += " AND phone_number = '" + phoneNumber + "'";
+        }
+        if (!membershipCard.equals("%")) {
+            query += " AND membership_card_id = '" + membershipCard + "'";
+        }
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        String report = "";
+        while (resultSet.next()) {
+            report += resultSet.getInt("id") + "," + resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getDate("date_of_birth") + "," + resultSet.getString("phone_number") + "," + resultSet.getString("email") + "," + resultSet.getInt("membership_card_id") + "///";
+        }
+        return report;
+    }
+
 
 }

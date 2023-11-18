@@ -43,4 +43,12 @@ public class Message {
     public void sendPaymentReportMessage(PrintWriter writer, String message) {
         writer.println("PAYMENT_REPORT:" + message);
     }
+
+    public void sendGymReportMessage(PrintWriter writer, String message) {
+        writer.println("GYM_REPORT:" + message);
+    }
+
+    public void sendClientReportMessage(PrintWriter writer, String message) {
+        writer.println("CLIENT_REPORT:" + message);
+    }
 }

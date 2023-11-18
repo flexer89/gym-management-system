@@ -1,11 +1,8 @@
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.logging.Handler;
 
 public class Handlers {
 
@@ -193,6 +190,47 @@ public class Handlers {
             SendToClient.println(report);
         } catch (SQLException e) {
             System.out.println("Error generating payment report: " + e.getMessage());
+        }
+    }
+
+    public void gymReport(String data) {
+        String[] reportData = data.split(",");
+        String name = reportData[0];
+        String address = reportData[1];
+        String postalCode = reportData[2];
+        String city = reportData[3];
+        String phoneNumber = reportData[4];
+        String email = reportData[5];
+
+        // Generate gym report
+        System.out.println("Generating gym report");
+        System.out.println("Name: " + name + " Address: " + address + " Postal code: " + postalCode + " City: " + city + " Phone number: " + phoneNumber + " Email: " + email);
+        try {
+            String report = sqlEngine.gymReport(name, address, postalCode, city, phoneNumber, email);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error generating gym report: " + e.getMessage());
+        }
+    }
+
+    public void clientReport(String data) {
+        String[] reportData = data.split(",");
+        String name = reportData[0];
+        String surname = reportData[1];
+        LocalDate fromDate = LocalDate.parse(reportData[2]);
+        LocalDate toDate = LocalDate.parse(reportData[3]);
+        String phoneNumber = reportData[4];
+        String email = reportData[5];
+        String membershipCard = reportData[6];
+
+        // Generate client report
+        System.out.println("Generating client report");
+        System.out.println("Name: " + name + " Surname: " + surname + "From date: " + fromDate + " To date: " + toDate + " Phone number: " + phoneNumber + " Email: " + email + " Membership card: " + membershipCard);
+        try {
+            String report = sqlEngine.clientReport(name, surname, fromDate, toDate, phoneNumber, email, membershipCard);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error generating client report: " + e.getMessage());
         }
     }
 }
