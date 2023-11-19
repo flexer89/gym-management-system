@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 
 import utils.Secure;
 
@@ -296,50 +297,53 @@ public class SQLEngine {
         }
     }
 
-    public boolean addEmployee(String name, String surname, String position, LocalDate dateOfBirth,LocalDate dateOfEmployment, String phone,
-            String email, String login) throws SQLException {
+    public boolean addEmployee(String name, String surname, String position, LocalDate dateOfBirth, LocalDate dateOfEmployment, String phone,
+        String email, String login) throws SQLException {
 
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
-        System.out.println("Generated salt: " + salt);
-        String saltString = salt.toString();
+        String saltString = Base64.getEncoder().encodeToString(salt);
         String hash = Secure.hashWithSalt("passwd", saltString);
 
-        String query = "INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) VALUES ('" + name + "', '" + surname + "', '" + position + "', '" + dateOfBirth + "', '" + dateOfEmployment + "', '" + phone + "', '" + email + "')";
-        Statement statement = connection.createStatement();
-        int count = statement.executeUpdate(query);
+        String query = "INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setString(1, name);
+        pstmt.setString(2, surname);
+        pstmt.setString(3, position);
+        pstmt.setObject(4, dateOfBirth);
+        pstmt.setObject(5, dateOfEmployment);
+        pstmt.setString(6, phone);
+        pstmt.setString(7, email);
+        int count = pstmt.executeUpdate();
+
         if (count > 0) {
-            query = "SELECT id FROM employee WHERE first_name = '" + name + "' AND last_name = '" + surname + "' AND position = '" + position + "' AND date_of_birth = '" + dateOfBirth + "' AND phone_number = '" + phone + "' AND email = '" + email + "' AND date_of_employment = '" + dateOfEmployment + "'";
-            ResultSet resultSet = statement.executeQuery(query);
-            if (resultSet.next()) {
-                int employeeID = resultSet.getInt("id");
-                // Temporary password is inserted, employee can change it after first login
-                query = "INSERT INTO employee_credentials (login, password, salt, employee_id) VALUES ('" + login + "','" + hash + "','" + salt +"', '" + employeeID + "')";
-                System.out.println(query);
-                count = statement.executeUpdate(query);
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                int employeeID = rs.getInt(1);
+                query = "INSERT INTO employee_credentials (login, password, salt, employee_id) VALUES (?, ?, ?, ?)";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setString(1, login);
+                pstmt.setString(2, hash);
+                pstmt.setString(3, saltString);
+                pstmt.setInt(4, employeeID);
+                count = pstmt.executeUpdate();
+
                 if (count > 0) {
-                    // TODO change employee_number to be unique (add a prefix and 6 random symbols [a-z0-9])
-                    query = "INSERT INTO employee_card (employee_number, expiration_date, employee_id) VALUES ('" + employeeID + "', '" + dateOfEmployment.plusYears(1) + "', '" + employeeID + "')";
-                    count = statement.executeUpdate(query);
+                    query = "INSERT INTO employee_card (employee_number, expiration_date, employee_id) VALUES (?, ?, ?)";
+                    pstmt = connection.prepareStatement(query);
+                    pstmt.setInt(1, employeeID);
+                    pstmt.setObject(2, dateOfEmployment.plusYears(1));
+                    pstmt.setInt(3, employeeID);
+                    count = pstmt.executeUpdate();
+
                     if (count > 0) {
                         return true;
                     }
-                    else {
-                        return false;
-                    }
-                }
-                else {
-                    return false;
                 }
             }
-            else {
-                return false;
-            }
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     public String paymentReport(LocalDate fromDate, LocalDate toDate, int minimumPayment, int maximumPayment,

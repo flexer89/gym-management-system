@@ -9,6 +9,8 @@ import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import utils.Secure;
+
 public class Handlers {
 
     private BufferedReader ReadFromClient;
@@ -90,7 +92,7 @@ public class Handlers {
             random.nextBytes(salt);
             System.out.println("Generated salt: " + salt);
             String saltString = salt.toString();
-            password = hashWithSalt(password, saltString);
+            password = Secure.hashWithSalt(password, saltString);
 
 
             System.out.println("Passwd: " + password + " Salt: " + salt);
@@ -104,26 +106,6 @@ public class Handlers {
             }
     }
 
-
-    public String hashWithSalt(String input, String salt) {
-        StringBuilder saltedInput = new StringBuilder(input);
-        for (byte b : salt.getBytes(StandardCharsets.UTF_8)) {
-            saltedInput.append(String.format("%02x", b));
-        }
-    
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(saltedInput.toString().getBytes(StandardCharsets.UTF_8));
-            BigInteger number = new BigInteger(1, hash);
-            StringBuilder hexString = new StringBuilder(number.toString(16));
-            while (hexString.length() < 32) {
-                hexString.insert(0, '0');
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public void login(String serverMessage)
     {
@@ -142,7 +124,7 @@ public class Handlers {
         String storedHash = sqlEngine.getHashByID(Integer.parseInt(ID), table);
         String salt = sqlEngine.getSaltByID(Integer.parseInt(ID), table);
         System.out.println("ID: " + ID + "   Hash: " + storedHash + " Salt: " + salt);
-        String hashedInput = hashWithSalt(password, salt);
+        String hashedInput = Secure.hashWithSalt(password, salt);
         System.out.println("Hashed input: " + hashedInput);
         
         if (storedHash.equals(hashedInput)) {
