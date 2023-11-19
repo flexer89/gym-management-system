@@ -1,6 +1,4 @@
 import java.net.*;
-import java.sql.SQLException;
-import java.time.LocalDate;
 import java.io.*;
 import java.util.concurrent.*;
 
@@ -15,7 +13,7 @@ class ClientHandler implements Callable<String> {
     }
 
     enum CommandType {
-        PRINT, SEND, EXIT, CAN_ENTER_GYM, CAN_EXIT_GYM, CAN_ENTER_TRAINING, LOGIN, REGISTER, ADD_GYM, ADD_EMPLOYEE, PAYMENT_REPORT, UNKNOWN,SHUTDOWN
+        PRINT, SEND, EXIT, CAN_ENTER_GYM, CAN_EXIT_GYM, CAN_ENTER_TRAINING, LOGIN, REGISTER, ADD_GYM, ADD_EMPLOYEE, PAYMENT_REPORT, GYM_REPORT, CLIENT_REPORT, UNKNOWN,SHUTDOWN
     }
 
     CommandType getCommandType(String command) {
@@ -81,6 +79,12 @@ class ClientHandler implements Callable<String> {
                         break;
                     case PAYMENT_REPORT:
                         Handlers.paymentReport(data);
+                        break;
+                    case GYM_REPORT:
+                        Handlers.gymReport(data);
+                        break;
+                    case CLIENT_REPORT:
+                        Handlers.clientReport(data);
                         break;
                     default:
                         System.out.println("Unknown command: " + command);
