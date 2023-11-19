@@ -124,6 +124,7 @@ public class AddGymWindow extends JFrame {
                 String email = emailField.getText();
 
                 // Validate the input
+                // TODO
                 if (name.isEmpty() || name.length() > 255) {
                     throw new IllegalArgumentException("Name is not valid");
                 }

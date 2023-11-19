@@ -10,6 +10,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
+import javax.swing.plaf.nimbus.State;
+
 import utils.Secure;
 
 public class SQLEngine {
@@ -458,6 +460,69 @@ public class SQLEngine {
                 report += resultSet.getInt("id") + "," + resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getDate("date_of_birth") + "," + resultSet.getDate("date_of_employment") + "," + resultSet.getString("phone_number") + "," + resultSet.getString("email") + "," + resultSet.getString("position") + "///";
             }
             return report;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String trainingReport(String name, LocalDate fromDate, LocalDate toDate, LocalTime fromHour, LocalTime toHour,
+            int capacity, int room, int trainerId) throws SQLException {
+        String query = "SELECT * FROM training WHERE date BETWEEN '" + fromDate + "' AND '" + toDate + "'" + " AND hour BETWEEN '" + fromHour + "' AND '" + toHour + "'";
+
+        if (!name.equals("%")) {
+            query += " AND name = '" + name + "'";
+        }
+        if (capacity != 0) {
+            query += " AND capacity = '" + capacity + "'";
+        }
+        if (room != 0) {
+            query += " AND room = '" + room + "'";
+        }
+        if (trainerId != 0) {
+            query += " AND trainer_id = '" + trainerId + "'";
+        }
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            String report = "";
+            while (resultSet.next()) {
+                report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("hour") + "," + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getInt("trainer_id") + "///";
+            }
+            return report;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String loadGym() throws SQLException{
+        String query = "SELECT * FROM gym";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            String report = "";
+            while (resultSet.next()) {
+                report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getString("address") + "," + resultSet.getString("postal_code") + "," + resultSet.getString("city") + "," + resultSet.getString("phone") + "," + resultSet.getString("email") + "///";
+            }
+            return report;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean deleteGym(int gymID) throws SQLException{
+        String query = "DELETE FROM gym WHERE id = " + gymID;
+        try {
+            Statement statement = connection.createStatement();
+            int count = statement.executeUpdate(query);
+            if (count > 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

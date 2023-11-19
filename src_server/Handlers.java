@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import utils.Secure;
 
@@ -294,6 +295,59 @@ public class Handlers {
             SendToClient.println(report);
         } catch (SQLException e) {
             System.out.println("Error generating employee report: " + e.getMessage());
+        }
+    }
+
+
+    public void trainingReport(String data) {
+        String[] reportData = data.split(",");
+        String name = reportData[0];
+        LocalDate fromDate = LocalDate.parse(reportData[1]);
+        LocalDate toDate = LocalDate.parse(reportData[2]);
+        LocalTime fromHour = LocalTime.parse(reportData[3]);
+        LocalTime toHour = LocalTime.parse(reportData[4]);
+        int capacity = Integer.parseInt(reportData[5]);
+        int room = Integer.parseInt(reportData[6]);
+        int trainerId = Integer.parseInt(reportData[7]);
+
+        // Generate training report
+        System.out.println("Generating training report");
+        System.out.println("Name: " + name + " From date: " + fromDate + " To date: " + toDate + " From hour: " + fromHour + " To hour: " + toHour + " Capacity: " + capacity + " Room: " + room + " Trainer ID: " + trainerId);
+        try {
+            String report = sqlEngine.trainingReport(name, fromDate, toDate, fromHour, toHour, capacity, room, trainerId);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error generating training report: " + e.getMessage());
+        }
+    }
+
+
+    public void loadGym() {
+        System.out.println("Loading gyms");
+        try {
+            String report = sqlEngine.loadGym();
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error loading gym: " + e.getMessage());
+        }
+    }
+
+
+    public void deleteGym(String data) {
+        int gymID = Integer.parseInt(data);
+        System.out.println("Deleting gym " + gymID);
+
+        try {
+            boolean ifDeleted = sqlEngine.deleteGym(gymID);
+            if (ifDeleted) {
+                System.out.println("Gym " + gymID + " deleted");
+                SendToClient.println("True");
+            } else {
+                System.out.println("Gym " + gymID + " wasn't deleted");
+                SendToClient.println("False");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error deleting gym: " + e.getMessage());
         }
     }
 }
