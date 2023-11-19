@@ -28,6 +28,7 @@ CREATE TABLE employee_credentials (
   id INT NOT NULL AUTO_INCREMENT,
   login VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
+  salt VARCHAR(255) NOT NULL,
   employee_id INT NOT NULL,
   PRIMARY KEY (id)
 );
@@ -65,6 +66,7 @@ CREATE TABLE client_credentials (
   id INT NOT NULL AUTO_INCREMENT,
   login VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
+  salt VARCHAR(255) NOT NULL,
   client_id INT NOT NULL,
   PRIMARY KEY (id)
 );
@@ -141,6 +143,7 @@ ALTER TABLE gym_visits ADD FOREIGN KEY (gym_id) REFERENCES gym (id);
 
 ALTER TABLE membership_card ADD FOREIGN KEY (original_gym_id) REFERENCES gym (id);
 
+
 -- Insert an admin
 INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) 
 VALUES ('Admin', 'Admin', 'admin', '2000-01-01', '2020-01-01', '1234567890', 'admin@admin.com');
@@ -149,8 +152,8 @@ VALUES ('Admin', 'Admin', 'admin', '2000-01-01', '2020-01-01', '1234567890', 'ad
 SET @admin_id = LAST_INSERT_ID();
 
 -- Insert an admin's credentials
-INSERT INTO employee_credentials (login, password, employee_id)
-VALUES ('admin', 'passwd', @admin_id);
+INSERT INTO employee_credentials (login, password, salt, employee_id)
+VALUES ('admin', 'ab92e806026cdf03da3301be0da72b0c624d482aea8123092fae2d29d4a39cbb','[B@737d46ef', @admin_id);
 
 -- Insert a trainer
 INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) 
@@ -160,17 +163,18 @@ VALUES ('Trainer', 'Trainer', 'trainer', '1980-01-01', '2020-01-01', '1234567890
 SET @trainer_id = LAST_INSERT_ID();
 
 -- Insert a trainer's credentials
-INSERT INTO employee_credentials (login, password, employee_id)
-VALUES ('trainer', 'passwd', @trainer_id);
+INSERT INTO employee_credentials (login, password, salt, employee_id)
+VALUES ('trainer', 'be3f3470b59f5802b2dd5cbebc44e04a9b15808a59a6595b8b6dd40ce398943','[B@2dae9e14', @trainer_id);
+
 
 -- Insert a client
 INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email)
-VALUES ('John', 'Doe', '1980-01-01', '1234567890', 'john.doe@example.com');
+VALUES ('client', 'client', '1980-01-01', '1234567890', 'john.doe@example.com');
 
 -- Get the ID of the client we just inserted
 SET @client_id = LAST_INSERT_ID();
 
 -- Insert a client's credentials
-INSERT INTO client_credentials (login, password, client_id)
-VALUES ('client', 'passwd', @client_id);
+INSERT INTO client_credentials (login, password, salt, client_id)
+VALUES ('client', 'ab92e806026cdf03da3301be0da72b0c624d482aea8123092fae2d29d4a39cbb','[B@737d46ef', @client_id);
 

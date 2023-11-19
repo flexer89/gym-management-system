@@ -1,6 +1,11 @@
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
@@ -79,8 +84,19 @@ public class Handlers {
             LocalDate birthDate = LocalDate.parse(registerInfo[4]);
             String phoneNumber = registerInfo[5];
             String email = registerInfo[6];
+
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
+            System.out.println("Generated salt: " + salt);
+            String saltString = salt.toString();
+            password = hashWithSalt(password, saltString);
+
+
+            System.out.println("Passwd: " + password + " Salt: " + salt);
+
             try {
-                int userID = sqlEngine.registerAccount(username, password, firstName, lastName, birthDate, phoneNumber, email);
+                int userID = sqlEngine.registerAccount(username, password, saltString, firstName, lastName, birthDate, phoneNumber, email);
                 System.out.println("User " + userID + " registered");
                 SendToClient.println(userID);
             } catch (SQLException e) {
@@ -88,23 +104,64 @@ public class Handlers {
             }
     }
 
+
+    public String hashWithSalt(String input, String salt) {
+        StringBuilder saltedInput = new StringBuilder(input);
+        for (byte b : salt.getBytes(StandardCharsets.UTF_8)) {
+            saltedInput.append(String.format("%02x", b));
+        }
+    
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(saltedInput.toString().getBytes(StandardCharsets.UTF_8));
+            BigInteger number = new BigInteger(1, hash);
+            StringBuilder hexString = new StringBuilder(number.toString(16));
+            while (hexString.length() < 32) {
+                hexString.insert(0, '0');
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void login(String serverMessage)
     {
         String[] loginInfo = serverMessage.split(",");
         String username = loginInfo[0];
         String password = loginInfo[1];
-        try {
-            String data = sqlEngine.loginToAccount(username, password);
-            String type = data.split(",")[0];
-            int userID = Integer.parseInt(data.split(",")[1]);
 
-            System.out.println(type + " " + userID + " logged in");
-            SendToClient.println(userID);
-            SendToClient.println(type);
-        } catch (SQLException e) {
-            System.out.println("Error logging in: " + e.getMessage());
-            SendToClient.println(-1);
-            SendToClient.println("ERROR");
+        String fetchedData = sqlEngine.getIDbyLogin(username);
+        System.out.println("Fetched data: " + fetchedData);
+        
+        String[] parts = fetchedData.split(",");
+        String ID = parts[0];
+        String table = parts[1];
+        
+        System.out.println("Testing creds for table: " + table);
+        String storedHash = sqlEngine.getHashByID(Integer.parseInt(ID), table);
+        String salt = sqlEngine.getSaltByID(Integer.parseInt(ID), table);
+        System.out.println("ID: " + ID + "   Hash: " + storedHash + " Salt: " + salt);
+        String hashedInput = hashWithSalt(password, salt);
+        System.out.println("Hashed input: " + hashedInput);
+        
+        if (storedHash.equals(hashedInput)) {
+            System.out.println("Hashes match");
+            try {
+                String data = sqlEngine.loginToAccount(username, hashedInput);
+                String type = data.split(",")[0];
+                int userID = Integer.parseInt(data.split(",")[1]);
+        
+                System.out.println(type + " " + userID + " logged in");
+                SendToClient.println(userID);
+                SendToClient.println(type);
+            } catch (SQLException e) {
+                System.out.println("Error logging in: " + e.getMessage());
+                SendToClient.println(-1);
+                SendToClient.println("ERROR");
+            }
+        } else {
+            System.out.println("Hashes don't match");
         }
     }
 

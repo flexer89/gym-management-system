@@ -1,3 +1,4 @@
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,6 +8,8 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+
+import utils.Secure;
 
 public class SQLEngine {
 
@@ -21,6 +24,9 @@ public class SQLEngine {
         this.password = password;
         this.connection = null;
     }
+
+
+
 
     public synchronized Connection getConnection() {
         if (connection == null) {
@@ -48,13 +54,83 @@ public class SQLEngine {
         }
     }
     
-    public String loginToAccount(String username, String password) throws SQLException {
+    public String getIDbyLogin(String login) {
+        String employeeQuery = "SELECT id FROM employee_credentials WHERE login = ?";
+        String clientQuery = "SELECT id FROM client_credentials WHERE login = ?";
+        ResultSet resultSet = null;
+    
+        try (PreparedStatement employeeStatement = connection.prepareStatement(employeeQuery);
+             PreparedStatement clientStatement = connection.prepareStatement(clientQuery)) {
+    
+            employeeStatement.setString(1, login);
+            resultSet = employeeStatement.executeQuery();
+    
+            if (resultSet.next()) {
+                return resultSet.getInt("id")+","+"employee_credentials";
+            } else {
+                resultSet.close(); // Close the previous ResultSet
+    
+                clientStatement.setString(1, login);
+                resultSet = clientStatement.executeQuery();
+    
+                if (resultSet.next()) {
+                    return resultSet.getInt("id")+","+"client_credentials";
+                } else {
+                    throw new SQLException("No user found with login " + login);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public String getHashByID(int id, String table) {
+        String query = "SELECT password FROM " + table + " WHERE id = " + id;
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                return resultSet.getString("password");
+            } else {
+                throw new SQLException("No user found with id " + id + " in table " + table);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getSaltByID(int id, String table) {
+        String query = "SELECT salt FROM " + table + " WHERE id = " + id;
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                return resultSet.getString("salt");
+            } else {
+                throw new SQLException("No user found with id " + id + " in table " + table);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String loginToAccount(String username, String hash) throws SQLException {
+
+        System.out.println("Trying to log a employee");
         String roleQuery = "SELECT position, employee_id FROM employee_credentials " +
                 "JOIN employee ON employee.id = employee_credentials.employee_id " +
                 "WHERE login = ? AND password = ? AND position IN ('admin', 'employee', 'trainer')";
         try (PreparedStatement roleStatement = connection.prepareStatement(roleQuery)) {
             roleStatement.setString(1, username);
-            roleStatement.setString(2, password);
+            roleStatement.setString(2, hash);
             try (ResultSet resultSet = roleStatement.executeQuery()) {
                 if (resultSet.next()) {
                     String position = resultSet.getString("position");
@@ -64,11 +140,11 @@ public class SQLEngine {
             }
         }
     
-    
+        System.out.println("Trying to log as client");
         String clientQuery = "SELECT client_id FROM client_credentials WHERE login = ? AND password = ?";
         try (PreparedStatement clientStatement = connection.prepareStatement(clientQuery)) {
             clientStatement.setString(1, username);
-            clientStatement.setString(2, password);
+            clientStatement.setString(2, hash);
             try (ResultSet clientResultSet = clientStatement.executeQuery()) {
                 if (clientResultSet.next()) {
                     int clientId = clientResultSet.getInt("client_id");
@@ -80,19 +156,49 @@ public class SQLEngine {
         throw new SQLException("Invalid login credentials");
     }
     
-    public int registerAccount(String username, String password, String firstName, String lastName, LocalDate birthDate, String phoneNumber, String email ) throws SQLException {
-        String query = "INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES ('" + firstName + "', '" + lastName + "', '" + birthDate + "', '" + phoneNumber + "', '" + email + "')";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(query);
-        query = "SELECT id FROM client WHERE first_name = '" + firstName + "' AND last_name = '" + lastName + "' AND date_of_birth = '" + birthDate + "' AND phone_number = '" + phoneNumber + "' AND email = '" + email + "'";
-        ResultSet resultSet = statement.executeQuery(query);
-        if (resultSet.next()) {
-            int userID = resultSet.getInt("id");
-            query = "INSERT INTO client_credentials (login, password, client_id) VALUES ('" + username + "', '" + password + "', '" + userID + " ')";
-            statement.executeUpdate(query);
-            return userID;
-        } else {
-            throw new SQLException("Invalid register credentials");
+    public int registerAccount(String username, String password, String salt, String firstName, String lastName, LocalDate birthDate, String phoneNumber, String email ) throws SQLException {
+        String insertClientQuery = "INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES (?, ?, ?, ?, ?)";
+        String selectClientQuery = "SELECT id FROM client WHERE first_name = ? AND last_name = ? AND date_of_birth = ? AND phone_number = ? AND email = ?";
+        String insertCredentialsQuery = "INSERT INTO client_credentials (login, password, salt, client_id) VALUES (?, ?, ?, ?)";
+        ResultSet resultSet = null;
+    
+        try (PreparedStatement insertClientStatement = connection.prepareStatement(insertClientQuery, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement selectClientStatement = connection.prepareStatement(selectClientQuery);
+             PreparedStatement insertCredentialsStatement = connection.prepareStatement(insertCredentialsQuery)) {
+    
+            insertClientStatement.setString(1, firstName);
+            insertClientStatement.setString(2, lastName);
+            insertClientStatement.setDate(3, java.sql.Date.valueOf(birthDate));
+            insertClientStatement.setString(4, phoneNumber);
+            insertClientStatement.setString(5, email);
+            insertClientStatement.executeUpdate();
+    
+            resultSet = insertClientStatement.getGeneratedKeys();
+    
+            if (resultSet.next()) {
+                int userID = resultSet.getInt(1);
+                resultSet.close(); // Close the previous ResultSet
+    
+                insertCredentialsStatement.setString(1, username);
+                insertCredentialsStatement.setString(2, password);
+                insertCredentialsStatement.setString(3, salt);
+                insertCredentialsStatement.setInt(4, userID);
+                insertCredentialsStatement.executeUpdate();
+    
+                return userID;
+            } else {
+                throw new SQLException("Invalid register credentials");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -192,6 +298,14 @@ public class SQLEngine {
 
     public boolean addEmployee(String name, String surname, String position, LocalDate dateOfBirth,LocalDate dateOfEmployment, String phone,
             String email, String login) throws SQLException {
+
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        System.out.println("Generated salt: " + salt);
+        String saltString = salt.toString();
+        String hash = Secure.hashWithSalt("passwd", saltString);
+
         String query = "INSERT INTO employee (first_name, last_name, position, date_of_birth, date_of_employment, phone_number, email) VALUES ('" + name + "', '" + surname + "', '" + position + "', '" + dateOfBirth + "', '" + dateOfEmployment + "', '" + phone + "', '" + email + "')";
         Statement statement = connection.createStatement();
         int count = statement.executeUpdate(query);
@@ -201,7 +315,8 @@ public class SQLEngine {
             if (resultSet.next()) {
                 int employeeID = resultSet.getInt("id");
                 // Temporary password is inserted, employee can change it after first login
-                query = "INSERT INTO employee_credentials (login, password, employee_id) VALUES ('" + login + "', 'password', '" + employeeID + "')";
+                query = "INSERT INTO employee_credentials (login, password, salt, employee_id) VALUES ('" + login + "','" + hash + "','" + salt +"', '" + employeeID + "')";
+                System.out.println(query);
                 count = statement.executeUpdate(query);
                 if (count > 0) {
                     // TODO change employee_number to be unique (add a prefix and 6 random symbols [a-z0-9])
