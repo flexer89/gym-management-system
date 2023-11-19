@@ -51,4 +51,7 @@ public class Message {
     public void sendClientReportMessage(PrintWriter writer, String message) {
         writer.println("CLIENT_REPORT:" + message);
     }
+    public void sendEmployeeReportMessage(PrintWriter writer, String message) {
+        writer.println("EMPLOYEE_REPORT:" + message);
+    }
 }

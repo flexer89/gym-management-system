@@ -26,9 +26,6 @@ public class SQLEngine {
         this.connection = null;
     }
 
-
-
-
     public synchronized Connection getConnection() {
         if (connection == null) {
             try {
@@ -429,4 +426,40 @@ public class SQLEngine {
     }
 
 
+
+
+    public String employeeReport(String name, String surname, LocalDate fromDateBirth, LocalDate toDateBirth,
+            LocalDate fromDateEmployment, LocalDate toDateEmployment, String phoneNumber, String email,
+            String position) throws SQLException{
+        String query = "SELECT * FROM employee WHERE date_of_birth BETWEEN '" + fromDateBirth + "' AND '" + toDateBirth + "' AND date_of_employment BETWEEN '" + fromDateEmployment + "' AND '" + toDateEmployment + "'";
+
+        if (!name.equals("%")) {
+            query += " AND first_name = '" + name + "'";
+        }
+        if (!surname.equals("%")) {
+            query += " AND last_name = '" + surname + "'";
+        }
+        if (!email.equals("%")) {
+            query += " AND email = '" + email + "'";
+        }
+        if (!phoneNumber.equals("%")) {
+            query += " AND phone_number = '" + phoneNumber + "'";
+        }
+        if (!position.equals("all")) {
+            query += " AND position = '" + position + "'";
+        }
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            String report = "";
+            while (resultSet.next()) {
+                report += resultSet.getInt("id") + "," + resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getDate("date_of_birth") + "," + resultSet.getDate("date_of_employment") + "," + resultSet.getString("phone_number") + "," + resultSet.getString("email") + "," + resultSet.getString("position") + "///";
+            }
+            return report;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

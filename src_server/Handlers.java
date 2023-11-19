@@ -272,4 +272,28 @@ public class Handlers {
             System.out.println("Error generating client report: " + e.getMessage());
         }
     }
+
+
+    public void employeeReport(String data) {
+        String[] reportData = data.split(",");
+        String name = reportData[0];
+        String surname = reportData[1];
+        LocalDate fromDateBirth = LocalDate.parse(reportData[2]);
+        LocalDate toDateBirth = LocalDate.parse(reportData[3]);
+        LocalDate fromDateEmployment = LocalDate.parse(reportData[4]);
+        LocalDate toDateEmployment = LocalDate.parse(reportData[5]);
+        String phoneNumber = reportData[6];
+        String email = reportData[7];
+        String position = reportData[8];
+
+        // Generate employee report
+        System.out.println("Generating employee report");
+        System.out.println("Name: " + name + " Surname: " + surname + " From date birth: " + fromDateBirth + " To date birth: " + toDateBirth + " From date employment: " + fromDateEmployment + " To date employment: " + toDateEmployment + " Phone number: " + phoneNumber + " Email: " + email + " Position: " + position);
+        try {
+            String report = sqlEngine.employeeReport(name, surname, fromDateBirth, toDateBirth, fromDateEmployment, toDateEmployment, phoneNumber, email, position);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error generating employee report: " + e.getMessage());
+        }
+    }
 }

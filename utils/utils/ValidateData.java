@@ -48,13 +48,13 @@ public class ValidateData {
         }
 
         // Validate correct month nmber
-        if (!fromDate.isEmpty() && !toDate.isEmpty() && (Integer.parseInt(fromDate.substring(5, 7)) > 12 || Integer.parseInt(toDate.substring(5, 7)) > 12)) {
+        if ((!fromDate.isEmpty() && Integer.parseInt(fromDate.substring(5, 7)) > 12) || (!toDate.isEmpty() && Integer.parseInt(toDate.substring(5, 7)) > 12)) {
             JOptionPane.showMessageDialog(null, "Invalid month number!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         // Validate correct day number
-        if (!fromDate.isEmpty() && !toDate.isEmpty() && (Integer.parseInt(fromDate.substring(8, 10)) > 31 || Integer.parseInt(toDate.substring(8, 10)) > 31)) {
+        if ((!fromDate.isEmpty() && Integer.parseInt(fromDate.substring(8, 10)) > 31) || (!toDate.isEmpty() && Integer.parseInt(toDate.substring(8, 10)) > 31)) {
             JOptionPane.showMessageDialog(null, "Invalid day number!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
