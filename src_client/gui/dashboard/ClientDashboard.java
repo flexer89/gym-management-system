@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.BorderFactory;
@@ -21,7 +22,7 @@ import gui.login.LoginRegisterWindow;
 import utils.Message;
 
 public class ClientDashboard extends JFrame{
-    public ClientDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow) {
+    public ClientDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow, int userID) {
         // Create the main window
         this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -136,7 +137,7 @@ public class ClientDashboard extends JFrame{
         // Add event listener for payment report button
         paymentReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new PaymentReportWindow(message, ReadFromServer, SendToServer);
+                new PaymentReportWindow(message, ReadFromServer, SendToServer, userID);
             }
         });
 
@@ -172,7 +173,12 @@ public class ClientDashboard extends JFrame{
         // Add event listener for profile management button
         profileManagementButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new ProfileWindow(message, ReadFromServer, SendToServer);
+                try {
+                    new ProfileWindow(message, ReadFromServer, SendToServer, userID);
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             }
         });
 

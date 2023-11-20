@@ -90,7 +90,7 @@ public class LoginWindow extends JFrame{
                                 break;
                             case "client":
                                 System.out.println("Client dashboard opened");
-                                ClientDashboard clientDashboard = new ClientDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow);
+                                ClientDashboard clientDashboard = new ClientDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow, userID);
                                 break;
                             case "trainer":
                                 System.out.println("Trainer dashboard opened");

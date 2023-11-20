@@ -67,4 +67,16 @@ public class Message {
     public void sendDeleteGymMessage(PrintWriter writer, String message) {
         writer.println("DELETE_GYM:" + message);
     }
+
+    public void sendDeleteEmployeeMessage(PrintWriter writer, String message) {
+        writer.println("DELETE_EMPLOYEE:" + message);
+    }
+
+    public void sendLoadEmployeeMessage(PrintWriter writer, String message) {
+        writer.println("LOAD_EMPLOYEE:" + message);
+    }
+
+    public void sendGetClientMessage(PrintWriter writer, String message) {
+        writer.println("GET_CLIENT:" + message);
+    }
 }

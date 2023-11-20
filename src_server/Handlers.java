@@ -221,12 +221,13 @@ public class Handlers {
         int minimumPayment = Integer.parseInt(reportData[2]);
         int maximumPayment = Integer.parseInt(reportData[3]);
         String paymentMethod = reportData[4];
+        int clientID = Integer.parseInt(reportData[5]);
 
         // Generate payment report
         System.out.println("Generating payment report");
         System.out.println("From date: " + fromDate + " To date: " + toDate + " Minimum payment: " + minimumPayment + " Maximum payment: " + maximumPayment + " Payment method: " + paymentMethod);
         try {
-            String report = sqlEngine.paymentReport(fromDate, toDate, minimumPayment, maximumPayment, paymentMethod);
+            String report = sqlEngine.paymentReport(fromDate, toDate, minimumPayment, maximumPayment, paymentMethod, clientID);
             SendToClient.println(report);
         } catch (SQLException e) {
             System.out.println("Error generating payment report: " + e.getMessage());
@@ -348,6 +349,49 @@ public class Handlers {
             }
         } catch (SQLException e) {
             System.out.println("Error deleting gym: " + e.getMessage());
+        }
+    }
+
+
+    public void deleteEmployee(String data) {
+        int employeeID = Integer.parseInt(data);
+        System.out.println("Deleting employee " + employeeID);
+
+        try {
+            boolean ifDeleted = sqlEngine.deleteEmployee(employeeID);
+            if (ifDeleted) {
+                System.out.println("Employee " + employeeID + " deleted");
+                SendToClient.println("True");
+            } else {
+                System.out.println("Employee " + employeeID + " wasn't deleted");
+                SendToClient.println("False");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error deleting employee: " + e.getMessage());
+        }
+    }
+
+
+    public void loadEmployee(String data) {
+        System.out.println("Loading employees");
+        try {
+            String report = sqlEngine.loadEmployee();
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error loading employee: " + e.getMessage());
+        }
+    }
+
+
+    public void getClient(String data) {
+        int clientID = Integer.parseInt(data);
+        System.out.println("Getting client " + clientID);
+
+        try {
+            String report = sqlEngine.getClient(clientID);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error getting client: " + e.getMessage());
         }
     }
 }
