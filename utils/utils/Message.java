@@ -51,7 +51,20 @@ public class Message {
     public void sendClientReportMessage(PrintWriter writer, String message) {
         writer.println("CLIENT_REPORT:" + message);
     }
+
     public void sendEmployeeReportMessage(PrintWriter writer, String message) {
         writer.println("EMPLOYEE_REPORT:" + message);
+    }
+
+    public void sendTrainingReportMessage(PrintWriter writer, String message) {
+        writer.println("TRAINING_REPORT:" + message);
+    }
+
+    public void sendLoadGymMessage(PrintWriter writer, String message) {
+        writer.println("LOAD_GYM:" + message);
+    }
+
+    public void sendDeleteGymMessage(PrintWriter writer, String message) {
+        writer.println("DELETE_GYM:" + message);
     }
 }

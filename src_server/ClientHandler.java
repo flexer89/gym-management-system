@@ -13,7 +13,7 @@ class ClientHandler implements Callable<String> {
     }
 
     enum CommandType {
-        PRINT, SEND, EXIT, CAN_ENTER_GYM, CAN_EXIT_GYM, CAN_ENTER_TRAINING, LOGIN, REGISTER, ADD_GYM, ADD_EMPLOYEE, PAYMENT_REPORT, GYM_REPORT, CLIENT_REPORT, EMPLOYEE_REPORT, UNKNOWN,SHUTDOWN
+        PRINT, SEND, EXIT, CAN_ENTER_GYM, CAN_EXIT_GYM, CAN_ENTER_TRAINING, LOGIN, REGISTER, ADD_GYM, ADD_EMPLOYEE, PAYMENT_REPORT, GYM_REPORT, CLIENT_REPORT, EMPLOYEE_REPORT, TRAINING_REPORT, LOAD_GYM, DELETE_GYM, UNKNOWN,SHUTDOWN
     }
 
     CommandType getCommandType(String command) {
@@ -88,6 +88,15 @@ class ClientHandler implements Callable<String> {
                         break;
                     case EMPLOYEE_REPORT:
                         Handlers.employeeReport(data);
+                        break;
+                    case TRAINING_REPORT:
+                        Handlers.trainingReport(data);
+                        break;
+                    case LOAD_GYM:
+                        Handlers.loadGym();
+                        break;
+                    case DELETE_GYM:
+                        Handlers.deleteGym(data);
                         break;
                     default:
                         System.out.println("Unknown command: " + command);

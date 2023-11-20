@@ -59,9 +59,9 @@ public class EmployeeReportWindow extends JFrame {
         constraints.insets = new Insets(5, 5, 5, 5);
 
         // Create the client report panel
-        JPanel ClientReportPanel = new JPanel();
-        ClientReportPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Employee Report"));
-        ClientReportPanel.setLayout(new GridLayout(2, 4));
+        JPanel  = new JPanel();
+        .setBorder(javax.swing.BorderFactory.createTitledBorder("Employee Report"));
+        .setLayout(new GridLayout(2, 4));
 
         // Add the namelabel and text field
         nameLabel = new JLabel("Name:");
@@ -126,17 +126,17 @@ public class EmployeeReportWindow extends JFrame {
         positionPanel.add(positionComboBox, constraints);
 
         // Add the "From Date" and "To Date" panels to the payment report panel
-        ClientReportPanel.add(namePanel);
-        ClientReportPanel.add(fromDateBirthPanel);
-        ClientReportPanel.add(fromDateEmploymentPanel);
-        ClientReportPanel.add(phoneNumberPanel);
-        ClientReportPanel.add(emailPanel);
-        ClientReportPanel.add(positionPanel);
+        .add(namePanel);
+        .add(fromDateBirthPanel);
+        .add(fromDateEmploymentPanel);
+        .add(phoneNumberPanel);
+        .add(emailPanel);
+        .add(positionPanel);
 
         // Add the "Generate Report" button
         generateReportButton = new JButton("Generate Report");
         mainPanel.add(generateReportButton);
-        mainPanel.add(ClientReportPanel);
+        mainPanel.add();
 
         // Add the report table
         reportTableModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Date of birth", "Date of employmen", "Phone Number", "Email", "Position"}, 0);

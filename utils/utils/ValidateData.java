@@ -93,4 +93,38 @@ public class ValidateData {
         }
         return true;
     }
+
+    public static boolean ValidateHourRange(String fromHour, String toHour) {
+        if ((!fromHour.matches("\\d{2}:\\d{2}") && !fromHour.isEmpty()) || (!toHour.matches("\\d{2}:\\d{2}") && !toHour.isEmpty())) {
+            JOptionPane.showMessageDialog(null, "Hour must be in the format hh:mm!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        // Validate if the hour is in the correct range
+        if (!fromHour.isEmpty() && !toHour.isEmpty() && fromHour.compareTo(toHour) > 0) {
+            JOptionPane.showMessageDialog(null, "From hour must be before to hour!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Validate correct hour number
+        if ((!fromHour.isEmpty() && Integer.parseInt(fromHour.substring(0, 2)) > 23) || (!toHour.isEmpty() && Integer.parseInt(toHour.substring(0, 2)) > 23)) {
+            JOptionPane.showMessageDialog(null, "Invalid hour number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Validate correct minute number
+        if ((!fromHour.isEmpty() && Integer.parseInt(fromHour.substring(3, 5)) > 59) || (!toHour.isEmpty() && Integer.parseInt(toHour.substring(3, 5)) > 59)) {
+            JOptionPane.showMessageDialog(null, "Invalid minute number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        return true;
+    }
+
+    public static boolean ValidateCapacity(String capacity) {
+        if (!capacity.matches("\\d+") && !capacity.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Invalid capacity!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
 }
