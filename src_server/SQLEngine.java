@@ -346,12 +346,16 @@ public class SQLEngine {
     }
 
     public String paymentReport(LocalDate fromDate, LocalDate toDate, int minimumPayment, int maximumPayment,
-            String paymentMethod) throws SQLException{
+            String paymentMethod, int clientID) throws SQLException{
         // Select payments between fromDate and toDate and between minimumPayment and maximumPayment
         String query = "SELECT * FROM payment WHERE payment_date BETWEEN '" + fromDate + "' AND '" + toDate + "' AND amount BETWEEN " + minimumPayment + " AND " + maximumPayment;
 
         if (!paymentMethod.equals("all")) {
             query += " AND payment_method = '" + paymentMethod + "'";
+        }
+
+        if (clientID != 0) {
+            query += " AND client_id = " + clientID;
         }
 
         Statement statement = connection.createStatement();
@@ -523,6 +527,61 @@ public class SQLEngine {
             else {
                 return false;
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean deleteEmployee(int employeeID) throws SQLException{ 
+        String query = "DELETE FROM employee_credentials WHERE employee_id = " + employeeID;
+        try {
+            Statement statement = connection.createStatement();
+            int count = statement.executeUpdate(query);
+            if (count > 0) {
+                query = "DELETE FROM employee_card WHERE employee_id = " + employeeID;
+                count = statement.executeUpdate(query);
+                if (count > 0) {
+                    query = "DELETE FROM employee WHERE id = " + employeeID;
+                    statement.executeUpdate(query);
+                    return true;
+                }
+                return false;
+            }
+            else {
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String loadEmployee() throws SQLException{
+        String query = "SELECT * FROM employee";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            String report = "";
+            while (resultSet.next()) {
+                report += resultSet.getInt("id") + "," + resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getString("position") + "," + resultSet.getDate("date_of_birth") + "," + resultSet.getDate("date_of_employment") + "," + resultSet.getString("phone_number") + "," + resultSet.getString("email") + "///";
+            }
+            return report;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getClient(int clientID) throws SQLException{
+        String query = "SELECT * FROM client WHERE id = " + clientID;
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            String report = "";
+            if (resultSet.next()) {
+                report += resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getDate("date_of_birth") + "," + resultSet.getString("phone_number") + "," + resultSet.getString("email");
+            }
+            return report;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

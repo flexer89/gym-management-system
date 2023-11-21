@@ -140,8 +140,9 @@ public class PaymentReportWindow extends JFrame {
                 maximumPayment = maximumPayment.isEmpty() ? "999999999" : maximumPayment;
                 paymentMethod = paymentMethod.isEmpty() ? "all" : paymentMethod;
 
+
                 // Send the report data to the server
-                message.sendPaymentReportMessage(SendToServer, fromDate + "," + toDate + "," + minimumPayment + "," + maximumPayment + "," + paymentMethod);
+                message.sendPaymentReportMessage(SendToServer, fromDate + "," + toDate + "," + minimumPayment + "," + maximumPayment + "," + paymentMethod + ",0");
 
                 // Clear the report table
                 reportTableModel.setRowCount(0);
