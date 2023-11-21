@@ -471,7 +471,7 @@ public class SQLEngine {
 
     public String trainingReport(String name, LocalDate fromDate, LocalDate toDate, LocalTime fromHour, LocalTime toHour,
             int capacity, int room, int trainerId) throws SQLException {
-        String query = "SELECT * FROM training WHERE date BETWEEN '" + fromDate + "' AND '" + toDate + "'" + " AND hour BETWEEN '" + fromHour + "' AND '" + toHour + "'";
+        String query = "SELECT * FROM training WHERE date BETWEEN '" + fromDate + "' AND '" + toDate + "'" + " AND start_hour BETWEEN '" + fromHour + "' AND '" + toHour + "'";
 
         if (!name.equals("%")) {
             query += " AND name = '" + name + "'";
@@ -492,7 +492,7 @@ public class SQLEngine {
 
             String report = "";
             while (resultSet.next()) {
-                report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("hour") + "," + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getInt("trainer_id") + "///";
+                report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getInt("trainer_id") + "///";
             }
             return report;
         } catch (SQLException e) {
@@ -584,6 +584,52 @@ public class SQLEngine {
             return report;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public String getTrainer(int trainerID) throws SQLException {
+        String query = "SELECT * FROM employee WHERE id = " + trainerID;
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            String report = "";
+            if (resultSet.next()) {
+                report += resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getDate("date_of_birth") + "," +  resultSet.getString("phone_number") + "," + resultSet.getString("email") + "," + resultSet.getDate("date_of_employment");
+            }
+            return report;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean addTraining(String name, LocalDate date, LocalTime startHour, LocalTime endHour, int capacity, int room, int trainerID, int gymID) throws SQLException{
+        // Check if room and trainer are available
+        String query = "SELECT * FROM training WHERE " +
+                    "((room = '" + room + "' AND gym_id = '" + gymID + "' AND date = '" + date + "' AND start_hour <= '" + endHour + "' AND end_hour >= '" + startHour + "') " +
+                    "OR " +
+                    "(trainer_id = '" + trainerID + "' AND date = '" + date + "' AND start_hour <= '" + endHour + "' AND end_hour >= '" + startHour + "' AND gym_id = '" + gymID + "' AND room != '" + room + "' " +
+                    "AND trainer_id NOT IN (SELECT trainer_id FROM training WHERE date = '" + date + "' AND start_hour <= '" + endHour + "' AND end_hour >= '" + startHour + "' AND (gym_id != '" + gymID + "' OR room IS NULL))))";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            return false; 
+        }
+
+        // Check if the trainer is already occupied at the specified time
+        query = "SELECT * FROM training WHERE trainer_id = '" + trainerID + "' AND date = '" + date + "' AND start_hour <= '" + endHour + "' AND end_hour >= '" + startHour + "' AND gym_id != '" + gymID + "'";
+        resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            return false; 
+        }
+
+        // Add training
+        query = "INSERT INTO training (name, date, start_hour, end_hour, capacity, room, trainer_id, gym_id) VALUES ('" + name + "', '" + date + "', '" + startHour + "', '" + endHour + "', " + capacity + ", " + room + ", " + trainerID + ", " + gymID + ")";
+        int count = statement.executeUpdate(query);
+        if (count > 0) {
+            return true; 
+        } else {
+            return false;
         }
     }
 }

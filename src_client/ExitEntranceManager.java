@@ -20,6 +20,6 @@ public class ExitEntranceManager {
 
         // Create the training entrance window
         int gymID = 1;
-        ExitEntranceWindow exitEntranceWindow = new ExitEntranceWindow(message, ReadFromServer, SendToServer, clientSocket, gymID);
+        new ExitEntranceWindow(message, ReadFromServer, SendToServer, clientSocket, gymID);
     }
 }

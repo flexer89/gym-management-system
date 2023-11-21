@@ -26,16 +26,12 @@ public class AddGymWindow extends JFrame {
     private JTextField emailField;
     private JButton addButton;
     private JButton cancelButton;
-    private BufferedReader readFromServer;
-    private PrintWriter sendToServer;
 
     public AddGymWindow(Message message, BufferedReader readFromServer, PrintWriter sendToServer) {
         // Create the main window
         this.setSize(400, 300);
         this.setVisible(true);
         this.setTitle("Add Gym");
-        this.readFromServer = readFromServer;
-        this.sendToServer = sendToServer;
 
         // Create the panel for the form
         JPanel formPanel = new JPanel(new GridBagLayout());

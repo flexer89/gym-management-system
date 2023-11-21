@@ -94,7 +94,7 @@ public class LoginWindow extends JFrame{
                                 break;
                             case "trainer":
                                 System.out.println("Trainer dashboard opened");
-                                TrainerDashboard trainerDashboard = new TrainerDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow);
+                                TrainerDashboard trainerDashboard = new TrainerDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow, userID);
                                 break;
                             default:
                                 System.out.println("Unhandled type");

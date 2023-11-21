@@ -30,16 +30,12 @@ public class AddEmployeeWindow extends JFrame {
     private JTextField dateOfEmploymentField;
     private JButton addButton;
     private JButton cancelButton;
-    private BufferedReader readFromServer;
-    private PrintWriter sendToServer;
 
     public AddEmployeeWindow(Message message, BufferedReader readFromServer, PrintWriter sendToServer) {
         // Create the main window
         this.setSize(400, 400);
         this.setVisible(true);
         this.setTitle("Add Employee");
-        this.readFromServer = readFromServer;
-        this.sendToServer = sendToServer;
 
         // Create the panel for the form
         JPanel formPanel = new JPanel(new GridBagLayout());

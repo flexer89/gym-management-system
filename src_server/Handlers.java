@@ -394,4 +394,44 @@ public class Handlers {
             System.out.println("Error getting client: " + e.getMessage());
         }
     }
+
+
+    public void getTrainer(String data) {
+        int trainerID = Integer.parseInt(data);
+        System.out.println("Getting trainer " + trainerID);
+
+        try {
+            String report = sqlEngine.getTrainer(trainerID);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error getting trainer: " + e.getMessage());
+        }
+    }
+
+
+    public void addTraining(String data) {
+        String[] trainingInfo = data.split(",");
+        String name = trainingInfo[0];
+        LocalDate date = LocalDate.parse(trainingInfo[1]);
+        LocalTime startHour = LocalTime.parse(trainingInfo[2]);
+        LocalTime endHour = LocalTime.parse(trainingInfo[3]);
+        int capacity = Integer.parseInt(trainingInfo[4]);
+        int room = Integer.parseInt(trainingInfo[5]);
+        int trainerID = Integer.parseInt(trainingInfo[6]);
+        int gymID = Integer.parseInt(trainingInfo[7]);
+        System.out.println("Adding training " + name + " " + date + " " + startHour + " " + endHour +" " + capacity + " " + room + " " + trainerID + " " + gymID);
+
+        try {
+            boolean ifAdded = sqlEngine.addTraining(name, date, startHour, endHour, capacity, room, trainerID, gymID);
+            if (ifAdded) {
+                System.out.println("Training " + name + " added");
+                SendToClient.println("True");
+            } else {
+                System.out.println("Training " + name + " wasn't added");
+                SendToClient.println("False");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error adding training: " + e.getMessage());
+        }
+    }
 }

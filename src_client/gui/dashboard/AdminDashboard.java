@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.BorderFactory;
@@ -177,21 +176,21 @@ public class AdminDashboard extends JFrame {
         // Add event listener for add employee button
         addEmployeeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                AddEmployeeWindow addEmployeeWindow = new AddEmployeeWindow(message, ReadFromServer, SendToServer);
+                new AddEmployeeWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for update employee button
         updateEmployeeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                UpdateEmployeeWindow updateEmployeeWindow = new UpdateEmployeeWindow(message, ReadFromServer, SendToServer);
+                new UpdateEmployeeWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for delete employee button
         deleteEmployeeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DeleteEmployeeWindow deleteEmployeeWindow = new DeleteEmployeeWindow(message, ReadFromServer, SendToServer);
+                new DeleteEmployeeWindow(message, ReadFromServer, SendToServer);
             }
         });
 
@@ -200,21 +199,21 @@ public class AdminDashboard extends JFrame {
         // Add event listener for update gym button
         updateGymButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                UpdateGymWindow updateGymWindow = new UpdateGymWindow(message, ReadFromServer, SendToServer);
+                new UpdateGymWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for delete gym button
         deleteGymButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DeleteGymWindow deleteGymWindow = new DeleteGymWindow(message, ReadFromServer, SendToServer);
+                new DeleteGymWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for add gym button
         addGymButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                AddGymWindow addGymWindow = new AddGymWindow(message, ReadFromServer, SendToServer);
+                new AddGymWindow(message, ReadFromServer, SendToServer);
             }
         });
 
@@ -223,35 +222,35 @@ public class AdminDashboard extends JFrame {
         // Add event listener for payment report button
         paymentReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                PaymentReportWindow paymentReportWindow = new PaymentReportWindow(message, ReadFromServer, SendToServer);
+                new PaymentReportWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for gym report button
         gymReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                GymReportWindow gymReportWindow = new GymReportWindow(message, ReadFromServer, SendToServer);
+                new GymReportWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for client report button
         clientReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ClientReportWindow clientReportWindow = new ClientReportWindow(message, ReadFromServer, SendToServer);
+                new ClientReportWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for employee report button
         employeeReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                EmployeeReportWindow employeeReportWindow = new EmployeeReportWindow(message, ReadFromServer, SendToServer);
+                new EmployeeReportWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for training report button
         trainingReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                TrainingReportWindow trainingReportWindow = new TrainingReportWindow(message, ReadFromServer, SendToServer);
+                new TrainingReportWindow(message, ReadFromServer, SendToServer);
             }
         });
     }

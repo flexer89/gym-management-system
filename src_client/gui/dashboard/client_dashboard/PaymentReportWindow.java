@@ -38,14 +38,12 @@ public class PaymentReportWindow extends JFrame {
     private JLabel minimumPaymentLabel;
     private JTable reportTable;
     private DefaultTableModel reportTableModel;
-    private int userID;
 
     public PaymentReportWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, int userID) {
         // Create the main window
         this.setSize(800, 600);
         this.setVisible(true);
         this.setTitle("Gym Management System | Payment Report");
-        this.userID = userID;
 
         // Create the main panel
         mainPanel = new JPanel(new GridBagLayout());

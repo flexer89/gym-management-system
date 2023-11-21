@@ -43,7 +43,7 @@ public class EmployeeReportWindow extends JFrame {
     private JTextField emailField;
     private JLabel emailLabel;
     private JLabel position;
-    private JComboBox positionComboBox;
+    private JComboBox<String> positionComboBox;
     private JTable reportTable;
     private DefaultTableModel reportTableModel;
 

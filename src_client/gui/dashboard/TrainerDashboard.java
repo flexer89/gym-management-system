@@ -23,7 +23,7 @@ import utils.Message;
 
 public class TrainerDashboard extends JFrame {
 
-    public TrainerDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow) {
+    public TrainerDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow, int userID) {
         // Create the main window
         this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -149,21 +149,21 @@ public class TrainerDashboard extends JFrame {
         // Add event listener for add training button
         addTrainingButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                AddTrainingWindow addTrainingWindow = new AddTrainingWindow(message, ReadFromServer, SendToServer);
+                new AddTrainingWindow(message, ReadFromServer, SendToServer, userID);
             }
         });
 
         // Add event listener for update training button
         updateTrainingButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                UpdateTrainingWindow updateTrainingWindow = new UpdateTrainingWindow(message, ReadFromServer, SendToServer);
+                new UpdateTrainingWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for delete training button
         deleteTrainingButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DeleteTrainingWindow deleteTrainingWindow = new DeleteTrainingWindow(message, ReadFromServer, SendToServer);
+                new DeleteTrainingWindow(message, ReadFromServer, SendToServer);
             }
         });
 
@@ -171,14 +171,14 @@ public class TrainerDashboard extends JFrame {
         // Add event listener for training report button
         trainingReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                TrainingReportWindow trainingReportWindow = new TrainingReportWindow(message, ReadFromServer, SendToServer);
+                new TrainingReportWindow(message, ReadFromServer, SendToServer);
             }
         });
 
         // Add event listener for time spent report button
         timeSpentReporButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                EntranceReportWindow entranceReportWindow = new EntranceReportWindow(message, ReadFromServer, SendToServer);
+                new EntranceReportWindow(message, ReadFromServer, SendToServer);
             }
         });
 
@@ -187,7 +187,11 @@ public class TrainerDashboard extends JFrame {
         // Add event listener for my profile button
         updateProfileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ProfileWindow profileWindow = new ProfileWindow(message, ReadFromServer, SendToServer);
+                try {
+                    new ProfileWindow(message, ReadFromServer, SendToServer, userID);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
     }
