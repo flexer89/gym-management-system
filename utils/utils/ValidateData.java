@@ -127,4 +127,52 @@ public class ValidateData {
         }
         return true;
     }
+
+    public static boolean ValidateHour(String hour) {
+        if (!hour.matches("\\d{2}:\\d{2}") && !hour.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Invalid hour!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!hour.isEmpty() && Integer.parseInt(hour.substring(0, 2)) > 23) {
+            JOptionPane.showMessageDialog(null, "Invalid hour number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!hour.isEmpty() && Integer.parseInt(hour.substring(3, 5)) > 59) {
+            JOptionPane.showMessageDialog(null, "Invalid minute number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean ValidateDate(String date) {
+        if (!date.matches("\\d{4}-\\d{2}-\\d{2}") && !date.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Invalid date!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!date.isEmpty() && Integer.parseInt(date.substring(5, 7)) > 12) {
+            JOptionPane.showMessageDialog(null, "Invalid month number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!date.isEmpty() && Integer.parseInt(date.substring(8, 10)) > 31) {
+            JOptionPane.showMessageDialog(null, "Invalid day number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean ValidateRoom(String room) {
+        if (!room.matches("\\d+") && !room.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Invalid room!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean ValidateGymID(String gymID) {
+        if (!gymID.matches("\\d+") && !gymID.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Invalid gym ID!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
 }

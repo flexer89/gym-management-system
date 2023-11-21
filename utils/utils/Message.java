@@ -79,4 +79,12 @@ public class Message {
     public void sendGetClientMessage(PrintWriter writer, String message) {
         writer.println("GET_CLIENT:" + message);
     }
+
+    public void sendGetTrainerMessage(PrintWriter writer, String message) {
+        writer.println("GET_TRAINER:" + message);
+    }
+
+    public void sendAddTrainingMessage(PrintWriter writer, String message) {
+        writer.println("ADD_TRAINING:" + message);
+    }
 }

@@ -87,10 +87,12 @@ CREATE TABLE training (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
   date DATE NOT NULL,
-  hour TIME NOT NULL,
+  start_hour TIME NOT NULL,
+  end_hour TIME NOT NULL,
   capacity INT NOT NULL,
   room int NOT NULL,
-  trainer_id INT,
+  trainer_id INT NOT NULL,
+  gym_id INT NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -142,6 +144,8 @@ ALTER TABLE employee_work_time ADD FOREIGN KEY (employee_id) REFERENCES employee
 ALTER TABLE gym_visits ADD FOREIGN KEY (gym_id) REFERENCES gym (id);
 
 ALTER TABLE membership_card ADD FOREIGN KEY (original_gym_id) REFERENCES gym (id);
+
+ALTER TABLE training ADD FOREIGN KEY (gym_id) REFERENCES gym (id);
 
 
 -- Insert an admin
