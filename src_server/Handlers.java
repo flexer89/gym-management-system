@@ -1,10 +1,6 @@
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.math.BigInteger;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -14,17 +10,13 @@ import utils.Secure;
 
 public class Handlers {
 
-    private BufferedReader ReadFromClient;
     private PrintWriter SendToClient;
     private SQLEngine sqlEngine;
-    private Socket clientSocket;
 
     //create constructor
     public Handlers(BufferedReader ReadFromClient, PrintWriter SendToClient, Socket clientSocket, SQLEngine sqlEngine) {
-        this.ReadFromClient = ReadFromClient;
         this.SendToClient = SendToClient;
         this.sqlEngine = sqlEngine;
-        this.clientSocket = clientSocket;
     }
 
 
