@@ -468,7 +468,7 @@ public class SQLEngine {
     }
 
     public String trainingReport(String name, LocalDate fromDate, LocalDate toDate, LocalTime fromHour, LocalTime toHour,
-            int capacity, int room, int trainerId) throws SQLException {
+            int capacity, int room, int trainerId, int clientID) throws SQLException {
         String query = "SELECT * FROM training WHERE date BETWEEN '" + fromDate + "' AND '" + toDate + "'" + " AND start_hour BETWEEN '" + fromHour + "' AND '" + toHour + "'";
 
         if (!name.equals("%")) {
@@ -482,6 +482,9 @@ public class SQLEngine {
         }
         if (trainerId != 0) {
             query += " AND trainer_id = '" + trainerId + "'";
+        }
+        if (clientID != 0) {
+            query += " AND id IN (SELECT training_id FROM reservation WHERE client_id = '" + clientID + "')";
         }
 
         try {
@@ -629,5 +632,41 @@ public class SQLEngine {
         } else {
             return false;
         }
+    }
+
+    public String loadTrainings(int userID) throws SQLException {
+        String query = "SELECT original_gym_id, all_gyms_access FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = " + userID;
+        String report = "";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            if (resultSet.next()) {
+                int originalGymID = resultSet.getInt("original_gym_id");
+                int allGymsAccess = resultSet.getInt("all_gyms_access");
+                
+                if (allGymsAccess == 1) {
+                    query = "SELECT tr.id, tr.name, tr.date, tr.start_hour, tr.end_hour, tr.capacity, tr.room, CONCAT(e.first_name, ' ', e.last_name) AS trainer_name, CONCAT(g.address, ', ', g.city) AS gym_location, (SELECT COUNT(*) FROM reservation r WHERE r.training_id = tr.id) AS current_reservations FROM training tr JOIN employee e ON tr.trainer_id = e.id JOIN gym g ON tr.gym_id = g.id WHERE tr.date > CURDATE() ORDER BY tr.date, tr.start_hour";
+
+                    resultSet = statement.executeQuery(query);
+
+                    while (resultSet.next()) {
+                        report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getTime("end_hour") + "," + resultSet.getInt("current_reservations") + "/" + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getString("trainer_name") + "," + resultSet.getString("gym_location") + "///";
+                    }
+                }
+                else {
+                    query = "SELECT tr.id, tr.name, tr.date, tr.start_hour, tr.end_hour, tr.capacity, tr.room, CONCAT(e.first_name, ' ', e.last_name) AS trainer_name, CONCAT(g.address, ', ', g.city) AS gym_location, (SELECT COUNT(*) FROM reservation r WHERE r.training_id = tr.id) AS current_reservations FROM training tr JOIN employee e ON tr.trainer_id = e.id JOIN gym g ON tr.gym_id = g.id WHERE tr.date > CURDATE() AND tr.gym_id = " + originalGymID + " ORDER BY tr.date, tr.start_hour";
+                    resultSet = statement.executeQuery(query);
+
+                    while (resultSet.next()) {
+                        report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getTime("end_hour") + "," + resultSet.getInt("current_reservations") + "/" + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getString("trainer_name") + "," + resultSet.getString("gym_location") + "///";
+                    }
+                }
+            }
+            return report;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+       
     }
 }

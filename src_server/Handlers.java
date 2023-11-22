@@ -302,12 +302,13 @@ public class Handlers {
         int capacity = Integer.parseInt(reportData[5]);
         int room = Integer.parseInt(reportData[6]);
         int trainerId = Integer.parseInt(reportData[7]);
+        int clientID = Integer.parseInt(reportData[8]);
 
         // Generate training report
         System.out.println("Generating training report");
         System.out.println("Name: " + name + " From date: " + fromDate + " To date: " + toDate + " From hour: " + fromHour + " To hour: " + toHour + " Capacity: " + capacity + " Room: " + room + " Trainer ID: " + trainerId);
         try {
-            String report = sqlEngine.trainingReport(name, fromDate, toDate, fromHour, toHour, capacity, room, trainerId);
+            String report = sqlEngine.trainingReport(name, fromDate, toDate, fromHour, toHour, capacity, room, trainerId, clientID);
             SendToClient.println(report);
         } catch (SQLException e) {
             System.out.println("Error generating training report: " + e.getMessage());
@@ -426,4 +427,17 @@ public class Handlers {
             System.out.println("Error adding training: " + e.getMessage());
         }
     }
+
+
+    public void loadTrainings(String data) {
+        int userID = Integer.parseInt(data);
+        System.out.println("Loading available trainings for client " + userID);
+        try {
+            String report = sqlEngine.loadTrainings(userID);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error loading trainings: " + e.getMessage());
+        }
+    }
+
 }

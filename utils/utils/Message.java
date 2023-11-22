@@ -87,4 +87,8 @@ public class Message {
     public void sendAddTrainingMessage(PrintWriter writer, String message) {
         writer.println("ADD_TRAINING:" + message);
     }
+
+    public void sendLoadTrainingsMessage(PrintWriter writer, String message) {
+        writer.println("LOAD_TRAININGS:" + message);
+    }
 }

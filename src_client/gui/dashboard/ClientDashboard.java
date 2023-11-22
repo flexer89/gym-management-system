@@ -151,7 +151,7 @@ public class ClientDashboard extends JFrame{
         // Add event listener for training report button
         trainingReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new TrainingReportWindow(message, ReadFromServer, SendToServer);
+                new TrainingReportWindow(message, ReadFromServer, SendToServer, userID);
             }
         });
 
@@ -159,7 +159,7 @@ public class ClientDashboard extends JFrame{
         // Add event listener for training management button
         trainingManagementButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new ReservationWindow(message, ReadFromServer, SendToServer);
+                new ReservationWindow(message, ReadFromServer, SendToServer, userID);
             }
         });
 
