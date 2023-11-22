@@ -30,6 +30,8 @@ public class LoginRegisterWindow extends JFrame{
         this.add(loginRegisterPanel);
         this.add(exitButton);
 
+        SwingUtilities.updateComponentTreeUI(getContentPane());
+
         // Add event listener for exit button
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -49,14 +51,14 @@ public class LoginRegisterWindow extends JFrame{
         // Add event listener for login button
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LoginWindow loginWindow = new LoginWindow(message, ReadFromServer, SendToServer, LoginRegisterWindow.this);
+                new LoginWindow(message, ReadFromServer, SendToServer, LoginRegisterWindow.this);
             }
         });
 
         // Add event listener for register button
         registerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                RegisterWindow registerWindow = new RegisterWindow(message, ReadFromServer, SendToServer);
+                new RegisterWindow(message, ReadFromServer, SendToServer);
             }
         });
     };

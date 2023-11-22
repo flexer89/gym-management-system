@@ -1,11 +1,11 @@
 import java.io.*;
 import java.net.*;
 
-import gui.login.LoginRegisterWindow;
+import gui.training_entrance.TrainingEntranceWindow;
 import utils.Color;
 import utils.Message;
 
-public class GymClient {
+public class TrainingEntranceManager {
     public static void main(String[] args) throws IOException {
         // Create client socket
         Socket clientSocket = new Socket("localhost", 5000);
@@ -18,7 +18,8 @@ public class GymClient {
         // Create message object
         Message message = new Message();
 
-        // Create the login/register window
-        new LoginRegisterWindow(message, ReadFromServer, SendToServer, clientSocket);
+        // Create the training entrance window
+        int roomID = 1;
+        new TrainingEntranceWindow(message, ReadFromServer, SendToServer, clientSocket, roomID);
     }
 }

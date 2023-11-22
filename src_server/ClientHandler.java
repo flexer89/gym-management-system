@@ -1,6 +1,4 @@
 import java.net.*;
-import java.sql.SQLException;
-import java.time.LocalDate;
 import java.io.*;
 import java.util.concurrent.*;
 
@@ -14,6 +12,19 @@ class ClientHandler implements Callable<String> {
         this.sqlEngine = sqlEngine;
     }
 
+    enum CommandType {
+        PRINT, SEND, EXIT, CAN_ENTER_GYM, CAN_EXIT_GYM, CAN_ENTER_TRAINING, LOGIN, REGISTER, ADD_GYM, ADD_EMPLOYEE, PAYMENT_REPORT, GYM_REPORT, CLIENT_REPORT, EMPLOYEE_REPORT, TRAINING_REPORT, LOAD_GYM, DELETE_GYM, DELETE_EMPLOYEE, LOAD_EMPLOYEE, GET_CLIENT, GET_TRAINER, ADD_TRAINING, LOAD_TRAININGS, UNKNOWN,SHUTDOWN
+    }
+
+    CommandType getCommandType(String command) {
+        try {
+            return CommandType.valueOf(command.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return CommandType.UNKNOWN;
+        }
+    }
+
+    
     @Override
     public String call() {
         try {
@@ -21,58 +32,97 @@ class ClientHandler implements Callable<String> {
             BufferedReader ReadFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter SendToClient = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            String serverMessage;
-            while (true) {
-                serverMessage = ReadFromClient.readLine();
-                if (serverMessage.startsWith("PRINT:")) {
-                    // Print the message, excluding the "PRINT:" prefix
-                    System.out.println(serverMessage.substring(6));
-                } else if (serverMessage.startsWith("SEND:")) {
-                    // Send data to the server
-                    System.out.println(serverMessage.substring(5));
-                    String clientMessage = System.console().readLine();
-                    SendToClient.println(clientMessage);
-                } else if (serverMessage.startsWith("EXIT:")) {
-                    // Exit the loop
-                    System.out.println(serverMessage.substring(5));
-                    break;
-                }
-                else if (serverMessage.startsWith("LOGIN:")) {
-                    // TODO move this to separate function
-                    String[] loginInfo = serverMessage.substring(6).split(",");
-                    String username = loginInfo[0];
-                    String password = loginInfo[1];
-                    try {
-                        String data = sqlEngine.loginToAccount(username, password);
-                        String type = data.split(",")[0];
-                        int userID = Integer.parseInt(data.split(",")[1]);
 
-                        System.out.println(type + " " + userID + " logged in");
-                        SendToClient.println(userID);
-                        SendToClient.println(type);
-                    } catch (SQLException e) {
-                        System.out.println("Error logging in: " + e.getMessage());
-                    }
+            Handlers Handlers = new Handlers(ReadFromClient, SendToClient,clientSocket, sqlEngine);
+
+            while (true) {
+                String serverMessage = ReadFromClient.readLine();
+                String[] parts = serverMessage.split(":", 2);
+                String command = parts[0];
+                String data= parts[1];
+                
+                System.out.println("Command: " + command + " Data: " + data);
+                
+                CommandType commandType = getCommandType(command);
+                
+            
+                switch (commandType) {
+                    case PRINT:
+                        Handlers.print(data);
+                        break;
+                    case SEND:
+                        Handlers.send();
+                        break;
+                    case EXIT:
+                        Handlers.exit();
+                        break;
+                    case CAN_ENTER_GYM:
+                        Handlers.canEnterGym(data);
+                        break;
+                    case CAN_EXIT_GYM:
+                        Handlers.canExitGym(data);
+                        break;
+                    case CAN_ENTER_TRAINING:
+                        Handlers.canEnterTraining(data);
+                        break;
+                    case LOGIN:
+                        Handlers.login(data);
+                        break;
+                    case REGISTER:
+                        Handlers.register(data);
+                        break;
+                    case ADD_GYM:
+                        Handlers.addGym(data);
+                        break;
+                    case ADD_EMPLOYEE:
+                        Handlers.addEmployee(data);
+                        break;
+                    case PAYMENT_REPORT:
+                        Handlers.paymentReport(data);
+                        break;
+                    case GYM_REPORT:
+                        Handlers.gymReport(data);
+                        break;
+                    case CLIENT_REPORT:
+                        Handlers.clientReport(data);
+                        break;
+                    case EMPLOYEE_REPORT:
+                        Handlers.employeeReport(data);
+                        break;
+                    case TRAINING_REPORT:
+                        Handlers.trainingReport(data);
+                        break;
+                    case LOAD_GYM:
+                        Handlers.loadGym();
+                        break;
+                    case DELETE_GYM:
+                        Handlers.deleteGym(data);
+                        break;
+                    case DELETE_EMPLOYEE:
+                        Handlers.deleteEmployee(data);
+                        break;
+                    case LOAD_EMPLOYEE:
+                        Handlers.loadEmployee(data);
+                        break;
+                    case GET_CLIENT:
+                        Handlers.getClient(data);
+                        break;
+                    case GET_TRAINER:
+                        Handlers.getTrainer(data);
+                        break;
+                    case ADD_TRAINING:
+                        Handlers.addTraining(data);
+                        break;
+                    case LOAD_TRAININGS:
+                        Handlers.loadTrainings(data);
+                        break;
+                    default:
+                        System.out.println("Unknown command: " + command);
+                        break;
                 }
-                else if (serverMessage.startsWith("REGISTER:"))
-                {
-                    // TODO move this to separate function
-                    // Register new account
-                    String[] registerInfo = serverMessage.substring(9).split(",");
-                    String username = registerInfo[0];
-                    String password = registerInfo[1];
-                    String firstName = registerInfo[2];
-                    String lastName = registerInfo[3];
-                    LocalDate birthDate = LocalDate.parse(registerInfo[4]);
-                    String phoneNumber = registerInfo[5];
-                    String email = registerInfo[6];
-                    try {
-                        int userID = sqlEngine.registerAccount(username, password, firstName, lastName, birthDate, phoneNumber, email);
-                        System.out.println("User " + userID + " registered");
-                        SendToClient.println(userID);
-                    } catch (SQLException e) {
-                        System.out.println("Error registering account: " + e.getMessage());
-                    }
+                //TODO how to implement this lol
+                if (commandType == CommandType.SHUTDOWN) {
+                    break;
                 }
             }
 
@@ -80,7 +130,7 @@ class ClientHandler implements Callable<String> {
             ReadFromClient.close();
             SendToClient.close();
             clientSocket.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
