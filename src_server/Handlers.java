@@ -114,38 +114,46 @@ public class Handlers {
         String username = loginInfo[0];
         String password = loginInfo[1];
 
-        String fetchedData = sqlEngine.getIDbyLogin(username);
-        System.out.println("Fetched data: " + fetchedData);
-        
-        String[] parts = fetchedData.split(",");
-        String ID = parts[0];
-        String table = parts[1];
-        
-        System.out.println("Testing creds for table: " + table);
-        String storedHash = sqlEngine.getHashByID(Integer.parseInt(ID), table);
-        String salt = sqlEngine.getSaltByID(Integer.parseInt(ID), table);
-        System.out.println("ID: " + ID + "   Hash: " + storedHash + " Salt: " + salt);
-        String hashedInput = Secure.hashWithSalt(password, salt);
-        System.out.println("Hashed input: " + hashedInput);
-        
-        if (storedHash.equals(hashedInput)) {
-            System.out.println("Hashes match");
-            try {
-                String data = sqlEngine.loginToAccount(username, hashedInput);
-                String type = data.split(",")[0];
-                int userID = Integer.parseInt(data.split(",")[1]);
-        
-                System.out.println(type + " " + userID + " logged in");
-                SendToClient.println(userID);
-                SendToClient.println(type);
-            } catch (SQLException e) {
-                System.out.println("Error logging in: " + e.getMessage());
-                SendToClient.println(-1);
-                SendToClient.println("ERROR");
+        try {
+            String fetchedData = sqlEngine.getIDbyLogin(username);
+            System.out.println("Fetched data: " + fetchedData);
+            
+            String[] parts = fetchedData.split(",");
+            String ID = parts[0];
+            String table = parts[1];
+            
+            System.out.println("Testing creds for table: " + table);
+            String storedHash = sqlEngine.getHashByID(Integer.parseInt(ID), table);
+            String salt = sqlEngine.getSaltByID(Integer.parseInt(ID), table);
+            System.out.println("ID: " + ID + "   Hash: " + storedHash + " Salt: " + salt);
+            String hashedInput = Secure.hashWithSalt(password, salt);
+            System.out.println("Hashed input: " + hashedInput);
+            
+            if (storedHash.equals(hashedInput)) {
+                System.out.println("Hashes match");
+                try {
+                    String data = sqlEngine.loginToAccount(username, hashedInput);
+                    String type = data.split(",")[0];
+                    int userID = Integer.parseInt(data.split(",")[1]);
+            
+                    System.out.println(type + " " + userID + " logged in");
+                    SendToClient.println(userID);
+                    SendToClient.println(type);
+                } catch (SQLException e) {
+                    System.out.println("SQL Error logging in: " + e.getMessage());
+                    SendToClient.println(-1);
+                    SendToClient.println("ERROR");
+                }
+            } else {
+                System.out.println("Hashes don't match");
             }
-        } else {
-            System.out.println("Hashes don't match");
         }
+        catch (Exception all) {
+            System.out.println("Error logging in: " + all.getMessage());
+            SendToClient.println(-1);
+            SendToClient.println("ERROR");
+        }
+
     }
 
     public void addGym(String serverMessage)
