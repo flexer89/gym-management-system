@@ -649,18 +649,15 @@ public class SQLEngine {
                     query = "SELECT tr.id, tr.name, tr.date, tr.start_hour, tr.end_hour, tr.capacity, tr.room, CONCAT(e.first_name, ' ', e.last_name) AS trainer_name, CONCAT(g.address, ', ', g.city) AS gym_location, (SELECT COUNT(*) FROM reservation r WHERE r.training_id = tr.id) AS current_reservations FROM training tr JOIN employee e ON tr.trainer_id = e.id JOIN gym g ON tr.gym_id = g.id WHERE tr.date > CURDATE() ORDER BY tr.date, tr.start_hour";
 
                     resultSet = statement.executeQuery(query);
-
-                    while (resultSet.next()) {
-                        report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getTime("end_hour") + "," + resultSet.getInt("current_reservations") + "/" + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getString("trainer_name") + "," + resultSet.getString("gym_location") + "///";
-                    }
                 }
                 else {
                     query = "SELECT tr.id, tr.name, tr.date, tr.start_hour, tr.end_hour, tr.capacity, tr.room, CONCAT(e.first_name, ' ', e.last_name) AS trainer_name, CONCAT(g.address, ', ', g.city) AS gym_location, (SELECT COUNT(*) FROM reservation r WHERE r.training_id = tr.id) AS current_reservations FROM training tr JOIN employee e ON tr.trainer_id = e.id JOIN gym g ON tr.gym_id = g.id WHERE tr.date > CURDATE() AND tr.gym_id = " + originalGymID + " ORDER BY tr.date, tr.start_hour";
-                    resultSet = statement.executeQuery(query);
 
-                    while (resultSet.next()) {
-                        report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getTime("end_hour") + "," + resultSet.getInt("current_reservations") + "/" + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getString("trainer_name") + "," + resultSet.getString("gym_location") + "///";
-                    }
+                    resultSet = statement.executeQuery(query);
+                }
+                
+                while (resultSet.next()) {
+                    report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getTime("end_hour") + "," + resultSet.getInt("current_reservations") + "/" + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getString("trainer_name") + "," + resultSet.getString("gym_location") + "///";
                 }
             }
             return report;
