@@ -129,13 +129,11 @@ public class RegisterWindow extends JFrame{
                     message.sendRegisterMessage(SendToServer, username + "," + password + "," + name + "," + surname + "," + dateOfBirth + "," + phone + "," + email);
                 } catch (DateTimeParseException e2) {
                     JOptionPane.showMessageDialog(null, "Error registering account!", "Invalid birth date!", JOptionPane.ERROR_MESSAGE);
-                    e2.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Invalid birth date!" + utils.Color.ANSI_RESET);
                 } catch (IllegalArgumentException e3) {
                     JOptionPane.showMessageDialog(null, "Error registering account!", e3.getMessage(), JOptionPane.ERROR_MESSAGE);
-                    e3.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + e3.getMessage() + utils.Color.ANSI_RESET);
                 }
-
-
 
                 // Close the register window
                 dispose();

@@ -69,34 +69,32 @@ public class Handlers {
 
     public void register(String serverMessage)
     {
-            // TODO move this to separate function
-            // Register new account
-            String[] registerInfo = serverMessage.split(",");
-            String username = registerInfo[0];
-            String password = registerInfo[1];
-            String firstName = registerInfo[2];
-            String lastName = registerInfo[3];
-            LocalDate birthDate = LocalDate.parse(registerInfo[4]);
-            String phoneNumber = registerInfo[5];
-            String email = registerInfo[6];
+        String[] registerInfo = serverMessage.split(",");
+        String username = registerInfo[0];
+        String password = registerInfo[1];
+        String firstName = registerInfo[2];
+        String lastName = registerInfo[3];
+        LocalDate birthDate = LocalDate.parse(registerInfo[4]);
+        String phoneNumber = registerInfo[5];
+        String email = registerInfo[6];
 
-            SecureRandom random = new SecureRandom();
-            byte[] salt = new byte[16];
-            random.nextBytes(salt);
-            System.out.println("Generated salt: " + salt);
-            String saltString = salt.toString();
-            password = Secure.hashWithSalt(password, saltString);
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        System.out.println("Generated salt: " + salt);
+        String saltString = salt.toString();
+        password = Secure.hashWithSalt(password, saltString);
 
 
-            System.out.println("Passwd: " + password + " Salt: " + salt);
+        System.out.println("Passwd: " + password + " Salt: " + salt);
 
-            try {
-                int userID = sqlEngine.registerAccount(username, password, saltString, firstName, lastName, birthDate, phoneNumber, email);
-                System.out.println("User " + userID + " registered");
-                SendToClient.println(userID);
-            } catch (SQLException e) {
-                System.out.println("Error registering account: " + e.getMessage());
-            }
+        try {
+            int userID = sqlEngine.registerAccount(username, password, saltString, firstName, lastName, birthDate, phoneNumber, email);
+            System.out.println("User " + userID + " registered");
+            SendToClient.println(userID);
+        } catch (SQLException e) {
+            System.out.println("Error registering account: " + e.getMessage());
+        }
     }
 
 

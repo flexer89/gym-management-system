@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import gui.dashboard.client_dashboard.*;
 
 import gui.login.LoginRegisterWindow;
-import utils.Message;
+import utils.*;
 
 public class ClientDashboard extends JFrame{
     public ClientDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow, int userID) {
@@ -176,8 +176,7 @@ public class ClientDashboard extends JFrame{
                 try {
                     new ProfileWindow(message, ReadFromServer, SendToServer, userID);
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error creating profile window." + utils.Color.ANSI_RESET);
                 }
             }
         });

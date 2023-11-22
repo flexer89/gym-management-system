@@ -69,8 +69,7 @@ public class TrainingEntranceWindow extends JFrame{
                     }
                     System.out.println(message);
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

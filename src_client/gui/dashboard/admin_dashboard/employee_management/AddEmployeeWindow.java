@@ -188,7 +188,7 @@ public class AddEmployeeWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Error adding Employee!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                     e1.printStackTrace();
                 }
             }

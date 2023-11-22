@@ -60,12 +60,10 @@ public class LoginWindow extends JFrame{
                 int userID;
                 String type;
 
-                //TODO figure out best way to handle this
                 if (username.isEmpty() || password.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Username or password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-                    throw new IllegalArgumentException("Username or password cannot be empty");
+                    return;
                 }
-
 
                 // Send the username and password to the server
                 message.sendLoginMessage(SendToServer, username + "," + password);
@@ -109,7 +107,7 @@ public class LoginWindow extends JFrame{
                 catch (IOException e1) 
                 {
                     JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + e1.getMessage() + utils.Color.ANSI_RESET);
                 }
             }
         });
