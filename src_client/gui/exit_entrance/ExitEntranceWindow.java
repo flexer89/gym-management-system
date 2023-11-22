@@ -48,16 +48,12 @@ public class ExitEntranceWindow extends JFrame{
         JTextField entranceTextField = new JTextField();
         entranceTextField.setFont(entranceLabel.getFont().deriveFont(30.0f));
 
-        // Create Entrance Button
+        // Create Buttons
         JButton enterButton = new JButton("Enter");
-
-        // Create Back Button
         JButton backButton = new JButton("Back");
-
-        // Create buy ticket button
         JButton buyTicketButton = new JButton("Buy a ticket");
         
-        // Add the label and the text field to the panel
+        // Add the labels and the text fields to the panel
         entrancePanel.add(entranceLabel);
         entrancePanel.add(entranceTextField);
         entrancePanel.add(enterButton);
@@ -77,10 +73,8 @@ public class ExitEntranceWindow extends JFrame{
         JTextField exitTextField = new JTextField();
         exitTextField.setFont(exitLabel.getFont().deriveFont(30.0f));
 
-        // Create Exit Button
+        // Create Buttons
         JButton exitGymButton = new JButton("Exit");
-
-        // Create Back Button
         JButton exitBackButton = new JButton("Back");
 
         // Add the label and the button to the panel
@@ -159,15 +153,12 @@ public class ExitEntranceWindow extends JFrame{
                     // Get the response from the server
                     String response = ReadFromServer.readLine();
                     if (response.equals("true")) {
-                        // If the response is true, the user can exit the gym
                         JOptionPane.showMessageDialog(null, "Have a nice day!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        // If the response is false, the user cannot exit the gym
                         JOptionPane.showMessageDialog(null, "You haven't even entered the gym yet!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    System.out.println("Error reading from server: " + e1.getMessage());
-                
+                    System.out.println(utils.Color.ANSI_RED + "Error reading from server: " + e1.getMessage() + utils.Color.ANSI_RESET);
                 }
             }
         });
@@ -183,14 +174,12 @@ public class ExitEntranceWindow extends JFrame{
                     // Get the response from the server
                     String response = ReadFromServer.readLine();
                     if (response.equals("true")) {
-                        // If the response is true, the user can enter the gym
                         JOptionPane.showMessageDialog(null, "Enjoy your training!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        // If the response is false, the user cannot enter the gym
                         JOptionPane.showMessageDialog(null, "You cannot enter the gym, sorry!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    System.out.println("Error reading from server: " + e1.getMessage());
+                    System.out.println(utils.Color.ANSI_RED + "Error reading from server: " + e1.getMessage() + utils.Color.ANSI_RESET);
                 }
             }
         });

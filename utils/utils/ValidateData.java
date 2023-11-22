@@ -183,4 +183,28 @@ public class ValidateData {
         }
         return true;
     }
+
+    public static boolean ValidatePassword(String password) {
+        if (password.length() > 255) {
+            JOptionPane.showMessageDialog(null, "Password is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean ValidateUsername(String username) {
+        if (username.length() > 255) {
+            JOptionPane.showMessageDialog(null, "Username is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean ValidatePosition(String position) {
+        if (!position.equals("admin") && !position.equals("trainer") && !position.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Position must be admin or trainer", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
 }

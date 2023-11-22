@@ -150,7 +150,7 @@ public class AdminDashboard extends JFrame {
         logoutButton.setForeground(new Color(255, 255, 255));
         logoutButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        // Add the reports panel, gym management panel, employee management panel, and logout button to the content panel
+        // Add reports panel to the content panel
         contentPanel.add(reportsPanel);
         contentPanel.add(gymManagementPanel);
         contentPanel.add(employeeManagementPanel);
@@ -172,7 +172,7 @@ public class AdminDashboard extends JFrame {
             }
         });
 
-                // ====================================================================================================
+        // ====================================================================================================
         // Add event listener for add employee button
         addEmployeeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

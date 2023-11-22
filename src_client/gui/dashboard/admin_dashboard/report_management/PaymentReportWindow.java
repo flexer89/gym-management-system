@@ -158,7 +158,7 @@ public class PaymentReportWindow extends JFrame {
                         reportTableModel.addRow(reportLineParts);
                     }
                 } catch (IOException e1) {
-                    System.out.println("Error reading payment report: " + e1.getMessage());
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

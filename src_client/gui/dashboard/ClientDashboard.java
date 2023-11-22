@@ -112,7 +112,7 @@ public class ClientDashboard extends JFrame{
         logoutButton.setForeground(new Color(255, 255, 255));
         logoutButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        // Add the reports panel, gym management panel, employee management panel, and logout button to the content panel
+        // Add panels to the content panel
         contentPanel.add(reportsPanel);
         contentPanel.add(generalClientManagementButton);
 

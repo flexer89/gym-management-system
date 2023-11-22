@@ -89,16 +89,11 @@ public class DeleteGymWindow extends JFrame {
                 // Send the message to the server
                 message.sendDeleteGymMessage(SendToServer, id);
 
-                
-
                 // read the report from the server
                 try {
                     String report = ReadFromServer.readLine();
                     if (report.equals("True")) {
                         JOptionPane.showMessageDialog(null, "Gym deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
-
-                        // Refresh the report table
-
                         // Send the message to the server
                         message.sendLoadGymMessage(SendToServer, "null");
 
@@ -130,8 +125,6 @@ public class DeleteGymWindow extends JFrame {
         // Add action listener to the "Load" button
         loadGymButton.addActionListener(new ActionListener() {    
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Load Gym button clicked");
-
                 // Send the message to the server
                 message.sendLoadGymMessage(SendToServer, "null");
 
@@ -149,7 +142,7 @@ public class DeleteGymWindow extends JFrame {
                         reportTableModel.addRow(reportLineParts);
                     }
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

@@ -111,6 +111,5 @@ public class ProfileWindow extends JFrame {
         mainPanel.add(passwordResetPanel);
 
         this.add(mainPanel);
-
     }
 }

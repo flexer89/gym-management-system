@@ -158,7 +158,6 @@ public class AddTrainingWindow extends JFrame {
                     }
                 } catch (IOException e1) {
                     System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
-                    e1.printStackTrace();
                 }
             }
         });

@@ -19,6 +19,7 @@ import gui.dashboard.AdminDashboard;
 import gui.dashboard.ClientDashboard;
 import gui.dashboard.TrainerDashboard;
 import utils.Message;
+import utils.ValidateData;
 
 public class LoginWindow extends JFrame{
     public LoginWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow) {
@@ -57,11 +58,8 @@ public class LoginWindow extends JFrame{
                 // Get the username and password
                 String username = usernameTextField.getText();
                 String password = new String(passwordField.getPassword());
-                int userID;
-                String type;
 
-                if (username.isEmpty() || password.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Username or password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+                if (!ValidateData.ValidateUsername(username) || !ValidateData.ValidatePassword(password)) {
                     return;
                 }
 
@@ -73,8 +71,8 @@ public class LoginWindow extends JFrame{
 
                 try {
                     // Read the response from the server (type to know which dashboard should be created and userID to know the user's ID)
-                    userID = Integer.parseInt(ReadFromServer.readLine());
-                    type = ReadFromServer.readLine();
+                    int userID = Integer.parseInt(ReadFromServer.readLine());
+                    String type = ReadFromServer.readLine();
                     System.out.println(type + " ID: " + userID);
 
                     if (userID > 0) {
