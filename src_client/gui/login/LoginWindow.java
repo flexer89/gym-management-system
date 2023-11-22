@@ -86,15 +86,15 @@ public class LoginWindow extends JFrame{
                         switch (type) {
                             case "admin":
                                 System.out.println("Admin dashboard opened");
-                                AdminDashboard adminDashboard = new AdminDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow);
+                                new AdminDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow);
                                 break;
                             case "client":
                                 System.out.println("Client dashboard opened");
-                                ClientDashboard clientDashboard = new ClientDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow, userID);
+                                new ClientDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow, userID);
                                 break;
                             case "trainer":
                                 System.out.println("Trainer dashboard opened");
-                                TrainerDashboard trainerDashboard = new TrainerDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow, userID);
+                                new TrainerDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow, userID);
                                 break;
                             default:
                                 System.out.println("Unhandled type");

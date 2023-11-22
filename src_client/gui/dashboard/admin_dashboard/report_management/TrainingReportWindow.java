@@ -172,7 +172,7 @@ public class TrainingReportWindow extends JFrame {
                 trainerId = trainerId.isEmpty() ? "0" : trainerId;
 
                 // Send the message to the server
-                message.sendTrainingReportMessage(SendToServer, name + "," + fromDate + "," + toDate + "," + fromHour + "," + toHour + "," + capacity + "," + room + "," + trainerId);
+                message.sendTrainingReportMessage(SendToServer, name + "," + fromDate + "," + toDate + "," + fromHour + "," + toHour + "," + capacity + "," + room + "," + trainerId + "," + "0");
 
                 // Clear the report table
                 reportTableModel.setRowCount(0);

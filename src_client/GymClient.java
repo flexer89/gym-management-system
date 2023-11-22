@@ -19,6 +19,6 @@ public class GymClient {
         Message message = new Message();
 
         // Create the login/register window
-        LoginRegisterWindow loginRegisterWindow = new LoginRegisterWindow(message, ReadFromServer, SendToServer, clientSocket);
+        new LoginRegisterWindow(message, ReadFromServer, SendToServer, clientSocket);
     }
 }

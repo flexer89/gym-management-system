@@ -20,6 +20,6 @@ public class TrainingEntranceManager {
 
         // Create the training entrance window
         int roomID = 1;
-        TrainingEntranceWindow trainingEntranceWindow = new TrainingEntranceWindow(message, ReadFromServer, SendToServer, clientSocket, roomID);
+        new TrainingEntranceWindow(message, ReadFromServer, SendToServer, clientSocket, roomID);
     }
 }

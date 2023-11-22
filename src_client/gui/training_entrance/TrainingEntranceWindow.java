@@ -23,9 +23,7 @@ import java.awt.event.ActionListener;
 import utils.Message;
 
 public class TrainingEntranceWindow extends JFrame{
-    private int roomID;
     public TrainingEntranceWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, Socket clientSocket, int roomID) {
-        this.roomID = roomID;
         // Create the window
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(400,300);
