@@ -144,7 +144,7 @@ public class ClientDashboard extends JFrame{
         // Add event listener for time spent report button
         timeSpentReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new TimeSpentReportWindow(message, ReadFromServer, SendToServer);
+                new TimeSpentReportWindow(message, ReadFromServer, SendToServer, userID);
             }
         });
 

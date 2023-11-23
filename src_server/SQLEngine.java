@@ -652,4 +652,57 @@ public class SQLEngine {
         }
        
     }
+
+    public boolean reserveTraining(int userID, int trainingID) throws SQLException {
+        // check if client has a valid membership card
+        String query = "SELECT * FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = " + userID + " AND expiration_date > CURDATE()";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            // check if client has already reserved this training
+            query = "SELECT * FROM reservation WHERE client_id = " + userID + " AND training_id = " + trainingID;
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                return false;
+            }
+
+            // check if there is still space for this training
+            query = "SELECT COUNT(*) AS current_reservations, capacity FROM reservation JOIN training ON training.id = reservation.training_id WHERE training_id = " + trainingID;
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                int currentReservations = resultSet.getInt("current_reservations");
+                int capacity = resultSet.getInt("capacity");
+                if (currentReservations < capacity) {
+                    query = "INSERT INTO reservation (client_id, training_id) VALUES (" + userID + ", " + trainingID + ")";
+                    int count = statement.executeUpdate(query);
+                    if (count > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public String timeSpentReport(LocalDate entranceFromDate, LocalDate entranceToDate, LocalTime entranceFromHour,
+            LocalTime entranceToHour, LocalDate exitFromDate, LocalDate exitToDate, LocalTime exitFromHour,
+            LocalTime exitToHour, int userID) throws SQLException {
+        String query = "SELECT * FROM gym_visits WHERE client_id = " + userID + " AND entrance_date BETWEEN '" + entranceFromDate + "' AND '" + entranceToDate + "' AND entrance_time BETWEEN '" + entranceFromHour + "' AND '" + entranceToHour + "' AND exit_date BETWEEN '" + exitFromDate + "' AND '" + exitToDate + "' AND exit_time BETWEEN '" + exitFromHour + "' AND '" + exitToHour + "'";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        String report = "";
+
+        while (resultSet.next()) {
+            // Calculate time spent (hh:mm)
+            LocalTime entranceTime = resultSet.getTime("entrance_time").toLocalTime();
+            LocalTime exitTime = resultSet.getTime("exit_time").toLocalTime();
+            int hours = exitTime.getHour() - entranceTime.getHour();
+            int minutes = exitTime.getMinute() - entranceTime.getMinute();
+            String timeSpent = hours + ":" + minutes;
+
+            report += resultSet.getInt("id") + "," + resultSet.getDate("entrance_date") + "," + resultSet.getTime("entrance_time") + "," + resultSet.getDate("exit_date") + "," + resultSet.getTime("exit_time") + "," + timeSpent + "///";
+        }
+        return report;
+    }
 }
