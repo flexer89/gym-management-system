@@ -1,6 +1,8 @@
 package gui.dashboard.admin_dashboard.employee_management;
 
 import utils.Message;
+import utils.ValidateData;
+
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -147,33 +149,14 @@ public class AddEmployeeWindow extends JFrame {
                 String email = emailField.getText();
                 String login = loginField.getText();
 
-                // Validate the input
-                try {
-                    LocalDate.parse(dateOfBirth);
+                if (name.isEmpty() || surname.isEmpty() || position.isEmpty() || dateOfBirth.isEmpty() || phone.isEmpty()
+                        || email.isEmpty() || login.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill in all the fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                    if (!position.equals("admin") && !position.equals("trainer")) {
-                        throw new IllegalArgumentException("Position must be either 'admin' or 'trainer'");
-                    }
-
-                    if (login.length() > 255) {
-                        throw new IllegalArgumentException("Username is not valid");
-                    }
-
-                    if (!email.matches("^(.+)@(\\S+)$")) {
-                        throw new IllegalArgumentException("Email is not valid");
-                    }
-                    if (!phone.matches("\\d{9}")) {
-                        throw new IllegalArgumentException("Phone number should only contain 9 digits");
-                    }
-
-                    if (name.isEmpty() || surname.isEmpty() || position.isEmpty() || dateOfBirth.isEmpty() || phone.isEmpty()
-                            || email.isEmpty() || login.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Please fill in all the fields!", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                } catch (IllegalArgumentException e2) {
-                    JOptionPane.showMessageDialog(null, "Error registering employee: " + e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                if (!ValidateData.ValidateUsername(login) || !ValidateData.validateName(name) || !ValidateData.validateSurname(surname) || !ValidateData.ValidateDate(dateOfBirth) || !ValidateData.ValidateDate(dateOfEmployment) || !ValidateData.validatePhoneNumber(phone) || !ValidateData.validateMail(email) || !ValidateData.validatePosition(position)) {
+                    return;
                 }
 
                 // Send the data to the server
@@ -188,8 +171,7 @@ public class AddEmployeeWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Error adding Employee!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

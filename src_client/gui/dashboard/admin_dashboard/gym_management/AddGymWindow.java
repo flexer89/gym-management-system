@@ -1,6 +1,8 @@
 package gui.dashboard.admin_dashboard.gym_management;
 
 import utils.Message;
+import utils.ValidateData;
+
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -120,35 +122,15 @@ public class AddGymWindow extends JFrame {
                 String email = emailField.getText();
 
                 // Validate the input
-                // TODO
-                if (name.isEmpty() || name.length() > 255) {
-                    throw new IllegalArgumentException("Name is not valid");
-                }
-                
-                if (address.isEmpty() || address.length() > 255) {
-                    throw new IllegalArgumentException("Address is not valid");
-                }
-                
-                if (!postalCode.matches("\\d{2}-\\d{3}")) {
-                    throw new IllegalArgumentException("Postal code is not valid");
-                }
-                
-                if (city.isEmpty() || city.length() > 255) {
-                    throw new IllegalArgumentException("City is not valid");
-                }
-                
-                if (!phone.matches("\\d{9}")) {
-                    throw new IllegalArgumentException("Phone number should only contain 9 digits");
-                }
-                
-                if (!email.matches("^(.+)@(\\S+)$")) {
-                    throw new IllegalArgumentException("Email is not valid");
-                }
-                
-                // Validate the input
                 if (name.isEmpty() || address.isEmpty() || postalCode.isEmpty() || city.isEmpty() || phone.isEmpty()
                         || email.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // validate data
+                if (!ValidateData.validateMail(email) || !ValidateData.validatePhoneNumber(phone) || !ValidateData.ValidatePostalCode(postalCode) || !ValidateData.validateName(name) || !ValidateData.validateName(city)) {
+                    JOptionPane.showMessageDialog(null, "Please fill in all fields correctly.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 // Send the data to the server
@@ -164,8 +146,7 @@ public class AddGymWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Error adding gym!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

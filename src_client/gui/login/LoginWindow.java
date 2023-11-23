@@ -19,6 +19,7 @@ import gui.dashboard.AdminDashboard;
 import gui.dashboard.ClientDashboard;
 import gui.dashboard.TrainerDashboard;
 import utils.Message;
+import utils.ValidateData;
 
 public class LoginWindow extends JFrame{
     public LoginWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow) {
@@ -57,15 +58,10 @@ public class LoginWindow extends JFrame{
                 // Get the username and password
                 String username = usernameTextField.getText();
                 String password = new String(passwordField.getPassword());
-                int userID;
-                String type;
 
-                //TODO figure out best way to handle this
-                if (username.isEmpty() || password.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Username or password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-                    throw new IllegalArgumentException("Username or password cannot be empty");
+                if (!ValidateData.ValidateUsername(username) || !ValidateData.ValidatePassword(password)) {
+                    return;
                 }
-
 
                 // Send the username and password to the server
                 message.sendLoginMessage(SendToServer, username + "," + password);
@@ -75,8 +71,8 @@ public class LoginWindow extends JFrame{
 
                 try {
                     // Read the response from the server (type to know which dashboard should be created and userID to know the user's ID)
-                    userID = Integer.parseInt(ReadFromServer.readLine());
-                    type = ReadFromServer.readLine();
+                    int userID = Integer.parseInt(ReadFromServer.readLine());
+                    String type = ReadFromServer.readLine();
                     System.out.println(type + " ID: " + userID);
 
                     if (userID > 0) {
@@ -109,7 +105,7 @@ public class LoginWindow extends JFrame{
                 catch (IOException e1) 
                 {
                     JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + e1.getMessage() + utils.Color.ANSI_RESET);
                 }
             }
         });

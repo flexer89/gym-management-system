@@ -120,7 +120,6 @@ class ClientHandler implements Callable<String> {
                         System.out.println("Unknown command: " + command);
                         break;
                 }
-                //TODO how to implement this lol
                 if (commandType == CommandType.SHUTDOWN) {
                     break;
                 }
@@ -131,10 +130,8 @@ class ClientHandler implements Callable<String> {
             SendToClient.close();
             clientSocket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(utils.Color.ANSI_RED + "Exception in client handler: " + e.getMessage() + utils.Color.ANSI_RESET);
         }
-
         return "Task completed";
     }
-
 }

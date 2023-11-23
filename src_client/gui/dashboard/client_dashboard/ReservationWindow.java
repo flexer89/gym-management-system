@@ -12,15 +12,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import utils.Message;
-import utils.ValidateData;
 
 public class ReservationWindow extends JFrame {
     private JPanel mainPanel;
@@ -42,16 +39,16 @@ public class ReservationWindow extends JFrame {
         constraints.insets = new Insets(5, 5, 5, 5);
 
         // Create the training report panel
-        JPanel trainingReportPanel = new JPanel();
-        trainingReportPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Reservation"));
-        trainingReportPanel.setLayout(new GridLayout(2, 4));
+        JPanel reservationPanel = new JPanel();
+        reservationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Reservation"));
+        reservationPanel.setLayout(new GridLayout(2, 4));
 
-        // Add the "Generate Report" button
+        // Add reserve and load buttons
         reserveButton = new JButton("Reserve");
         loadButton = new JButton("Load");
         mainPanel.add(loadButton); 
         mainPanel.add(reserveButton);
-        mainPanel.add(trainingReportPanel);
+        mainPanel.add(reservationPanel);
 
         // Add the report table
         reportTableModel = new DefaultTableModel(new String[]{"ID", "Name", "Date", "Start Time", "End Time", "Current Reservations", "Room", "Trainer Name", "Gym Location"}, 0);
@@ -95,7 +92,7 @@ public class ReservationWindow extends JFrame {
                         reportTableModel.addRow(reportLineParts);
                     }
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import gui.dashboard.client_dashboard.*;
 
 import gui.login.LoginRegisterWindow;
-import utils.Message;
+import utils.*;
 
 public class ClientDashboard extends JFrame{
     public ClientDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow, int userID) {
@@ -112,7 +112,7 @@ public class ClientDashboard extends JFrame{
         logoutButton.setForeground(new Color(255, 255, 255));
         logoutButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        // Add the reports panel, gym management panel, employee management panel, and logout button to the content panel
+        // Add panels to the content panel
         contentPanel.add(reportsPanel);
         contentPanel.add(generalClientManagementButton);
 
@@ -176,8 +176,7 @@ public class ClientDashboard extends JFrame{
                 try {
                     new ProfileWindow(message, ReadFromServer, SendToServer, userID);
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error creating profile window." + utils.Color.ANSI_RESET);
                 }
             }
         });

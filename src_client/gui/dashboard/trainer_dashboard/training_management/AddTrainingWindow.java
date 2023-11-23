@@ -157,8 +157,7 @@ public class AddTrainingWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Error adding Training!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

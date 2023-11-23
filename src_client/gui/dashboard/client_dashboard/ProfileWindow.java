@@ -36,7 +36,7 @@ public class ProfileWindow extends JFrame {
         // Create the main window
         this.setSize(400, 600);
         this.setVisible(true);
-        this.setTitle("My Profile");
+        this.setTitle("Gym Management System | My Profile");
 
         // Create the main panel
         JPanel mainPanel = new JPanel(new GridLayout(2,1));
@@ -106,6 +106,5 @@ public class ProfileWindow extends JFrame {
         mainPanel.add(passwordResetPanel);
 
         this.add(mainPanel);
-
     }
 }

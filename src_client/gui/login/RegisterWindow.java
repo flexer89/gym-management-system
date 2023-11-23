@@ -15,10 +15,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-
 import utils.Message;
+import utils.ValidateData;
 
 public class RegisterWindow extends JFrame{
     public RegisterWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer) {
@@ -106,36 +104,17 @@ public class RegisterWindow extends JFrame{
 
                 int userID;
 
-                try {
-                    LocalDate.parse(dateOfBirth);
-
-                    // TODO: FINETUNE IT AFTER ADDING HASHING 
-                    if (password.isEmpty() || password.length() > 255) {
-                        throw new IllegalArgumentException("Password is not valid");
-                    }
-
-                    if (username.isEmpty() || username.length() > 255) {
-                        throw new IllegalArgumentException("Username is not valid");
-                    }
-
-                    if (username.isEmpty() || !email.matches("^(.+)@(\\S+)$")) {
-                        throw new IllegalArgumentException("Email is not valid");
-                    }
-                    if (username.isEmpty() || !phone.matches("\\d{9}")) {
-                        throw new IllegalArgumentException("Phone number should only contain 9 digits");
-                    }
-
-                    // Send the username and password to the server
-                    message.sendRegisterMessage(SendToServer, username + "," + password + "," + name + "," + surname + "," + dateOfBirth + "," + phone + "," + email);
-                } catch (DateTimeParseException e2) {
-                    JOptionPane.showMessageDialog(null, "Error registering account!", "Invalid birth date!", JOptionPane.ERROR_MESSAGE);
-                    e2.printStackTrace();
-                } catch (IllegalArgumentException e3) {
-                    JOptionPane.showMessageDialog(null, "Error registering account!", e3.getMessage(), JOptionPane.ERROR_MESSAGE);
-                    e3.printStackTrace();
+                if (name.isEmpty() || username.isEmpty() || password.isEmpty() || surname.isEmpty() || dateOfBirth.isEmpty() || phone.isEmpty() || email.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Error registering account!", "Fill all fields!", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
 
+                if (!ValidateData.validateMail(email) || !ValidateData.validatePhoneNumber(phone) || !ValidateData.validateName(name) || !ValidateData.validateName(surname)) {
+                    return;
+                }
 
+                // Send the username and password to the server
+                message.sendRegisterMessage(SendToServer, username + "," + password + "," + name + "," + surname + "," + dateOfBirth + "," + phone + "," + email);
 
                 // Close the register window
                 dispose();
@@ -148,8 +127,7 @@ public class RegisterWindow extends JFrame{
                         JOptionPane.showMessageDialog(null, "Account registered successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    JOptionPane.showMessageDialog(null, "Error registering account!", "Error", JOptionPane.ERROR_MESSAGE);
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

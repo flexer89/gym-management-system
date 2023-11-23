@@ -118,8 +118,7 @@ public class DeleteEmployeeWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Employee not deleted", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });
@@ -127,8 +126,6 @@ public class DeleteEmployeeWindow extends JFrame {
         // Add action listener to the "Load" button
         loadEmployeeButton.addActionListener(new ActionListener() {    
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Load Gym button clicked");
-
                 // Send the message to the server
                 message.sendLoadEmployeeMessage(SendToServer, "null");
 
@@ -146,7 +143,7 @@ public class DeleteEmployeeWindow extends JFrame {
                         reportTableModel.addRow(reportLineParts);
                     }
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

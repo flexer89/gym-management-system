@@ -164,7 +164,7 @@ public class GymReportWindow extends JFrame {
                         reportTableModel.addRow(reportLineData);
                     }
                 } catch (IOException ex) {
-                    System.out.println("Error getting gym report: " + ex.getMessage());
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
             }
         });

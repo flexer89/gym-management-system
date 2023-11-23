@@ -4,15 +4,23 @@ import javax.swing.JOptionPane;
 
 public class ValidateData {
     public static boolean validateMail(String email) {
-        if (!email.matches("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$") && !email.isEmpty()) {
+        if (!email.matches("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$") && (!email.isEmpty() || email.length() > 255)) {
             JOptionPane.showMessageDialog(null, "Invalid email address!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
     }
 
+    public static boolean validateAddress(String address) {
+        if (!address.matches("^[a-zA-Z0-9 ]+$") && (!address.isEmpty() || address.length() > 255))  {
+            JOptionPane.showMessageDialog(null, "Invalid address!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
     public static boolean validateName(String name) {
-        if (!name.matches("^[a-zA-Z]+$") && !name.isEmpty()) {
+        if (!name.matches("^[a-zA-Z]+$") && (!name.isEmpty() || name.length() > 255)) {
             JOptionPane.showMessageDialog(null, "Invalid name!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -21,7 +29,7 @@ public class ValidateData {
 
     public static boolean validateSurname(String surname)
     {
-        if (!surname.matches("^[a-zA-Z]+$") && !surname.isEmpty()) {
+        if (!surname.matches("^[a-zA-Z]+$") && (!surname.isEmpty() || surname.length() > 255)) {
             JOptionPane.showMessageDialog(null, "Invalid surname!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -87,7 +95,7 @@ public class ValidateData {
     }
 
     public static boolean ValidateCity(String city) {
-        if (!city.matches("^[a-zA-Z]+$") && !city.isEmpty()) {
+        if (!city.matches("^[a-zA-Z]+$") && (!city.isEmpty() || city.length() > 255)) {
             JOptionPane.showMessageDialog(null, "Invalid city!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -121,7 +129,7 @@ public class ValidateData {
     }
 
     public static boolean ValidateCapacity(String capacity) {
-        if (!capacity.matches("\\d+") && !capacity.isEmpty()) {
+        if (!capacity.matches("\\d+") && (!capacity.isEmpty() || capacity.length() > 100)) {
             JOptionPane.showMessageDialog(null, "Invalid capacity!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -161,7 +169,7 @@ public class ValidateData {
     }
 
     public static boolean ValidateRoom(String room) {
-        if (!room.matches("\\d+") && !room.isEmpty()) {
+        if (!room.matches("\\d+") && (!room.isEmpty() || room.length() > 100)) {
             JOptionPane.showMessageDialog(null, "Invalid room!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -169,8 +177,32 @@ public class ValidateData {
     }
 
     public static boolean ValidateGymID(String gymID) {
-        if (!gymID.matches("\\d+") && !gymID.isEmpty()) {
+        if (!gymID.matches("\\d+") && (!gymID.isEmpty() || gymID.length() > 100)) {
             JOptionPane.showMessageDialog(null, "Invalid gym ID!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean ValidatePassword(String password) {
+        if (password.length() > 255) {
+            JOptionPane.showMessageDialog(null, "Password is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean ValidateUsername(String username) {
+        if (username.length() > 255) {
+            JOptionPane.showMessageDialog(null, "Username is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean ValidatePosition(String position) {
+        if (!position.equals("admin") && !position.equals("trainer") && !position.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Position must be admin or trainer", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
