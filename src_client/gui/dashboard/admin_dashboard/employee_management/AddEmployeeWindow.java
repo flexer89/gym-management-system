@@ -155,7 +155,7 @@ public class AddEmployeeWindow extends JFrame {
                     return;
                 }
 
-                if (!ValidateData.ValidateUsername(login) || !ValidateData.validateName(name) || !ValidateData.validateSurname(surname) || !ValidateData.ValidateDate(dateOfBirth) || !ValidateData.ValidateDate(dateOfEmployment) || !ValidateData.validatePhoneNumber(phone) || !ValidateData.validateMail(email) || !ValidateData.validatePosition(position)) {
+                if (!ValidateData.ValidateUsername(login) || !ValidateData.validateName(name) || !ValidateData.validateSurname(surname) || !ValidateData.ValidateDate(dateOfBirth) || !ValidateData.ValidateDate(dateOfEmployment) || !ValidateData.validatePhoneNumber(phone) || !ValidateData.validateMail(email) || !ValidateData.ValidatePosition(position)) {
                     return;
                 }
 
