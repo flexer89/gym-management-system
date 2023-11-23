@@ -91,4 +91,12 @@ public class Message {
     public void sendLoadTrainingsMessage(PrintWriter writer, String message) {
         writer.println("LOAD_TRAININGS:" + message);
     }
+
+    public void sendReserveTrainingMessage(PrintWriter writer, String message) {
+        writer.println("RESERVE_TRAINING:" + message);
+    }
+
+    public void sendTimeSpentReportMessage(PrintWriter writer, String message) {
+        writer.println("TIME_SPENT_REPORT:" + message);
+    }
 }

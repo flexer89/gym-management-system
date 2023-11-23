@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -68,7 +69,34 @@ public class ReservationWindow extends JFrame {
         // Add action listener to the "Generate Report" button
         reserveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                // Get the selected row
+                int selectedRow = reportTable.getSelectedRow();
 
+                // Check if a row is selected
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Please select a row", "Success", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Get the training ID
+                String trainingID = reportTable.getValueAt(selectedRow, 0).toString();
+
+                // Send the message to the server
+                message.sendReserveTrainingMessage(SendToServer, userIDString + "," + trainingID);
+
+                // Read the response from the server
+                try {
+                    String response = ReadFromServer.readLine();
+
+                    // Check if the reservation was successful
+                    if (response.equals("Reservation successful.")) {
+                        JOptionPane.showMessageDialog(null, response, "Successfully reserved training", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, response, "Error reserving training", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (IOException ex) {
+                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                }
             }
         });
 
