@@ -99,4 +99,8 @@ public class Message {
     public void sendTimeSpentReportMessage(PrintWriter writer, String message) {
         writer.println("TIME_SPENT_REPORT:" + message);
     }
+
+    public void sendChangePasswordMessage(PrintWriter writer, String message) {
+        writer.println("CHANGE_PASSWORD:" + message);
+    }
 }

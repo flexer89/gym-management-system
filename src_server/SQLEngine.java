@@ -145,6 +145,35 @@ public class SQLEngine {
         throw new SQLException("Invalid login credentials");
     }
     
+    public boolean changePassword(String userID, String newPassword, String saltString, String userType) {   
+        String table;
+        if (userType.equals("client")) {
+            table = "client_credentials";
+        }
+        else if (userType.equals("employee")) {
+            table = "employee_credentials";
+        }
+        else {
+            throw new RuntimeException("Invalid user type");
+        }
+    
+        String query = "UPDATE " + table + " SET password = ?, salt = ? WHERE id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, newPassword);
+            pstmt.setString(2, saltString);
+            pstmt.setString(3, userID);
+            int count = pstmt.executeUpdate();
+            if (count == 1) {
+                return true;
+            } else {
+                throw new SQLException("Invalid change happened");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int registerAccount(String username, String password, String salt, String firstName, String lastName, LocalDate birthDate, String phoneNumber, String email ) throws SQLException {
         String insertClientQuery = "INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES (?, ?, ?, ?, ?)";
         String selectClientQuery = "SELECT id FROM client WHERE first_name = ? AND last_name = ? AND date_of_birth = ? AND phone_number = ? AND email = ?";
