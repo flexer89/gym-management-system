@@ -72,7 +72,7 @@ public class Message {
         writer.println("DELETE_EMPLOYEE:" + message);
     }
 
-    public void sendLoadEmployeeMessage(PrintWriter writer, String message) {
+    public void sendloadEmployeesMessage(PrintWriter writer, String message) {
         writer.println("LOAD_EMPLOYEE:" + message);
     }
 

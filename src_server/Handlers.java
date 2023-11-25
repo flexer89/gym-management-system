@@ -371,10 +371,10 @@ public class Handlers {
     }
 
 
-    public void loadEmployee(String data) {
+    public void loadEmployees(String data) {
         System.out.println("Loading employees");
         try {
-            String report = sqlEngine.loadEmployee();
+            String report = sqlEngine.loadEmployees();
             SendToClient.println(report);
         } catch (SQLException e) {
             System.out.println("Error loading employee: " + e.getMessage());

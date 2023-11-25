@@ -102,7 +102,7 @@ class ClientHandler implements Callable<String> {
                         Handlers.deleteEmployee(data);
                         break;
                     case LOAD_EMPLOYEE:
-                        Handlers.loadEmployee(data);
+                        Handlers.loadEmployees(data);
                         break;
                     case GET_CLIENT:
                         Handlers.getClient(data);
