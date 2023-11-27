@@ -97,6 +97,36 @@ public class Handlers {
         }
     }
 
+    public void changePassword(String serverMessage)
+    {
+        String[] registerInfo = serverMessage.split(",");
+        String newPassword = registerInfo[0];
+        String userIDString = registerInfo[1];
+        String userType = registerInfo[2];
+        
+        try {
+            System.out.println("User " + userIDString + " changing password");
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
+            System.out.println("Generated salt: " + salt);
+            String saltString = salt.toString();
+            newPassword = Secure.hashWithSalt(newPassword, saltString);
+            System.out.println("Passwd: " + newPassword + " Salt: " + salt);
+
+            boolean ifChanged = sqlEngine.changePassword(userIDString, newPassword, saltString, userType);
+            if (ifChanged) {
+                System.out.println("Password changed");
+                SendToClient.println("True");
+            } else {
+                System.out.println("Password wasn't changed");
+                SendToClient.println("False");
+            }
+        } catch (Exception e) {
+            System.out.println("Error changing password: " + e.getMessage());
+        }
+
+    }
 
     public void login(String serverMessage)
     {
@@ -371,10 +401,10 @@ public class Handlers {
     }
 
 
-    public void loadEmployee(String data) {
+    public void loadEmployees(String data) {
         System.out.println("Loading employees");
         try {
-            String report = sqlEngine.loadEmployee();
+            String report = sqlEngine.loadEmployees();
             SendToClient.println(report);
         } catch (SQLException e) {
             System.out.println("Error loading employee: " + e.getMessage());

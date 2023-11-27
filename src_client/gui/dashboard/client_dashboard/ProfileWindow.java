@@ -5,16 +5,25 @@ import java.awt.GridLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.SecureRandom;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import utils.Message;
+import utils.Secure;
+import utils.ValidateData;
 
 public class ProfileWindow extends JFrame {
+    private JButton changePasswordButton;
     public ProfileWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, int userID) throws IOException {
         // cast the userID to string
         String userIDString = Integer.toString(userID);
@@ -89,7 +98,29 @@ public class ProfileWindow extends JFrame {
         confirmPasswordPanel.add(confirmPasswordTextField);
 
         // Create Change Password button
-        JButton changePasswordButton = new JButton("Change Password");
+        changePasswordButton = new JButton("Change Password");
+
+        // Add action listener to the button
+        changePasswordButton.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e) 
+            {
+                String newPassword = newPasswordTextField.getText();
+                String confirmPassword = confirmPasswordTextField.getText();
+        
+                try {
+                    if (!newPassword.equals(confirmPassword)) {
+                        throw new Exception("Passwords do not match");
+                    }
+                    System.out.println("New password and confirm password match");
+
+                    message.sendChangePasswordMessage(SendToServer, newPassword + "," + userIDString + "," + "client");
+                    
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         // Add all password reset panels to password reset panel
         passwordResetPanel.add(newPasswordPanel);
