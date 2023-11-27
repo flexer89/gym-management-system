@@ -103,4 +103,12 @@ public class Message {
     public void sendChangePasswordMessage(PrintWriter writer, String message) {
         writer.println("CHANGE_PASSWORD:" + message);
     }
+
+    public void sendUpdateGymMessage(PrintWriter writer, String message) {
+        writer.println("UPDATE_GYM:" + message);
+    }
+
+    public void sendUpdateEmployeeMessage(PrintWriter writer, String message) {
+        writer.println("UPDATE_EMPLOYEE:" + message);
+    }
 }
