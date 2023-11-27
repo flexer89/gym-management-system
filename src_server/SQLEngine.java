@@ -8,7 +8,9 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import utils.Secure;
 
@@ -143,6 +145,35 @@ public class SQLEngine {
         throw new SQLException("Invalid login credentials");
     }
     
+    public boolean changePassword(String userID, String newPassword, String saltString, String userType) {   
+        String table;
+        if (userType.equals("client")) {
+            table = "client_credentials";
+        }
+        else if (userType.equals("employee")) {
+            table = "employee_credentials";
+        }
+        else {
+            throw new RuntimeException("Invalid user type");
+        }
+    
+        String query = "UPDATE " + table + " SET password = ?, salt = ? WHERE id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, newPassword);
+            pstmt.setString(2, saltString);
+            pstmt.setString(3, userID);
+            int count = pstmt.executeUpdate();
+            if (count == 1) {
+                return true;
+            } else {
+                throw new SQLException("Invalid change happened");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int registerAccount(String username, String password, String salt, String firstName, String lastName, LocalDate birthDate, String phoneNumber, String email ) throws SQLException {
         String insertClientQuery = "INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES (?, ?, ?, ?, ?)";
         String selectClientQuery = "SELECT id FROM client WHERE first_name = ? AND last_name = ? AND date_of_birth = ? AND phone_number = ? AND email = ?";
@@ -189,57 +220,67 @@ public class SQLEngine {
         }
     }
 
+    //TODO: TEST IT FULLY
     public boolean canEnterTraining(int clientID, int roomID) throws SQLException {
-        String query = "SELECT training.date, training.hour FROM reservation JOIN training ON training.id = reservation.training_id WHERE client_id = " + clientID + " and room = " + roomID;
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
-
+        String query = "SELECT training.date, training.hour FROM reservation JOIN training ON training.id = reservation.training_id WHERE client_id = ? and room = ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, clientID);
+        pstmt.setInt(2, roomID);
+        ResultSet resultSet = pstmt.executeQuery();
+    
         // Check if client has a reservation for this room
         if (resultSet.next()) {
             LocalDate trainingDate = resultSet.getDate("date").toLocalDate();
             LocalTime trainingHour = resultSet.getTime("hour").toLocalTime();
-
+    
             // Check if training is today
             if (trainingDate.equals(LocalDate.now())) {
                 // Check if 10 minutes before training
                 if (LocalTime.now().isBefore(trainingHour) && LocalTime.now().isAfter(trainingHour.minusMinutes(10))) {
                     return true;
                 }
-                else {
-                    return false;
-                }
-
             }
         }
         return false;
-
     }
 
     public boolean canEnterGym(int card_number, int gymID) throws SQLException {
-        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.card_number = " + card_number;
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.card_number = ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, card_number);
+        ResultSet resultSet = pstmt.executeQuery();
+    
         if (resultSet.next()) {
             LocalDate expirationDate = resultSet.getDate("expiration_date").toLocalDate();
             boolean allGymAccess = resultSet.getBoolean("all_gyms_access");
             int originalGymID = resultSet.getInt("original_gym_id");
             int clientID = resultSet.getInt("client_id");
-            System.out.println(expirationDate + " " + allGymAccess + " " + originalGymID);
-
+    
             // Format time
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             LocalTime now = LocalTime.now();
             String formattedTime = formatter.format(now);
-
+    
             if ((allGymAccess || originalGymID == gymID) && expirationDate.isAfter(LocalDate.now())) {
                 // Check if client entered already
-                query = "SELECT * FROM gym_visits WHERE client_id = " + clientID + " AND gym_id = " + gymID + " AND exit_date IS NULL";
-                resultSet = statement.executeQuery(query);
+                query = "SELECT * FROM gym_visits WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, clientID);
+                pstmt.setInt(2, gymID);
+                resultSet = pstmt.executeQuery();
+    
                 if (resultSet.next()) {
                     return false;
                 }
-                query = "INSERT INTO gym_visits (client_id, gym_id, entrance_date, entrance_time) VALUES (" + clientID + ", " + gymID + ", '" + LocalDate.now() + "', '" + formattedTime + "')";
-                statement.executeUpdate(query);
+    
+                query = "INSERT INTO gym_visits (client_id, gym_id, entrance_date, entrance_time) VALUES (?, ?, ?, ?)";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, clientID);
+                pstmt.setInt(2, gymID);
+                pstmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+                pstmt.setString(4, formattedTime);
+                pstmt.executeUpdate();
+    
                 return true;
             }
             else {
@@ -248,39 +289,50 @@ public class SQLEngine {
         }
         return false;
     }
+    
     public boolean canExitGym(int card_number, int gymID) throws SQLException {
-        String query = "SELECT client_id FROM membership_card WHERE card_number = " + card_number;
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
-
+        String query = "SELECT client_id FROM membership_card WHERE card_number = ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, card_number);
+        ResultSet resultSet = pstmt.executeQuery();
+    
         if (resultSet.next()) {
             int clientID = resultSet.getInt("client_id");
-            query = "SELECT * FROM gym_visits WHERE client_id = " + clientID + " AND gym_id = " + gymID + " AND exit_date IS NULL";
-            resultSet = statement.executeQuery(query);
+            query = "SELECT * FROM gym_visits WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, clientID);
+            pstmt.setInt(2, gymID);
+            resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
                 // Format time
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
                 LocalTime now = LocalTime.now();
                 String formattedTime = formatter.format(now);
-
-                query = "UPDATE gym_visits SET exit_date = '" + LocalDate.now() + "', exit_time = '" + formattedTime + "' WHERE client_id = " + clientID + " AND gym_id = " + gymID + " AND exit_date IS NULL";
-                statement.executeUpdate(query);
+    
+                query = "UPDATE gym_visits SET exit_date = ?, exit_time = ? WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
+                pstmt.setString(2, formattedTime);
+                pstmt.setInt(3, clientID);
+                pstmt.setInt(4, gymID);
+                pstmt.executeUpdate();
                 return true;
             }
         }
         return false;
     }
 
-    public boolean addGym(String name, String address, String postalCode, String city, String phone, String email) throws SQLException{
-        String query = "INSERT INTO gym (name, address, postal_code, city, phone, email) VALUES ('" + name + "', '" + address + "', '" + postalCode + "', '" + city + "', '" + phone + "', '" + email + "')";
-        Statement statement = connection.createStatement();
-        int count = statement.executeUpdate(query);
-        if (count > 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    public boolean addGym(String name, String address, String postalCode, String city, String phone, String email) throws SQLException {
+        String query = "INSERT INTO gym (name, address, postal_code, city, phone, email) VALUES (?, ?, ?, ?, ?, ?)";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setString(1, name);
+        pstmt.setString(2, address);
+        pstmt.setString(3, postalCode);
+        pstmt.setString(4, city);
+        pstmt.setString(5, phone);
+        pstmt.setString(6, email);
+        int count = pstmt.executeUpdate();
+        return count > 0;
     }
 
     public boolean addEmployee(String name, String surname, String position, LocalDate dateOfBirth, LocalDate dateOfEmployment, String phone,
@@ -332,162 +384,273 @@ public class SQLEngine {
         return false;
     }
 
-    public String paymentReport(LocalDate fromDate, LocalDate toDate, int minimumPayment, int maximumPayment,
-            String paymentMethod, int clientID) throws SQLException{
-        // Select payments between fromDate and toDate and between minimumPayment and maximumPayment
-        String query = "SELECT * FROM payment WHERE payment_date BETWEEN '" + fromDate + "' AND '" + toDate + "' AND amount BETWEEN " + minimumPayment + " AND " + maximumPayment;
+    public String paymentReport(LocalDate fromDate, LocalDate toDate, int minimumPayment, int maximumPayment, String paymentMethod, int clientID)
+        throws SQLException {
+        StringBuilder query = new StringBuilder("SELECT * FROM payment WHERE payment_date BETWEEN ? AND ? AND amount BETWEEN ? AND ?");
 
         if (!paymentMethod.equals("all")) {
-            query += " AND payment_method = '" + paymentMethod + "'";
+            query.append(" AND payment_method = ?");
         }
 
         if (clientID != 0) {
-            query += " AND client_id = " + clientID;
+        query.append(" AND client_id = ?");
         }
 
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
+        PreparedStatement pstmt = connection.prepareStatement(query.toString());
+        pstmt.setDate(1, java.sql.Date.valueOf(fromDate));
+        pstmt.setDate(2, java.sql.Date.valueOf(toDate));
+        pstmt.setInt(3, minimumPayment);
+        pstmt.setInt(4, maximumPayment);
 
-        String report = "";
+        int index = 5;
+        if (!paymentMethod.equals("all")) {
+            pstmt.setString(index++, paymentMethod);
+        }
+
+        if (clientID != 0) {
+            pstmt.setInt(index, clientID);
+        }
+
+        ResultSet resultSet = pstmt.executeQuery();
+
+        StringBuilder report = new StringBuilder();
         while (resultSet.next()) {
-            report += resultSet.getInt("id") + "," + resultSet.getDate("payment_date") + "," + resultSet.getInt("amount") + "," + resultSet.getString("payment_method") + "," + resultSet.getInt("client_id") + "///";
+            report.append(resultSet.getInt("id")).append(",")
+            .append(resultSet.getDate("payment_date")).append(",")
+            .append(resultSet.getInt("amount")).append(",")
+            .append(resultSet.getString("payment_method")).append(",")
+            .append(resultSet.getInt("client_id")).append("///");
         }
-        return report;
+        return report.toString();
     }
 
     public String gymReport(String name, String address, String postalCode, String city, String phoneNumber,
             String email) throws SQLException {
-        String query = "SELECT * FROM gym WHERE 1=1";
+        StringBuilder query = new StringBuilder("SELECT * FROM gym WHERE 1=1");
+        /*
+        The `1=1` is a common SQL trick. It's used here to simplify the construction of the SQL query.
+
+        In SQL, `1=1` is always true for every row. So, it doesn't filter out any rows, and doesn't affect the results of the query.
+
+        The reason it's used here is to avoid having to check if each subsequent condition is the first condition in the WHERE clause 
+        (and thus should be prefixed with `WHERE` instead of `AND`). By starting with `WHERE 1=1`, you can safely append all subsequent 
+        conditions with `AND`, knowing that there's always a valid condition before.
+        */
+        List<String> parameters = new ArrayList<>();
 
         if (!name.equals("%")) {
-            query += " AND name = '" + name + "'";
+            query.append(" AND name = ?");
+            parameters.add(name);
         }
         if (!address.equals("%")) {
-            query += " AND address = '" + address + "'";
+            query.append(" AND address = ?");
+            parameters.add(address);
         }
         if (!postalCode.equals("%")) {
-            query += " AND postal_code = '" + postalCode + "'";
+            query.append(" AND postal_code = ?");
+            parameters.add(postalCode);
         }
         if (!city.equals("%")) {
-            query += " AND city = '" + city + "'";
+            query.append(" AND city = ?");
+            parameters.add(city);
         }
         if (!phoneNumber.equals("%")) {
-            query += " AND phone = '" + phoneNumber + "'";
+            query.append(" AND phone = ?");
+            parameters.add(phoneNumber);
         }
         if (!email.equals("%")) {
-            query += " AND email = '" + email + "'";
+            query.append(" AND email = ?");
+            parameters.add(email);
         }
 
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
+        PreparedStatement pstmt = connection.prepareStatement(query.toString());
+        for (int i = 0; i < parameters.size(); i++) {
+            pstmt.setString(i + 1, parameters.get(i));
+        }
 
-        String report = "";
+        ResultSet resultSet = pstmt.executeQuery();
+
+        StringBuilder report = new StringBuilder();
         while (resultSet.next()) {
-            report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getString("address") + "," + resultSet.getString("postal_code") + "," + resultSet.getString("city") + "," + resultSet.getString("phone") + "," + resultSet.getString("email") + "///";
+            report.append(resultSet.getInt("id")).append(",")
+                    .append(resultSet.getString("name")).append(",")
+                    .append(resultSet.getString("address")).append(",")
+                    .append(resultSet.getString("postal_code")).append(",")
+                    .append(resultSet.getString("city")).append(",")
+                    .append(resultSet.getString("phone")).append(",")
+                    .append(resultSet.getString("email")).append("///");
         }
-        return report;
+        return report.toString();
     }
 
+    //todo: MEMBERSHIPCARD ID IS FUCKED
     public String clientReport(String name, String surname, LocalDate fromDate, LocalDate toDate, String phoneNumber, String email,
-            String membershipCard) throws SQLException {
-        String query = "SELECT * FROM client WHERE date_of_birth BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+        String membershipCard) throws SQLException {
+            StringBuilder query = new StringBuilder("SELECT * FROM client WHERE date_of_birth BETWEEN ? AND ?");
 
-        if (!name.equals("%")) {
-            query += " AND first_name = '" + name + "'";
-        }
-        if (!surname.equals("%")) {
-            query += " AND last_name = '" + surname + "'";
-        }
-        if (!email.equals("%")) {
-            query += " AND email = '" + email + "'";
-        }
-        if (!phoneNumber.equals("%")) {
-            query += " AND phone_number = '" + phoneNumber + "'";
-        }
-        if (!membershipCard.equals("%")) {
-            query += " AND membership_card_id = '" + membershipCard + "'";
-        }
+            List<Object> parameters = new ArrayList<>();
+            parameters.add(fromDate);
+            parameters.add(toDate);
 
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
+            if (!name.equals("%")) {
+                query.append(" AND first_name = ?");
+                parameters.add(name);
+            }
+            if (!surname.equals("%")) {
+                query.append(" AND last_name = ?");
+                parameters.add(surname);
+            }
+            if (!email.equals("%")) {
+                query.append(" AND email = ?");
+                parameters.add(email);
+            }
+            if (!phoneNumber.equals("%")) {
+                query.append(" AND phone_number = ?");
+                parameters.add(phoneNumber);
+            }
+            if (!membershipCard.equals("%")) {
+                query.append(" AND membership_card_id = ?");
+                parameters.add(membershipCard);
+            }
 
-        String report = "";
-        while (resultSet.next()) {
-            report += resultSet.getInt("id") + "," + resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getDate("date_of_birth") + "," + resultSet.getString("phone_number") + "," + resultSet.getString("email") + "," + resultSet.getInt("membership_card_id") + "///";
+            PreparedStatement pstmt = connection.prepareStatement(query.toString());
+            for (int i = 0; i < parameters.size(); i++) {
+                if (parameters.get(i) instanceof LocalDate) {
+                    pstmt.setDate(i + 1, java.sql.Date.valueOf((LocalDate) parameters.get(i)));
+                } else {
+                    pstmt.setString(i + 1, (String) parameters.get(i));
+                }
+            }
+
+            ResultSet resultSet = pstmt.executeQuery();
+
+            StringBuilder report = new StringBuilder();
+            while (resultSet.next()) {
+                report.append(resultSet.getInt("id")).append(",")
+                        .append(resultSet.getString("first_name")).append(",")
+                        .append(resultSet.getString("last_name")).append(",")
+                        .append(resultSet.getDate("date_of_birth")).append(",")
+                        .append(resultSet.getString("phone_number")).append(",")
+                        .append(resultSet.getString("email")).append(",")
+                        .append(resultSet.getInt("membership_card_id")).append("///");
+            }
+            return report.toString();
         }
-        return report;
-    }
-
-
 
 
     public String employeeReport(String name, String surname, LocalDate fromDateBirth, LocalDate toDateBirth,
-            LocalDate fromDateEmployment, LocalDate toDateEmployment, String phoneNumber, String email,
-            String position) throws SQLException{
-        String query = "SELECT * FROM employee WHERE date_of_birth BETWEEN '" + fromDateBirth + "' AND '" + toDateBirth + "' AND date_of_employment BETWEEN '" + fromDateEmployment + "' AND '" + toDateEmployment + "'";
+                                LocalDate fromDateEmployment, LocalDate toDateEmployment, String phoneNumber, String email,
+                                String position) throws SQLException {
+        StringBuilder query = new StringBuilder("SELECT * FROM employee WHERE date_of_birth BETWEEN ? AND ? AND date_of_employment BETWEEN ? AND ?");
+
+        List<Object> parameters = new ArrayList<>();
+        parameters.add(fromDateBirth);
+        parameters.add(toDateBirth);
+        parameters.add(fromDateEmployment);
+        parameters.add(toDateEmployment);
 
         if (!name.equals("%")) {
-            query += " AND first_name = '" + name + "'";
+            query.append(" AND first_name = ?");
+            parameters.add(name);
         }
         if (!surname.equals("%")) {
-            query += " AND last_name = '" + surname + "'";
+            query.append(" AND last_name = ?");
+            parameters.add(surname);
         }
         if (!email.equals("%")) {
-            query += " AND email = '" + email + "'";
+            query.append(" AND email = ?");
+            parameters.add(email);
         }
         if (!phoneNumber.equals("%")) {
-            query += " AND phone_number = '" + phoneNumber + "'";
+            query.append(" AND phone_number = ?");
+            parameters.add(phoneNumber);
         }
         if (!position.equals("all")) {
-            query += " AND position = '" + position + "'";
+            query.append(" AND position = ?");
+            parameters.add(position);
         }
 
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
-            String report = "";
-            while (resultSet.next()) {
-                report += resultSet.getInt("id") + "," + resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getDate("date_of_birth") + "," + resultSet.getDate("date_of_employment") + "," + resultSet.getString("phone_number") + "," + resultSet.getString("email") + "," + resultSet.getString("position") + "///";
+        PreparedStatement pstmt = connection.prepareStatement(query.toString());
+        for (int i = 0; i < parameters.size(); i++) {
+            if (parameters.get(i) instanceof LocalDate) {
+                pstmt.setDate(i + 1, java.sql.Date.valueOf((LocalDate) parameters.get(i)));
+            } else {
+                pstmt.setString(i + 1, (String) parameters.get(i));
             }
-            return report;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
+
+        ResultSet resultSet = pstmt.executeQuery();
+
+        StringBuilder report = new StringBuilder();
+        while (resultSet.next()) {
+            report.append(resultSet.getInt("id")).append(",")
+                    .append(resultSet.getString("first_name")).append(",")
+                    .append(resultSet.getString("last_name")).append(",")
+                    .append(resultSet.getDate("date_of_birth")).append(",")
+                    .append(resultSet.getDate("date_of_employment")).append(",")
+                    .append(resultSet.getString("phone_number")).append(",")
+                    .append(resultSet.getString("email")).append(",")
+                    .append(resultSet.getString("position")).append("///");
+        }
+        return report.toString();
     }
 
+
     public String trainingReport(String name, LocalDate fromDate, LocalDate toDate, LocalTime fromHour, LocalTime toHour,
-            int capacity, int room, int trainerId, int clientID) throws SQLException {
-        String query = "SELECT * FROM training WHERE date BETWEEN '" + fromDate + "' AND '" + toDate + "'" + " AND start_hour BETWEEN '" + fromHour + "' AND '" + toHour + "'";
+                                int capacity, int room, int trainerId, int clientID) throws SQLException {
+        StringBuilder query = new StringBuilder("SELECT * FROM training WHERE date BETWEEN ? AND ? AND start_hour BETWEEN ? AND ?");
+
+        List<Object> parameters = new ArrayList<>();
+        parameters.add(fromDate);
+        parameters.add(toDate);
+        parameters.add(fromHour);
+        parameters.add(toHour);
 
         if (!name.equals("%")) {
-            query += " AND name = '" + name + "'";
+            query.append(" AND name = ?");
+            parameters.add(name);
         }
         if (capacity != 0) {
-            query += " AND capacity = '" + capacity + "'";
+            query.append(" AND capacity = ?");
+            parameters.add(capacity);
         }
         if (room != 0) {
-            query += " AND room = '" + room + "'";
+            query.append(" AND room = ?");
+            parameters.add(room);
         }
         if (trainerId != 0) {
-            query += " AND trainer_id = '" + trainerId + "'";
+            query.append(" AND trainer_id = ?");
+            parameters.add(trainerId);
         }
         if (clientID != 0) {
-            query += " AND id IN (SELECT training_id FROM reservation WHERE client_id = '" + clientID + "')";
+            query.append(" AND id IN (SELECT training_id FROM reservation WHERE client_id = ?)");
+            parameters.add(clientID);
         }
 
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
-            String report = "";
-            while (resultSet.next()) {
-                report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getInt("trainer_id") + "///";
+        PreparedStatement pstmt = connection.prepareStatement(query.toString());
+        for (int i = 0; i < parameters.size(); i++) {
+            if (parameters.get(i) instanceof LocalDate) {
+                pstmt.setDate(i + 1, java.sql.Date.valueOf((LocalDate) parameters.get(i)));
+            } else if (parameters.get(i) instanceof LocalTime) {
+                pstmt.setTime(i + 1, java.sql.Time.valueOf((LocalTime) parameters.get(i)));
+            } else {
+                pstmt.setInt(i + 1, (Integer) parameters.get(i));
             }
-            return report;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
+
+        ResultSet resultSet = pstmt.executeQuery();
+
+        StringBuilder report = new StringBuilder();
+        while (resultSet.next()) {
+            report.append(resultSet.getInt("id")).append(",")
+                    .append(resultSet.getString("name")).append(",")
+                    .append(resultSet.getDate("date")).append(",")
+                    .append(resultSet.getTime("start_hour")).append(",")
+                    .append(resultSet.getInt("capacity")).append(",")
+                    .append(resultSet.getInt("room")).append(",")
+                    .append(resultSet.getInt("trainer_id")).append("///");
+        }
+        return report.toString();
     }
 
     public String loadGym() throws SQLException{
@@ -506,38 +669,65 @@ public class SQLEngine {
         }
     }
 
-    public boolean deleteGym(int gymID) throws SQLException{
-        String query = "DELETE FROM gym WHERE id = " + gymID;
+    public boolean deleteGym(int gymID) throws SQLException {
+        String query = "DELETE FROM gym WHERE id = ?";
         try {
-            Statement statement = connection.createStatement();
-            int count = statement.executeUpdate(query);
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, gymID);
+            int count = pstmt.executeUpdate();
             if (count > 0) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-
-    public boolean deleteEmployee(int employeeID) throws SQLException{ 
-        String query = "DELETE FROM employee_credentials WHERE employee_id = " + employeeID;
+    
+    public boolean deleteEmployee(int employeeID) throws SQLException {
         try {
-            Statement statement = connection.createStatement();
-            int count = statement.executeUpdate(query);
+            // First set the trainer_id in training to -1
+            String query = "UPDATE training SET trainer_id = -1 WHERE trainer_id = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, employeeID);
+            pstmt.executeUpdate();
+            System.out.println("Set trainer_id to -1 in training");
+    
+            // Then set the employee_id in employee_work_time to -1
+            query = "UPDATE employee_work_time SET employee_id = -1 WHERE employee_id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, employeeID);
+            pstmt.executeUpdate();
+            System.out.println("Set employee_id to -1 in employee_work_time");
+    
+            // Now delete the employee credentials
+            query = "DELETE FROM employee_credentials WHERE employee_id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, employeeID);
+            int count = pstmt.executeUpdate();
+            System.out.println("Deleted " + count + " rows from employee_credentials");
+    
             if (count > 0) {
-                query = "DELETE FROM employee_card WHERE employee_id = " + employeeID;
-                count = statement.executeUpdate(query);
+                query = "DELETE FROM employee_card WHERE employee_id = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, employeeID);
+                count = pstmt.executeUpdate();
+                System.out.println("Deleted " + count + " rows from employee_card");
+    
                 if (count > 0) {
-                    query = "DELETE FROM employee WHERE id = " + employeeID;
-                    statement.executeUpdate(query);
+                    query = "DELETE FROM employee WHERE id = ?";
+                    pstmt = connection.prepareStatement(query);
+                    pstmt.setInt(1, employeeID);
+                    count = pstmt.executeUpdate();
+                    System.out.println("Deleted " + count + " rows from employee");
+    
                     return true;
                 }
+                System.out.println("No rows deleted from employee_card");
                 return false;
-            }
-            else {
+            } else {
+                System.out.println("No rows deleted from employee_credentials");
                 return false;
             }
         } catch (SQLException e) {
@@ -545,7 +735,7 @@ public class SQLEngine {
         }
     }
 
-    public String loadEmployee() throws SQLException{
+    public String loadEmployees() throws SQLException{
         String query = "SELECT * FROM employee";
         try {
             Statement statement = connection.createStatement();
@@ -561,12 +751,13 @@ public class SQLEngine {
         }
     }
 
-    public String getClient(int clientID) throws SQLException{
-        String query = "SELECT * FROM client WHERE id = " + clientID;
+    public String getClient(int clientID) throws SQLException {
+        String query = "SELECT * FROM client WHERE id = ?";
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, clientID);
+            ResultSet resultSet = pstmt.executeQuery();
+    
             String report = "";
             if (resultSet.next()) {
                 report += resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getDate("date_of_birth") + "," + resultSet.getString("phone_number") + "," + resultSet.getString("email");
@@ -578,11 +769,12 @@ public class SQLEngine {
     }
 
     public String getTrainer(int trainerID) throws SQLException {
-        String query = "SELECT * FROM employee WHERE id = " + trainerID;
+        String query = "SELECT * FROM employee WHERE id = ?";
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, trainerID);
+            ResultSet resultSet = pstmt.executeQuery();
+    
             String report = "";
             if (resultSet.next()) {
                 report += resultSet.getString("first_name") + "," + resultSet.getString("last_name") + "," + resultSet.getDate("date_of_birth") + "," +  resultSet.getString("phone_number") + "," + resultSet.getString("email") + "," + resultSet.getDate("date_of_employment");
@@ -593,29 +785,60 @@ public class SQLEngine {
         }
     }
 
+
     public boolean addTraining(String name, LocalDate date, LocalTime startHour, LocalTime endHour, int capacity, int room, int trainerID, int gymID) throws SQLException{
         // Check if room and trainer are available
         String query = "SELECT * FROM training WHERE " +
-                    "((room = '" + room + "' AND gym_id = '" + gymID + "' AND date = '" + date + "' AND start_hour <= '" + endHour + "' AND end_hour >= '" + startHour + "') " +
-                    "OR " +
-                    "(trainer_id = '" + trainerID + "' AND date = '" + date + "' AND start_hour <= '" + endHour + "' AND end_hour >= '" + startHour + "' AND gym_id = '" + gymID + "' AND room != '" + room + "' " +
-                    "AND trainer_id NOT IN (SELECT trainer_id FROM training WHERE date = '" + date + "' AND start_hour <= '" + endHour + "' AND end_hour >= '" + startHour + "' AND (gym_id != '" + gymID + "' OR room IS NULL))))";
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
+        "((room = ? AND gym_id = ? AND date = ? AND start_hour <= ? AND end_hour >= ?) " +
+        "OR " +
+        "(trainer_id = ? AND date = ? AND start_hour <= ? AND end_hour >= ? AND gym_id = ? AND room != ? " +
+        "AND trainer_id NOT IN (SELECT trainer_id FROM training WHERE date = ? AND start_hour <= ? AND end_hour >= ? AND (gym_id != ? OR room IS NULL))))";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, room);
+        pstmt.setInt(2, gymID);
+        pstmt.setDate(3, java.sql.Date.valueOf(date));
+        pstmt.setTime(4, java.sql.Time.valueOf(endHour));
+        pstmt.setTime(5, java.sql.Time.valueOf(startHour));
+        pstmt.setInt(6, trainerID);
+        pstmt.setDate(7, java.sql.Date.valueOf(date));
+        pstmt.setTime(8, java.sql.Time.valueOf(endHour));
+        pstmt.setTime(9, java.sql.Time.valueOf(startHour));
+        pstmt.setInt(10, gymID);
+        pstmt.setInt(11, room);
+        pstmt.setDate(12, java.sql.Date.valueOf(date));
+        pstmt.setTime(13, java.sql.Time.valueOf(endHour));
+        pstmt.setTime(14, java.sql.Time.valueOf(startHour));
+        pstmt.setInt(15, gymID);
+        ResultSet resultSet = pstmt.executeQuery();
         if (resultSet.next()) {
             return false; 
         }
 
         // Check if the trainer is already occupied at the specified time
-        query = "SELECT * FROM training WHERE trainer_id = '" + trainerID + "' AND date = '" + date + "' AND start_hour <= '" + endHour + "' AND end_hour >= '" + startHour + "' AND gym_id != '" + gymID + "'";
-        resultSet = statement.executeQuery(query);
+        query = "SELECT * FROM training WHERE trainer_id = ? AND date = ? AND start_hour <= ? AND end_hour >= ? AND gym_id != ?";
+        pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, trainerID);
+        pstmt.setDate(2, java.sql.Date.valueOf(date));
+        pstmt.setTime(3, java.sql.Time.valueOf(endHour));
+        pstmt.setTime(4, java.sql.Time.valueOf(startHour));
+        pstmt.setInt(5, gymID);
+        resultSet = pstmt.executeQuery();
         if (resultSet.next()) {
             return false; 
         }
 
         // Add training
-        query = "INSERT INTO training (name, date, start_hour, end_hour, capacity, room, trainer_id, gym_id) VALUES ('" + name + "', '" + date + "', '" + startHour + "', '" + endHour + "', " + capacity + ", " + room + ", " + trainerID + ", " + gymID + ")";
-        int count = statement.executeUpdate(query);
+        query = "INSERT INTO training (name, date, start_hour, end_hour, capacity, room, trainer_id, gym_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        pstmt = connection.prepareStatement(query);
+        pstmt.setString(1, name);
+        pstmt.setDate(2, java.sql.Date.valueOf(date));
+        pstmt.setTime(3, java.sql.Time.valueOf(startHour));
+        pstmt.setTime(4, java.sql.Time.valueOf(endHour));
+        pstmt.setInt(5, capacity);
+        pstmt.setInt(6, room);
+        pstmt.setInt(7, trainerID);
+        pstmt.setInt(8, gymID);
+        int count = pstmt.executeUpdate();
         if (count > 0) {
             return true; 
         } else {
@@ -623,24 +846,30 @@ public class SQLEngine {
         }
     }
 
+    @SuppressWarnings("resource")
     public String loadTrainings(int userID) throws SQLException {
-        String query = "SELECT original_gym_id, all_gyms_access FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = " + userID;
+        String query = "SELECT original_gym_id, all_gyms_access FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = ?";
         String report = "";
+        PreparedStatement pstmt = null;
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, userID);
+            ResultSet resultSet = pstmt.executeQuery();
+    
             if (resultSet.next()) {
                 int originalGymID = resultSet.getInt("original_gym_id");
                 int allGymsAccess = resultSet.getInt("all_gyms_access");
                 
                 if (allGymsAccess == 1) {
                     query = "SELECT tr.id, tr.name, tr.date, tr.start_hour, tr.end_hour, tr.capacity, tr.room, CONCAT(e.first_name, ' ', e.last_name) AS trainer_name, CONCAT(g.address, ', ', g.city) AS gym_location, (SELECT COUNT(*) FROM reservation r WHERE r.training_id = tr.id) AS current_reservations FROM training tr JOIN employee e ON tr.trainer_id = e.id JOIN gym g ON tr.gym_id = g.id WHERE tr.date > CURDATE() ORDER BY tr.date, tr.start_hour";
+                    pstmt = connection.prepareStatement(query);
                 }
                 else {
-                    query = "SELECT tr.id, tr.name, tr.date, tr.start_hour, tr.end_hour, tr.capacity, tr.room, CONCAT(e.first_name, ' ', e.last_name) AS trainer_name, CONCAT(g.address, ', ', g.city) AS gym_location, (SELECT COUNT(*) FROM reservation r WHERE r.training_id = tr.id) AS current_reservations FROM training tr JOIN employee e ON tr.trainer_id = e.id JOIN gym g ON tr.gym_id = g.id WHERE tr.date > CURDATE() AND tr.gym_id = " + originalGymID + " ORDER BY tr.date, tr.start_hour";
+                    query = "SELECT tr.id, tr.name, tr.date, tr.start_hour, tr.end_hour, tr.capacity, tr.room, CONCAT(e.first_name, ' ', e.last_name) AS trainer_name, CONCAT(g.address, ', ', g.city) AS gym_location, (SELECT COUNT(*) FROM reservation r WHERE r.training_id = tr.id) AS current_reservations FROM training tr JOIN employee e ON tr.trainer_id = e.id JOIN gym g ON tr.gym_id = g.id WHERE tr.date > CURDATE() AND tr.gym_id = ? ORDER BY tr.date, tr.start_hour";
+                    pstmt = connection.prepareStatement(query);
+                    pstmt.setInt(1, originalGymID);
                 }
-                resultSet = statement.executeQuery(query);
+                resultSet = pstmt.executeQuery();
                 
                 while (resultSet.next()) {
                     report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getTime("end_hour") + "," + resultSet.getInt("current_reservations") + "/" + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getString("trainer_name") + "," + resultSet.getString("gym_location") + "///";
@@ -649,32 +878,45 @@ public class SQLEngine {
             return report;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
+            }
         }
-       
     }
+
 
     public boolean reserveTraining(int userID, int trainingID) throws SQLException {
         // check if client has a valid membership card
-        String query = "SELECT * FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = " + userID + " AND expiration_date > CURDATE()";
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT * FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = ? AND expiration_date > CURDATE()";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, userID);
+        ResultSet resultSet = pstmt.executeQuery();
         if (resultSet.next()) {
             // check if client has already reserved this training
-            query = "SELECT * FROM reservation WHERE client_id = " + userID + " AND training_id = " + trainingID;
-            resultSet = statement.executeQuery(query);
+            query = "SELECT * FROM reservation WHERE client_id = ? AND training_id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, userID);
+            pstmt.setInt(2, trainingID);
+            resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
                 return false;
             }
-
+    
             // check if there is still space for this training
-            query = "SELECT COUNT(*) AS current_reservations, capacity FROM reservation JOIN training ON training.id = reservation.training_id WHERE training_id = " + trainingID;
-            resultSet = statement.executeQuery(query);
+            query = "SELECT COUNT(*) AS current_reservations, capacity FROM reservation JOIN training ON training.id = reservation.training_id WHERE training_id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, trainingID);
+            resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
                 int currentReservations = resultSet.getInt("current_reservations");
                 int capacity = resultSet.getInt("capacity");
                 if (currentReservations < capacity) {
-                    query = "INSERT INTO reservation (client_id, training_id) VALUES (" + userID + ", " + trainingID + ")";
-                    int count = statement.executeUpdate(query);
+                    query = "INSERT INTO reservation (client_id, training_id) VALUES (?, ?)";
+                    pstmt = connection.prepareStatement(query);
+                    pstmt.setInt(1, userID);
+                    pstmt.setInt(2, trainingID);
+                    int count = pstmt.executeUpdate();
                     if (count > 0) {
                         return true;
                     }
@@ -684,12 +926,22 @@ public class SQLEngine {
         return false;
     }
 
+
     public String timeSpentReport(LocalDate entranceFromDate, LocalDate entranceToDate, LocalTime entranceFromHour,
             LocalTime entranceToHour, LocalDate exitFromDate, LocalDate exitToDate, LocalTime exitFromHour,
             LocalTime exitToHour, int userID) throws SQLException {
-        String query = "SELECT * FROM gym_visits WHERE client_id = " + userID + " AND entrance_date BETWEEN '" + entranceFromDate + "' AND '" + entranceToDate + "' AND entrance_time BETWEEN '" + entranceFromHour + "' AND '" + entranceToHour + "' AND exit_date BETWEEN '" + exitFromDate + "' AND '" + exitToDate + "' AND exit_time BETWEEN '" + exitFromHour + "' AND '" + exitToHour + "'";
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT * FROM gym_visits WHERE client_id = ? AND entrance_date BETWEEN ? AND ? AND entrance_time BETWEEN ? AND ? AND exit_date BETWEEN ? AND ? AND exit_time BETWEEN ? AND ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, userID);
+        pstmt.setDate(2, java.sql.Date.valueOf(entranceFromDate));
+        pstmt.setDate(3, java.sql.Date.valueOf(entranceToDate));
+        pstmt.setTime(4, java.sql.Time.valueOf(entranceFromHour));
+        pstmt.setTime(5, java.sql.Time.valueOf(entranceToHour));
+        pstmt.setDate(6, java.sql.Date.valueOf(exitFromDate));
+        pstmt.setDate(7, java.sql.Date.valueOf(exitToDate));
+        pstmt.setTime(8, java.sql.Time.valueOf(exitFromHour));
+        pstmt.setTime(9, java.sql.Time.valueOf(exitToHour));
+        ResultSet resultSet = pstmt.executeQuery();
 
         String report = "";
 

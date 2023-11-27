@@ -28,7 +28,7 @@ public class DeleteEmployeeWindow extends JFrame {
     private JLabel idLabel;
     private JTextField idTextField;
     private JButton deleteEmployeeButton;
-    private JButton loadEmployeeButton;
+    private JButton loadEmployeesButton;
     private JTable reportTable;
     private DefaultTableModel reportTableModel;
 
@@ -58,9 +58,9 @@ public class DeleteEmployeeWindow extends JFrame {
         deleteEmployeeButton = new JButton("Delete");
 
         // Add the load employee button to the main panel
-        loadEmployeeButton = new JButton("Load");
+        loadEmployeesButton = new JButton("Load");
 
-        deleteEmployeePanel.add(loadEmployeeButton);
+        deleteEmployeePanel.add(loadEmployeesButton);
         deleteEmployeePanel.add(deleteEmployeeButton);
         deleteEmployeePanel.add(idPanel);
         mainPanel.add(deleteEmployeePanel);
@@ -96,7 +96,7 @@ public class DeleteEmployeeWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Employee deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
 
                         // Send the message to the server
-                        message.sendLoadEmployeeMessage(SendToServer, "null");
+                        message.sendloadEmployeesMessage(SendToServer, "null");
 
                         // Clear the table
                         reportTableModel.setRowCount(0);
@@ -124,10 +124,10 @@ public class DeleteEmployeeWindow extends JFrame {
         });
 
         // Add action listener to the "Load" button
-        loadEmployeeButton.addActionListener(new ActionListener() {    
+        loadEmployeesButton.addActionListener(new ActionListener() {    
             public void actionPerformed(ActionEvent e) {
                 // Send the message to the server
-                message.sendLoadEmployeeMessage(SendToServer, "null");
+                message.sendloadEmployeesMessage(SendToServer, "null");
 
                 // Clear the table
                 reportTableModel.setRowCount(0);

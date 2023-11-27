@@ -72,7 +72,7 @@ public class Message {
         writer.println("DELETE_EMPLOYEE:" + message);
     }
 
-    public void sendLoadEmployeeMessage(PrintWriter writer, String message) {
+    public void sendloadEmployeesMessage(PrintWriter writer, String message) {
         writer.println("LOAD_EMPLOYEE:" + message);
     }
 
@@ -98,5 +98,9 @@ public class Message {
 
     public void sendTimeSpentReportMessage(PrintWriter writer, String message) {
         writer.println("TIME_SPENT_REPORT:" + message);
+    }
+
+    public void sendChangePasswordMessage(PrintWriter writer, String message) {
+        writer.println("CHANGE_PASSWORD:" + message);
     }
 }
