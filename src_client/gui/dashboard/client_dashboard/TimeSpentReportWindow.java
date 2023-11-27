@@ -24,23 +24,11 @@ import utils.ValidateData;
 
 public class TimeSpentReportWindow extends JFrame {
     private JPanel mainPanel;
-    private JLabel entranceDateLabel;
-    private JTextField entranceDateField;
-    private JLabel entranceTimeLabel;
-    private JTextField entranceTimeField;
-    private JLabel exitDateLabel;
-    private JTextField fromDateTextField;
-    private JLabel exitTimeLabel;
-    private JTextField exitTimeexitDatePanel;
     private JLabel entranceFromHourLabel;
     private JTextField entranceFromHourField;
     private JLabel entranceToHourLabel;
     private JTextField entranceToHourField;
     private JButton generateReportButton;
-    private JTextField capacityTextField;
-    private JLabel capacityLabel;
-    private JTextField trainerIdTextField;
-    private JLabel trainerIdLabel;
     private JTable reportTable;
     private DefaultTableModel reportTableModel;
     private JTextField exitToHourField;

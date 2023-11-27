@@ -5,22 +5,17 @@ import java.awt.GridLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.SecureRandom;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import utils.Message;
-import utils.Secure;
-import utils.ValidateData;
 
 public class ProfileWindow extends JFrame {
     private JButton changePasswordButton;
