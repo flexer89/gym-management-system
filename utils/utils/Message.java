@@ -111,4 +111,8 @@ public class Message {
     public void sendUpdateEmployeeMessage(PrintWriter writer, String message) {
         writer.println("UPDATE_EMPLOYEE:" + message);
     }
+
+    public void sendTimeSpentEmployeeReportMessage(PrintWriter writer, String message) {
+        writer.println("TIME_SPENT_EMPLOYEE_REPORT:" + message);
+    }
 }

@@ -181,6 +181,12 @@ public class ExitEntranceWindow extends JFrame{
                 } catch (IOException e1) {
                     System.out.println(utils.Color.ANSI_RED + "Error reading from server: " + e1.getMessage() + utils.Color.ANSI_RESET);
                 }
+                // Clear the window
+                getContentPane().removeAll();
+                add(entranceButton);
+                add(exitButton);
+                revalidate();
+                SwingUtilities.updateComponentTreeUI(getContentPane());
             }
         });
 

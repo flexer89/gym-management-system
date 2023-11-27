@@ -125,7 +125,7 @@ public class TimeSpentReportWindow extends JFrame {
         mainPanel.add(timeSpentPanel);
 
         // Add the report table
-        reportTableModel = new DefaultTableModel(new String[]{"ID", "Entrance Date", "Entrance Time", "Exit Date", "Exit Time", "Time Spent"}, 0);
+        reportTableModel = new DefaultTableModel(new String[]{"ID", "Entrance Date", "Entrance Time", "Exit Date", "Exit Time", "Time Spent", "Gym"}, 0);
         reportTable = new JTable(reportTableModel);
         JScrollPane scrollPane = new JScrollPane(reportTable);
         constraints.gridx = 0;

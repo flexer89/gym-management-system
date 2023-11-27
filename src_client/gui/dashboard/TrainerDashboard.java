@@ -23,7 +23,7 @@ import utils.Message;
 
 public class TrainerDashboard extends JFrame {
 
-    public TrainerDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow, int userID) {
+    public TrainerDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow, int employeeID) {
         // Create the main window
         this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -149,7 +149,7 @@ public class TrainerDashboard extends JFrame {
         // Add event listener for add training button
         addTrainingButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new AddTrainingWindow(message, ReadFromServer, SendToServer, userID);
+                new AddTrainingWindow(message, ReadFromServer, SendToServer, employeeID);
             }
         });
 
@@ -178,7 +178,7 @@ public class TrainerDashboard extends JFrame {
         // Add event listener for time spent report button
         timeSpentReporButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new EntranceReportWindow(message, ReadFromServer, SendToServer);
+                new EntranceReportWindow(message, ReadFromServer, SendToServer, employeeID);
             }
         });
 
@@ -188,7 +188,7 @@ public class TrainerDashboard extends JFrame {
         updateProfileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    new ProfileWindow(message, ReadFromServer, SendToServer, userID);
+                    new ProfileWindow(message, ReadFromServer, SendToServer, employeeID);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

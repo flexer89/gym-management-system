@@ -222,7 +222,7 @@ public class SQLEngine {
 
     //TODO: TEST IT FULLY
     public boolean canEnterTraining(int clientID, int roomID) throws SQLException {
-        String query = "SELECT training.date, training.hour FROM reservation JOIN training ON training.id = reservation.training_id WHERE client_id = ? and room = ?";
+        String query = "SELECT training.date, training.start_hour FROM reservation JOIN training ON training.id = reservation.training_id WHERE client_id = ? and room = ?";
         PreparedStatement pstmt = connection.prepareStatement(query);
         pstmt.setInt(1, clientID);
         pstmt.setInt(2, roomID);
@@ -953,7 +953,19 @@ public class SQLEngine {
             int minutes = exitTime.getMinute() - entranceTime.getMinute();
             String timeSpent = hours + ":" + minutes;
 
-            report += resultSet.getInt("id") + "," + resultSet.getDate("entrance_date") + "," + resultSet.getTime("entrance_time") + "," + resultSet.getDate("exit_date") + "," + resultSet.getTime("exit_time") + "," + timeSpent + "///";
+            report += resultSet.getInt("id") + "," + resultSet.getDate("entrance_date") + "," + resultSet.getTime("entrance_time") + "," + resultSet.getDate("exit_date") + "," + resultSet.getTime("exit_time") + "," + timeSpent;
+
+            // Get the gym name
+            query = "SELECT name FROM gym WHERE id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, resultSet.getInt("gym_id"));
+            ResultSet gymResultSet = pstmt.executeQuery();
+            String gymName = "";
+            if (gymResultSet.next()) {
+                gymName = gymResultSet.getString("name");
+            }
+
+            report += "," + gymName + "///";
         }
         return report;
     }
