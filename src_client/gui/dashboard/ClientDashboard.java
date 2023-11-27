@@ -32,17 +32,17 @@ public class ClientDashboard extends JFrame{
 
         // Create a main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(238, 242, 247));
+        mainPanel.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
 
         // Create a header panel
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(255, 255, 255));
+        headerPanel.setBackground(UIFormat.WHITE_BACKGROUND);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Create a title label
         JLabel titleLabel = new JLabel("Gym Management System");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        titleLabel.setForeground(new Color(51, 51, 51));
+        titleLabel.setForeground(UIFormat.DARK_GREY_FOREGROUND);
 
         // Add the title label to the header panel
         headerPanel.add(titleLabel);
@@ -52,13 +52,13 @@ public class ClientDashboard extends JFrame{
 
         // Create a content panel
         JPanel contentPanel = new JPanel(new GridLayout(2, 1));
-        contentPanel.setBackground(new Color(255, 255, 255));
+        contentPanel.setBackground(UIFormat.WHITE_BACKGROUND);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Create a reports panel
         JPanel reportsPanel = new JPanel(new GridLayout(1, 5));
         reportsPanel.setBorder(BorderFactory.createTitledBorder("Reports"));
-        reportsPanel.setBackground(new Color(255, 255, 255));
+        reportsPanel.setBackground(UIFormat.WHITE_BACKGROUND);
 
         // Create buttons for the reports panel
         JButton paymentReportButton = new JButton("Payment Report");
@@ -66,13 +66,13 @@ public class ClientDashboard extends JFrame{
         JButton trainingReportButton = new JButton("Training Report");
 
         // Set the style of the buttons
-        paymentReportButton.setBackground(new Color(238, 242, 247));
-        paymentReportButton.setForeground(new Color(51, 51, 51));
+        paymentReportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        paymentReportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         paymentReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        timeSpentReportButton.setBackground(new Color(238, 242, 247));
-        timeSpentReportButton.setForeground(new Color(51, 51, 51));
+        timeSpentReportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        timeSpentReportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         timeSpentReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        trainingReportButton.setBackground(new Color(238, 242, 247));
+        trainingReportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
         trainingReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the buttons to the reports panel
@@ -83,7 +83,7 @@ public class ClientDashboard extends JFrame{
         // Create an employee management panel
         JPanel generalClientManagementButton = new JPanel(new GridLayout(1, 3));
         generalClientManagementButton.setBorder(BorderFactory.createTitledBorder("General"));
-        generalClientManagementButton.setBackground(new Color(255, 255, 255));
+        generalClientManagementButton.setBackground(UIFormat.WHITE_BACKGROUND);
 
         // Create buttons for the employee management panel
         JButton trainingManagementButton = new JButton("Training Management");
@@ -91,14 +91,14 @@ public class ClientDashboard extends JFrame{
         JButton profileManagementButton = new JButton("My Profile");
 
         // Set the style of the buttons
-        trainingManagementButton.setBackground(new Color(238, 242, 247));
-        trainingManagementButton.setForeground(new Color(51, 51, 51));
+        trainingManagementButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        trainingManagementButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         trainingManagementButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        profileManagementButton.setBackground(new Color(238, 242, 247));
-        profileManagementButton.setForeground(new Color(51, 51, 51));
+        profileManagementButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        profileManagementButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         profileManagementButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        membershipManagementButton.setBackground(new Color(238, 242, 247));
-        membershipManagementButton.setForeground(new Color(51, 51, 51));
+        membershipManagementButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        membershipManagementButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         membershipManagementButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the buttons to the employee management panel
@@ -108,8 +108,8 @@ public class ClientDashboard extends JFrame{
 
         // Create a logout button
         JButton logoutButton = new JButton("Logout");
-        logoutButton.setBackground(new Color(255, 77, 77));
-        logoutButton.setForeground(new Color(255, 255, 255));
+        logoutButton.setBackground(UIFormat.LOGOUT_BTN_BACKGROUND);
+        logoutButton.setForeground(UIFormat.WHITE_BACKGROUND);
         logoutButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add panels to the content panel

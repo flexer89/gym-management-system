@@ -20,6 +20,7 @@ import gui.dashboard.trainer_dashboard.*;
 
 import gui.login.LoginRegisterWindow;
 import utils.Message;
+import utils.UIFormat;
 
 public class TrainerDashboard extends JFrame {
 
@@ -33,17 +34,17 @@ public class TrainerDashboard extends JFrame {
 
         // Create a main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(238, 242, 247));
+        mainPanel.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
 
         // Create a header panel
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(255, 255, 255));
+        headerPanel.setBackground(UIFormat.WHITE_BACKGROUND);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Create a title label
         JLabel titleLabel = new JLabel("Gym Management System");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        titleLabel.setForeground(new Color(51, 51, 51));
+        titleLabel.setForeground(UIFormat.DARK_GREY_FOREGROUND);
 
         // Add the title label to the header panel
         headerPanel.add(titleLabel);
@@ -53,24 +54,24 @@ public class TrainerDashboard extends JFrame {
 
         // Create a content panel
         JPanel contentPanel = new JPanel(new GridLayout(3, 1));
-        contentPanel.setBackground(new Color(255, 255, 255));
+        contentPanel.setBackground(UIFormat.WHITE_BACKGROUND);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Create a reports panel
         JPanel reportsPanel = new JPanel(new GridLayout(1, 2));
         reportsPanel.setBorder(BorderFactory.createTitledBorder("Reports"));
-        reportsPanel.setBackground(new Color(255, 255, 255));
+        reportsPanel.setBackground(UIFormat.WHITE_BACKGROUND);
 
         // Create buttons for the reports panel
         JButton trainingReportButton = new JButton("Training Report");
         JButton timeSpentReporButton = new JButton("Time Spent Report");
 
         // Set the style of the buttons
-        trainingReportButton.setBackground(new Color(238, 242, 247));
-        trainingReportButton.setForeground(new Color(51, 51, 51));
+        trainingReportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        trainingReportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         trainingReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        timeSpentReporButton.setBackground(new Color(238, 242, 247));
-        timeSpentReporButton.setForeground(new Color(51, 51, 51));
+        timeSpentReporButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        timeSpentReporButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         timeSpentReporButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the buttons to the reports panel
@@ -80,7 +81,7 @@ public class TrainerDashboard extends JFrame {
         // Create a gym management panel
         JPanel trainingManagementPanel = new JPanel(new GridLayout(1, 3));
         trainingManagementPanel.setBorder(BorderFactory.createTitledBorder("Training Management"));
-        trainingManagementPanel.setBackground(new Color(255, 255, 255));
+        trainingManagementPanel.setBackground(UIFormat.WHITE_BACKGROUND);
 
         // Create buttons for the gym management panel
         JButton addTrainingButton = new JButton("Add Training");
@@ -88,14 +89,14 @@ public class TrainerDashboard extends JFrame {
         JButton deleteTrainingButton = new JButton("Delete Training");
 
         // Set the style of the buttons
-        addTrainingButton.setBackground(new Color(238, 242, 247));
-        addTrainingButton.setForeground(new Color(51, 51, 51));
+        addTrainingButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        addTrainingButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         addTrainingButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        updateTrainingButton.setBackground(new Color(238, 242, 247));
-        updateTrainingButton.setForeground(new Color(51, 51, 51));
+        updateTrainingButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        updateTrainingButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         updateTrainingButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        deleteTrainingButton.setBackground(new Color(238, 242, 247));
-        deleteTrainingButton.setForeground(new Color(51, 51, 51));
+        deleteTrainingButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        deleteTrainingButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         deleteTrainingButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the buttons to the gym management panel
@@ -106,12 +107,12 @@ public class TrainerDashboard extends JFrame {
         // Create My Profile panel  
         JPanel myProfilePanel = new JPanel(new GridLayout(1, 1));
         myProfilePanel.setBorder(BorderFactory.createTitledBorder("My Profile"));
-        myProfilePanel.setBackground(new Color(255, 255, 255));
+        myProfilePanel.setBackground(UIFormat.WHITE_BACKGROUND);
 
         // Create buttons for the My Profile panel
         JButton updateProfileButton = new JButton("My Profile");  
-        updateProfileButton.setBackground(new Color(238, 242, 247));
-        updateProfileButton.setForeground(new Color(51, 51, 51));
+        updateProfileButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        updateProfileButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         updateProfileButton.setFont(new Font("Arial", Font.PLAIN, 14)); 
 
         // Add the buttons to the My Profile panel
@@ -119,8 +120,8 @@ public class TrainerDashboard extends JFrame {
 
         // Create a logout button
         JButton logoutButton = new JButton("Logout");
-        logoutButton.setBackground(new Color(255, 77, 77));
-        logoutButton.setForeground(new Color(255, 255, 255));
+        logoutButton.setBackground(UIFormat.LOGOUT_BTN_BACKGROUND);
+        logoutButton.setForeground(UIFormat.WHITE_BACKGROUND);
         logoutButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the panels to the content panel
