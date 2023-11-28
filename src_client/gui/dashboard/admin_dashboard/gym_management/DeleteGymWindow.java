@@ -2,7 +2,6 @@ package gui.dashboard.admin_dashboard.gym_management;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,21 +11,16 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import utils.Message;
 
 public class DeleteGymWindow extends JFrame {
     private JPanel mainPanel;
-    private JPanel idPanel;
-    private JLabel idLabel;
-    private JTextField idTextField;
     private JButton deleteGymButton;
     private JButton loadGymButton;
     private JTable reportTable;
@@ -47,13 +41,6 @@ public class DeleteGymWindow extends JFrame {
         JPanel deleteGymPanel = new JPanel();
         deleteGymPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Delete Gym"));
 
-        // Add the "ID" label
-        idLabel = new JLabel("Type Gym ID to delete: ");
-        idTextField = new JTextField();
-        idPanel = new JPanel(new GridLayout(2,1));
-        idPanel.add(idLabel);
-        idPanel.add(idTextField);
-
         // Add the "Generate Report" button
         deleteGymButton = new JButton("Delete");
 
@@ -62,11 +49,16 @@ public class DeleteGymWindow extends JFrame {
 
         deleteGymPanel.add(loadGymButton);
         deleteGymPanel.add(deleteGymButton);
-        deleteGymPanel.add(idPanel);
         mainPanel.add(deleteGymPanel);
 
         // Add the report table
-        reportTableModel = new DefaultTableModel(new String[]{"ID", "Name", "Address", "Postal Code", "City", "Phone", "Email"}, 0);
+        reportTableModel = new DefaultTableModel(new String[]{"ID", "Name", "Address", "Postal Code", "City", "Phone", "Email"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Make the ID column unmodifiable
+                return column != 0;
+            }
+        };
         reportTable = new JTable(reportTableModel);
         JScrollPane scrollPane = new JScrollPane(reportTable);
         constraints.gridx = 0;
@@ -83,8 +75,23 @@ public class DeleteGymWindow extends JFrame {
         // Add action listener to the "Generate Report" button
         deleteGymButton.addActionListener(new ActionListener() {    
             public void actionPerformed(ActionEvent e) {
-                // Get the ID from the text field
-                String id = idTextField.getText();
+                // Get the ID from table
+                int row = reportTable.getSelectedRow(); 
+
+                // Check if a row is selected
+                if (row == -1) {
+                    JOptionPane.showMessageDialog(null, "Please select a row", "Success", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // check if fields aren't edited
+                if (reportTable.isEditing()) {
+                    JOptionPane.showMessageDialog(null, "Please finish editing the table", "Success", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Get the ID from the table
+                String id = reportTable.getValueAt(row, 0).toString();
 
                 // Send the message to the server
                 message.sendDeleteGymMessage(SendToServer, id);

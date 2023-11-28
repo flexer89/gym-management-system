@@ -1,7 +1,6 @@
 package gui.dashboard;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -21,6 +20,7 @@ import gui.dashboard.admin_dashboard.report_management.*;
 
 import gui.login.LoginRegisterWindow;
 import utils.Message;
+import utils.UIFormat;
 
 public class AdminDashboard extends JFrame {
 
@@ -34,17 +34,17 @@ public class AdminDashboard extends JFrame {
 
         // Create a main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(238, 242, 247));
+        mainPanel.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
 
         // Create a header panel
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(255, 255, 255));
+        headerPanel.setBackground(UIFormat.WHITE_BACKGROUND);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Create a title label
         JLabel titleLabel = new JLabel("Gym Management System");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        titleLabel.setForeground(new Color(51, 51, 51));
+        titleLabel.setForeground(UIFormat.DARK_GREY_FOREGROUND);
 
         // Add the title label to the header panel
         headerPanel.add(titleLabel);
@@ -54,13 +54,13 @@ public class AdminDashboard extends JFrame {
 
         // Create a content panel
         JPanel contentPanel = new JPanel(new GridLayout(3, 1));
-        contentPanel.setBackground(new Color(255, 255, 255));
+        contentPanel.setBackground(UIFormat.WHITE_BACKGROUND);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Create a reports panel
         JPanel reportsPanel = new JPanel(new GridLayout(1, 5));
         reportsPanel.setBorder(BorderFactory.createTitledBorder("Reports"));
-        reportsPanel.setBackground(new Color(255, 255, 255));
+        reportsPanel.setBackground(UIFormat.WHITE_BACKGROUND);
 
         // Create buttons for the reports panel
         JButton paymentReportButton = new JButton("Payment Report");
@@ -70,19 +70,19 @@ public class AdminDashboard extends JFrame {
         JButton trainingReportButton = new JButton("Training Report");
 
         // Set the style of the buttons
-        paymentReportButton.setBackground(new Color(238, 242, 247));
-        paymentReportButton.setForeground(new Color(51, 51, 51));
+        paymentReportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        paymentReportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         paymentReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        gymReportButton.setBackground(new Color(238, 242, 247));
-        gymReportButton.setForeground(new Color(51, 51, 51));
+        gymReportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        gymReportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         gymReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        clientReportButton.setBackground(new Color(238, 242, 247));
-        clientReportButton.setForeground(new Color(51, 51, 51));
+        clientReportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        clientReportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         clientReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        employeeReportButton.setBackground(new Color(238, 242, 247));
-        employeeReportButton.setForeground(new Color(51, 51, 51));
+        employeeReportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        employeeReportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         employeeReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        trainingReportButton.setBackground(new Color(238, 242, 247));
+        trainingReportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
         trainingReportButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the buttons to the reports panel
@@ -95,7 +95,7 @@ public class AdminDashboard extends JFrame {
         // Create a gym management panel
         JPanel gymManagementPanel = new JPanel(new GridLayout(1, 3));
         gymManagementPanel.setBorder(BorderFactory.createTitledBorder("Gym Management"));
-        gymManagementPanel.setBackground(new Color(255, 255, 255));
+        gymManagementPanel.setBackground(UIFormat.WHITE_BACKGROUND);
 
         // Create buttons for the gym management panel
         JButton addGymButton = new JButton("Add Gym");
@@ -103,14 +103,14 @@ public class AdminDashboard extends JFrame {
         JButton deleteGymButton = new JButton("Delete Gym");
 
         // Set the style of the buttons
-        addGymButton.setBackground(new Color(238, 242, 247));
-        addGymButton.setForeground(new Color(51, 51, 51));
+        addGymButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        addGymButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         addGymButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        updateGymButton.setBackground(new Color(238, 242, 247));
-        updateGymButton.setForeground(new Color(51, 51, 51));
+        updateGymButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        updateGymButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         updateGymButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        deleteGymButton.setBackground(new Color(238, 242, 247));
-        deleteGymButton.setForeground(new Color(51, 51, 51));
+        deleteGymButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        deleteGymButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         deleteGymButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the buttons to the gym management panel
@@ -121,7 +121,7 @@ public class AdminDashboard extends JFrame {
         // Create an employee management panel
         JPanel employeeManagementPanel = new JPanel(new GridLayout(1, 3));
         employeeManagementPanel.setBorder(BorderFactory.createTitledBorder("Employee Management"));
-        employeeManagementPanel.setBackground(new Color(255, 255, 255));
+        employeeManagementPanel.setBackground(UIFormat.WHITE_BACKGROUND);
 
         // Create buttons for the employee management panel
         JButton addEmployeeButton = new JButton("Add Employee");
@@ -129,14 +129,14 @@ public class AdminDashboard extends JFrame {
         JButton deleteEmployeeButton = new JButton("Delete Employee");
 
         // Set the style of the buttons
-        addEmployeeButton.setBackground(new Color(238, 242, 247));
-        addEmployeeButton.setForeground(new Color(51, 51, 51));
+        addEmployeeButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        addEmployeeButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         addEmployeeButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        updateEmployeeButton.setBackground(new Color(238, 242, 247));
-        updateEmployeeButton.setForeground(new Color(51, 51, 51));
+        updateEmployeeButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        updateEmployeeButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         updateEmployeeButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        deleteEmployeeButton.setBackground(new Color(238, 242, 247));
-        deleteEmployeeButton.setForeground(new Color(51, 51, 51));
+        deleteEmployeeButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        deleteEmployeeButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         deleteEmployeeButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the buttons to the employee management panel
@@ -146,8 +146,8 @@ public class AdminDashboard extends JFrame {
 
         // Create a logout button
         JButton logoutButton = new JButton("Logout");
-        logoutButton.setBackground(new Color(255, 77, 77));
-        logoutButton.setForeground(new Color(255, 255, 255));
+        logoutButton.setBackground(UIFormat.LOGOUT_BTN_BACKGROUND);
+        logoutButton.setForeground(UIFormat.WHITE_BACKGROUND);
         logoutButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add reports panel to the content panel
