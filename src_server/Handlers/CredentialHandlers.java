@@ -1,3 +1,4 @@
+package Handlers;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -6,6 +7,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import Handlers.SQLEngine;
 import utils.Secure;
 
 public class CredentialHandlers {

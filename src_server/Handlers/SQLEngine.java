@@ -1,3 +1,4 @@
+package Handlers;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
