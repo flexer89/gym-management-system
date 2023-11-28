@@ -17,7 +17,7 @@ class ClientHandler implements Callable<String> {
         LOGIN, REGISTER, ADD_GYM, ADD_EMPLOYEE, PAYMENT_REPORT, GYM_REPORT,
         CLIENT_REPORT, EMPLOYEE_REPORT, TRAINING_REPORT, LOAD_GYM, DELETE_GYM,
         DELETE_EMPLOYEE, LOAD_EMPLOYEE, GET_CLIENT, GET_TRAINER, ADD_TRAINING,
-        LOAD_TRAININGS, RESERVE_TRAINING, TIME_SPENT_REPORT, UNKNOWN,SHUTDOWN,
+        LOAD_TRAININGS, RESERVE_TRAINING, TIME_SPENT_REPORT, UNKNOWN,SHUTDOWN, GET_MEMBERSHIP_CARD,
         CHANGE_PASSWORD
     }
 
@@ -129,6 +129,9 @@ class ClientHandler implements Callable<String> {
                         break;
                     case CHANGE_PASSWORD:
                         Handlers.changePassword(data);
+                        break;
+                    case GET_MEMBERSHIP_CARD:
+                        Handlers.getMembershipCard(data);
                         break;
                     default:
                         System.out.println("Unknown command: " + command);

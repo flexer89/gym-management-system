@@ -969,4 +969,33 @@ public class SQLEngine {
         }
         return report;
     }
+
+    public String getMembershipCard(int userID) throws SQLException {
+        String query = "SELECT * FROM membership_card WHERE client_id = ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, userID);
+        ResultSet resultSet = pstmt.executeQuery();
+
+        String report = "";
+        if (resultSet.next()) {
+            report += resultSet.getInt("card_number") + "," + resultSet.getDate("expiration_date") + "," + resultSet.getString("type");
+            
+            if (resultSet.getInt("all_gyms_access") == 1) {
+                report += ",Yes";
+            }
+            else {
+                report += ",No";
+            }
+
+            // get gym name
+            query = "SELECT name FROM gym WHERE id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, resultSet.getInt("original_gym_id"));
+            ResultSet gymResultSet = pstmt.executeQuery();
+            if (gymResultSet.next()) {
+                report += "," + gymResultSet.getString("name");
+            }
+        }
+        return report;
+    }
 }

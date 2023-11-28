@@ -521,4 +521,16 @@ public class Handlers {
         }
     }
 
+
+    public void getMembershipCard(String data) {
+        int userID = Integer.parseInt(data);
+        System.out.println("Getting membership card for client " + userID);
+        try {
+            String report = sqlEngine.getMembershipCard(userID);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error getting membership card: " + e.getMessage());
+        }
+    }
+
 }
