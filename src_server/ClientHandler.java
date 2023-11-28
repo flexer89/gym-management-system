@@ -38,7 +38,13 @@ class ClientHandler implements Callable<String> {
             PrintWriter SendToClient = new PrintWriter(clientSocket.getOutputStream(), true);
 
 
-            Handlers Handlers = new Handlers(ReadFromClient, SendToClient,clientSocket, sqlEngine);
+            SystemHandlers          SystemHandlers      = new SystemHandlers(ReadFromClient, SendToClient,clientSocket);
+            CredentialHandlers      CredentialHandlers  = new CredentialHandlers(ReadFromClient, SendToClient,clientSocket, sqlEngine);
+            ReportsHandlers         ReportsHandlers     = new ReportsHandlers(ReadFromClient, SendToClient,clientSocket, sqlEngine);
+            ClientHandlers          ClientHandlers      = new ClientHandlers(ReadFromClient, SendToClient,clientSocket, sqlEngine);
+            EmployeeHandlers        EmployeeHandlers    = new EmployeeHandlers(ReadFromClient, SendToClient,clientSocket, sqlEngine);
+            GymHandlers             GymHandlers         = new GymHandlers(ReadFromClient, SendToClient,clientSocket, sqlEngine);
+            TrainingHandlers        TrainingHandlers    = new TrainingHandlers(ReadFromClient, SendToClient,clientSocket, sqlEngine);
 
             while (true) {
                 String serverMessage = ReadFromClient.readLine();
@@ -53,85 +59,85 @@ class ClientHandler implements Callable<String> {
             
                 switch (commandType) {
                     case PRINT:
-                        Handlers.print(data);
+                        SystemHandlers.print(data);
                         break;
                     case SEND:
-                        Handlers.send();
+                        SystemHandlers.send();
                         break;
                     case EXIT:
-                        Handlers.exit();
+                        SystemHandlers.exit();
                         break;
                     case CAN_ENTER_GYM:
-                        Handlers.canEnterGym(data);
+                        ClientHandlers.canEnterGym(data);
                         break;
                     case CAN_EXIT_GYM:
-                        Handlers.canExitGym(data);
+                        ClientHandlers.canExitGym(data);
                         break;
                     case CAN_ENTER_TRAINING:
-                        Handlers.canEnterTraining(data);
+                        ClientHandlers.canEnterTraining(data);
                         break;
                     case LOGIN:
-                        Handlers.login(data);
+                        CredentialHandlers.login(data);
                         break;
                     case REGISTER:
-                        Handlers.register(data);
+                        CredentialHandlers.register(data);
                         break;
                     case ADD_GYM:
-                        Handlers.addGym(data);
+                        GymHandlers.addGym(data);
                         break;
                     case ADD_EMPLOYEE:
-                        Handlers.addEmployee(data);
+                        EmployeeHandlers.addEmployee(data);
                         break;
                     case PAYMENT_REPORT:
-                        Handlers.paymentReport(data);
+                        ReportsHandlers.paymentReport(data);
                         break;
                     case GYM_REPORT:
-                        Handlers.gymReport(data);
+                        ReportsHandlers.gymReport(data);
                         break;
                     case CLIENT_REPORT:
-                        Handlers.clientReport(data);
+                        ReportsHandlers.clientReport(data);
                         break;
                     case EMPLOYEE_REPORT:
-                        Handlers.employeeReport(data);
+                        ReportsHandlers.employeeReport(data);
                         break;
                     case TRAINING_REPORT:
-                        Handlers.trainingReport(data);
+                        ReportsHandlers.trainingReport(data);
                         break;
                     case LOAD_GYM:
-                        Handlers.loadGym();
+                        GymHandlers.loadGym();
                         break;
                     case DELETE_GYM:
-                        Handlers.deleteGym(data);
+                        GymHandlers.deleteGym(data);
                         break;
                     case DELETE_EMPLOYEE:
-                        Handlers.deleteEmployee(data);
+                        EmployeeHandlers.deleteEmployee(data);
                         break;
                     case LOAD_EMPLOYEE:
-                        Handlers.loadEmployees(data);
+                        EmployeeHandlers.loadEmployees(data);
                         break;
                     case GET_CLIENT:
-                        Handlers.getClient(data);
+                        ClientHandlers.getClient(data);
                         break;
                     case GET_TRAINER:
-                        Handlers.getTrainer(data);
+                        TrainingHandlers.getTrainer(data);
                         break;
                     case ADD_TRAINING:
-                        Handlers.addTraining(data);
+                        TrainingHandlers.addTraining(data);
                         break;
                     case LOAD_TRAININGS:
-                        Handlers.loadTrainings(data);
+                        TrainingHandlers.loadTrainings(data);
                         break;
                     case RESERVE_TRAINING:
-                        Handlers.reserveTraining(data);
+                        TrainingHandlers.reserveTraining(data);
                         break;
                     case TIME_SPENT_REPORT:
-                        Handlers.timeSpentReport(data);
+                        ReportsHandlers.timeSpentReport(data);
                         break;
                     case CHANGE_PASSWORD:
-                        Handlers.changePassword(data);
+                        CredentialHandlers.changePassword(data);
                         break;
                     case GET_MEMBERSHIP_CARD:
-                        Handlers.getMembershipCard(data);
+                        ClientHandlers.getMembershipCard(data);
                         break;
                     default:
                         System.out.println("Unknown command: " + command);
