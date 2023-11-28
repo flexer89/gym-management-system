@@ -166,7 +166,11 @@ public class ClientDashboard extends JFrame{
         // Add event listener for membership management button
         membershipManagementButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new MembershipCardWindow(message, ReadFromServer, SendToServer);
+                try {
+                    new MembershipCardWindow(message, ReadFromServer, SendToServer, userID);
+                } catch (IOException e1) {
+                    System.out.println(utils.Color.ANSI_RED + "Error creating Membership window." + utils.Color.ANSI_RESET);
+                }
             }
         });
 
