@@ -187,38 +187,6 @@ INSERT INTO employee_card (employee_number, expiration_date, employee_id)
 VALUES ('98765432', '2025-01-01', @trainer_id);
 
 
-
--- Insert a client
-INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email)
-VALUES ('client', 'client', '1980-01-01', '1234567890', 'john.doe@example.com');
-
--- Get the ID of the client we just inserted
-SET @client_id = LAST_INSERT_ID();
-
--- Insert a client's credentials
-INSERT INTO client_credentials (login, password, salt, client_id)
-VALUES ('client', 'ab92e806026cdf03da3301be0da72b0c624d482aea8123092fae2d29d4a39cbb','[B@737d46ef', @client_id);
-
--- Insert a membership card for the client
-INSERT INTO membership_card (card_number, expiration_date, type, all_gyms_access, client_id)
-VALUES ('12345678', '2030-12-31', 'membership', true, @client_id);
-
--- Insert a payment for the client
-INSERT INTO payment (payment_date, amount, payment_method, client_id)
-VALUES (CURDATE(), 100.00, 'cash', @client_id);
-
--- Insert another payment for the client
-INSERT INTO payment (payment_date, amount, payment_method, client_id)
-VALUES (DATE_ADD(CURDATE(), INTERVAL 1 MONTH), 100.00, 'card', @client_id);
-
--- Insert a third payment for the client
-INSERT INTO payment (payment_date, amount, payment_method, client_id)
-VALUES (DATE_ADD(CURDATE(), INTERVAL 2 MONTH), 100.00, 'blik', @client_id);
-
-
-
-
-
 -- Insert a gym
 INSERT INTO gym (name, address, postal_code, city, phone, email)
 VALUES ('Gym A', 'Address A', '123456', 'City A', '1234567890', 'emailA@example.com');
@@ -237,3 +205,33 @@ VALUES ('Pilates Class', '2022-01-04', '14:00:00', '15:00:00', 15, 2, @trainer_i
 -- Insert a third training session
 INSERT INTO training (name, date, start_hour, end_hour, capacity, room, trainer_id, gym_id)
 VALUES ('Zumba Class', '2022-01-05', '18:00:00', '19:00:00', 25, 3, @trainer_id, 1);
+
+
+
+
+-- Insert a client
+INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email)
+VALUES ('client', 'client', '1980-01-01', '1234567890', 'john.doe@example.com');
+
+-- Get the ID of the client we just inserted
+SET @client_id = LAST_INSERT_ID();
+
+-- Insert a client's credentials
+INSERT INTO client_credentials (login, password, salt, client_id)
+VALUES ('client', 'ab92e806026cdf03da3301be0da72b0c624d482aea8123092fae2d29d4a39cbb','[B@737d46ef', @client_id);
+
+-- Insert a membership card for the client
+INSERT INTO membership_card (card_number, expiration_date, type,original_gym_id, all_gyms_access, client_id)
+VALUES ('12345678', '2030-12-31', 'membership',1 , true, @client_id);
+
+-- Insert a payment for the client
+INSERT INTO payment (payment_date, amount, payment_method, client_id)
+VALUES (CURDATE(), 100.00, 'cash', @client_id);
+
+-- Insert another payment for the client
+INSERT INTO payment (payment_date, amount, payment_method, client_id)
+VALUES (DATE_ADD(CURDATE(), INTERVAL 1 MONTH), 100.00, 'card', @client_id);
+
+-- Insert a third payment for the client
+INSERT INTO payment (payment_date, amount, payment_method, client_id)
+VALUES (DATE_ADD(CURDATE(), INTERVAL 2 MONTH), 100.00, 'blik', @client_id);

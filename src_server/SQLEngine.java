@@ -990,12 +990,20 @@ public class SQLEngine {
             // get gym name
             query = "SELECT name FROM gym WHERE id = ?";
             pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, resultSet.getInt("original_gym_id"));
+            int originalGymId = resultSet.getInt("original_gym_id");
+            pstmt.setInt(1, originalGymId);
+            System.out.println("original_gym_id: " + originalGymId);
             ResultSet gymResultSet = pstmt.executeQuery();
+
             if (gymResultSet.next()) {
-                report += "," + gymResultSet.getString("name");
+                String gymName = gymResultSet.getString("name");
+                report += "," + gymName;
+                System.out.println("Gym Name: " + gymName);  // Debug print
+            } else {
+                System.out.println("No gym found with id: " + originalGymId);  // Debug print
             }
         }
+        System.out.println(report);
         return report;
     }
 }
