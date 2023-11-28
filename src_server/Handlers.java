@@ -166,6 +166,8 @@ public class Handlers {
                 }
             } else {
                 System.out.println("Hashes don't match");
+                SendToClient.println(-1);
+                SendToClient.println("ERROR");
             }
         }
         catch (Exception all) {

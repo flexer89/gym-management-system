@@ -3,9 +3,13 @@ package gui.dashboard.trainer_dashboard;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,6 +18,7 @@ import javax.swing.JTextField;
 import utils.Message;
 
 public class ProfileWindow extends JFrame {
+    private JButton changePasswordButton;
     public ProfileWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, int trainerID) throws Exception{
         // cast the trainerID to string
         String trainerIDString = Integer.toString(trainerID);
@@ -93,7 +98,39 @@ public class ProfileWindow extends JFrame {
         confirmPasswordPanel.add(confirmPasswordTextField);
 
         // Create Change Password button
-        JButton changePasswordButton = new JButton("Change Password");
+        changePasswordButton = new JButton("Change Password");
+
+        // Add action listener to the button
+        changePasswordButton.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e) 
+            {
+                String newPassword = newPasswordTextField.getText();
+                String confirmPassword = confirmPasswordTextField.getText();
+        
+                try {
+                    if (!newPassword.equals(confirmPassword)) {
+                        throw new Exception("Passwords do not match");
+                    }
+                    System.out.println("New password and confirm password match");
+
+                    message.sendChangePasswordMessage(SendToServer, newPassword + "," + trainerIDString + "," + "employee");
+                    String status =ReadFromServer.readLine();
+
+                    if (status.equals("True")) {
+                        JOptionPane.showMessageDialog(null, "Password changed successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    } 
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Password change failed", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+        });
 
         // Add all password reset panels to password reset panel
         passwordResetPanel.add(newPasswordPanel);
