@@ -110,6 +110,15 @@ public class ProfileWindow extends JFrame {
                     System.out.println("New password and confirm password match");
 
                     message.sendChangePasswordMessage(SendToServer, newPassword + "," + userIDString + "," + "client");
+                    String status =ReadFromServer.readLine();
+                    
+                    if (status.equals("True")) {
+                        JOptionPane.showMessageDialog(null, "Password changed successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    } 
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Password change failed", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                     
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
