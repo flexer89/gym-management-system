@@ -6,7 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Secure {
-
     public static String hashWithSalt(String input, String salt) 
     {
         StringBuilder saltedInput = new StringBuilder(input);

@@ -207,4 +207,12 @@ public class ValidateData {
         }
         return true;
     }
+
+    public static boolean ValidateBlik(String blikCode) {
+        if (!blikCode.matches("\\d{6}") || blikCode.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Invalid BLIK code!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
 }

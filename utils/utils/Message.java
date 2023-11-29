@@ -119,4 +119,8 @@ public class Message {
     public void sendGetMembershipCardMessage(PrintWriter writer, String message) {
         writer.println("GET_MEMBERSHIP_CARD:" + message);
     }
+
+    public void sendPaymentMessage(PrintWriter writer, String message) {
+        writer.println("PAYMENT:" + message);
+    }
 }
