@@ -15,6 +15,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import gui.dashboard.client_dashboard.membership_extension.AllGymMembership;
+import gui.dashboard.client_dashboard.membership_extension.PaymentWindow;
 import utils.*;
 
 public class MembershipCardWindow extends JFrame{
@@ -115,6 +118,12 @@ public class MembershipCardWindow extends JFrame{
         cancelSubscriptionButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         cancelSubscriptionButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
+        // Create multisport button
+        JButton multisportButton = new JButton("I have multisport button");
+        multisportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        multisportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
+        multisportButton.setFont(new Font("Arial", Font.PLAIN, 14));
+
         // Create an extend membership panel
         JPanel extendMembershipPanel = new JPanel(new GridLayout(1, 3));
         extendMembershipPanel.setBorder(BorderFactory.createTitledBorder("Extend Membership"));
@@ -189,7 +198,12 @@ public class MembershipCardWindow extends JFrame{
 
         // Add the content panel to the main panel
         mainPanel.add(contentPanel, BorderLayout.CENTER);
-        mainPanel.add(cancelSubscriptionButton, BorderLayout.SOUTH);
+        mainPanel.add(cancelSubscriptionButton, BorderLayout.NORTH);
+
+        // Add the multisport button if the membership type is not multisport
+        if (!membershipType.equals("multisport")) {
+            mainPanel.add(multisportButton, BorderLayout.SOUTH);
+        }
 
         // Add the main panel to the frame
         this.add(mainPanel);
@@ -207,6 +221,7 @@ public class MembershipCardWindow extends JFrame{
         // Add event listener for training management button
         oneDayMembershipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                new PaymentWindow(utils.Prices.ONE_DAY_MEMBERSHIP_PRICE);
             }
         });
 
@@ -215,10 +230,11 @@ public class MembershipCardWindow extends JFrame{
             public void actionPerformed(ActionEvent e) {
             }
         });
-
+        
         // Add event listener for profile management button
         unlimitedMembershipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                new AllGymMembership(message, ReadFromServer, SendToServer, userID);
             }
         });
 
