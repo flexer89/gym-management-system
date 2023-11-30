@@ -79,6 +79,7 @@ CREATE TABLE membership_card (
   type ENUM('multisport', 'membership'),
   original_gym_id INT,
   all_gyms_access BOOLEAN NOT NULL,
+  isCanceled BOOLEAN NOT NULL DEFAULT FALSE,
   client_id INT,
   PRIMARY KEY (id)
 );

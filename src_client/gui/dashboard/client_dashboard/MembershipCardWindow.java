@@ -218,7 +218,19 @@ public class MembershipCardWindow extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to cancel your subscription?", "Confirmation", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    // Code to cancel the subscription
+                    message.sendCancelSubscriptionMessage(SendToServer, Integer.toString(userID));
+                    dispose();
+
+                    try {
+                        boolean subscriptionCancelled = Boolean.parseBoolean(ReadFromServer.readLine());
+                        if (subscriptionCancelled) {
+                            JOptionPane.showMessageDialog(null, "Subscription cancelled successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error cancelling subscription!", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });

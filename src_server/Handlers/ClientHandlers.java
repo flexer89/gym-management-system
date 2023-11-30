@@ -104,4 +104,16 @@ public class ClientHandlers {
         }
     }
 
+
+    public void cancelSubscription(String data) {
+        int userID = Integer.parseInt(data);
+        System.out.println("User " + userID + " wants to cancel subscription");
+        try {
+            boolean subscriptionCancelled = sqlEngine.cancelSubscription(userID);
+            SendToClient.println(subscriptionCancelled);
+        } catch (SQLException e) {
+            System.out.println("Error cancelling subscription: " + e.getMessage());
+        }
+    }
+
 }

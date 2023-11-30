@@ -248,7 +248,7 @@ public class SQLEngine {
     }
 
     public boolean canEnterGym(int card_number, int gymID) throws SQLException {
-        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.card_number = ?";
+        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id, isCanceled FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.card_number = ?";
         PreparedStatement pstmt = connection.prepareStatement(query);
         pstmt.setInt(1, card_number);
         ResultSet resultSet = pstmt.executeQuery();
@@ -258,13 +258,14 @@ public class SQLEngine {
             boolean allGymAccess = resultSet.getBoolean("all_gyms_access");
             int originalGymID = resultSet.getInt("original_gym_id");
             int clientID = resultSet.getInt("client_id");
+            boolean isCanceled = resultSet.getBoolean("isCanceled");
     
             // Format time
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             LocalTime now = LocalTime.now();
             String formattedTime = formatter.format(now);
     
-            if ((allGymAccess || originalGymID == gymID) && expirationDate.isAfter(LocalDate.now())) {
+            if ((allGymAccess || originalGymID == gymID) && expirationDate.isAfter(LocalDate.now()) && !isCanceled) {
                 // Check if client entered already
                 query = "SELECT * FROM gym_visits WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
                 pstmt = connection.prepareStatement(query);
@@ -891,7 +892,7 @@ public class SQLEngine {
 
     public boolean reserveTraining(int userID, int trainingID) throws SQLException {
         // check if client has a valid membership card
-        String query = "SELECT * FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = ? AND expiration_date > CURDATE()";
+        String query = "SELECT * FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = ? AND expiration_date > CURDATE() AND isCanceled = 0";
         PreparedStatement pstmt = connection.prepareStatement(query);
         pstmt.setInt(1, userID);
         ResultSet resultSet = pstmt.executeQuery();
@@ -974,7 +975,7 @@ public class SQLEngine {
     }
 
     public String getMembershipCard(int userID) throws SQLException {
-        String query = "SELECT * FROM membership_card WHERE client_id = ? AND expiration_date > CURDATE()";
+        String query = "SELECT * FROM membership_card WHERE client_id = ? AND expiration_date > CURDATE() AND isCanceled = 0";
         PreparedStatement pstmt = connection.prepareStatement(query);
         pstmt.setInt(1, userID);
         ResultSet resultSet = pstmt.executeQuery();
@@ -1068,5 +1069,22 @@ public class SQLEngine {
             System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
         }
         return "--------";
+    }
+
+    public boolean cancelSubscription(int userID) throws SQLException {
+        String query = "UPDATE membership_card SET isCanceled = 1 WHERE client_id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, userID);
+            int count = pstmt.executeUpdate();
+            if (count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+        }
+        return false;
     }
 }
