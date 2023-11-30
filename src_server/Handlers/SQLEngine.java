@@ -15,7 +15,6 @@ import java.util.List;
 
 import utils.GenerateCard;
 import utils.Secure;
-import utils.GenerateCard;
 
 public class SQLEngine {
 
@@ -1134,6 +1133,12 @@ public class SQLEngine {
         } catch (SQLException e) {
             System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
         }
+        return false;
+    }
+
+    public boolean updateTraining(int trainingID, String name, LocalDate date, LocalTime startHour, LocalTime endHour,
+            int capacity, int room, int trainerID, int gymID) throws SQLException {
+        // TODO
         return false;
     }
 }

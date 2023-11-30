@@ -113,5 +113,32 @@ public class TrainingHandlers {
         }
     }
 
+    public void updateTraining(String data) {
+        String[] trainingInfo = data.split(",");
+        int trainingID = Integer.parseInt(trainingInfo[0]);
+        String name = trainingInfo[1];
+        LocalDate date = LocalDate.parse(trainingInfo[2]);
+        LocalTime startHour = LocalTime.parse(trainingInfo[3]);
+        LocalTime endHour = LocalTime.parse(trainingInfo[4]);
+        int capacity = Integer.parseInt(trainingInfo[5]);
+        int room = Integer.parseInt(trainingInfo[6]);
+        int trainerID = Integer.parseInt(trainingInfo[7]);
+        int gymID = Integer.parseInt(trainingInfo[8]);
+        System.out.println("Updating training " + trainingID + " " + name + " " + date + " " + startHour + " " + endHour +" " + capacity + " " + room + " " + trainerID + " " + gymID);
+
+        try {
+            boolean ifUpdated = sqlEngine.updateTraining(trainingID, name, date, startHour, endHour, capacity, room, trainerID, gymID);
+            if (ifUpdated) {
+                System.out.println("Training " + trainingID + " updated");
+                SendToClient.println("True");
+            } else {
+                System.out.println("Training " + trainingID + " wasn't updated");
+                SendToClient.println("False");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating training: " + e.getMessage());
+        }
+    }
+
 
 }
