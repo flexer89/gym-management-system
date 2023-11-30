@@ -1087,4 +1087,53 @@ public class SQLEngine {
         }
         return false;
     }
+
+    public boolean updateGym(int gymID, String name, String address, String postalCode, String city, String phone,
+            String email) throws SQLException{
+        String query = "UPDATE gym SET name = ?, address = ?, postal_code = ?, city = ?, phone = ?, email = ? WHERE id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, name);
+            pstmt.setString(2, address);
+            pstmt.setString(3, postalCode);
+            pstmt.setString(4, city);
+            pstmt.setString(5, phone);
+            pstmt.setString(6, email);
+            pstmt.setInt(7, gymID);
+            int count = pstmt.executeUpdate();
+            if (count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+        }
+        return false;
+    }
+
+    public boolean updateEmployee(int employeeID, String name, String surname, String position, LocalDate dateOfBirth,
+            LocalDate dateOfEmployment, String phone, String email) throws SQLException {
+        String query = "UPDATE employee SET first_name = ?, last_name = ?, position = ?, date_of_birth = ?, date_of_employment = ?, phone_number = ?, email = ? WHERE id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, name);
+            pstmt.setString(2, surname);
+            pstmt.setString(3, position);
+            pstmt.setObject(4, dateOfBirth);
+            pstmt.setObject(5, dateOfEmployment);
+            pstmt.setString(6, phone);
+            pstmt.setString(7, email);
+            pstmt.setInt(8, employeeID);
+            int count = pstmt.executeUpdate();
+            if (count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+        }
+        return false;
+    }
 }

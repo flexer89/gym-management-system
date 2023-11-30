@@ -80,4 +80,28 @@ public class EmployeeHandlers {
             System.out.println("Error loading employee: " + e.getMessage());
         }
     }
+
+    public void updateEmployee(String data) {
+        String[] employeeInfo = data.split(",");
+        int employeeID = Integer.parseInt(employeeInfo[0]);
+        String name = employeeInfo[1];
+        String surname = employeeInfo[2];
+        String position = employeeInfo[3];
+        LocalDate dateOfBirth = LocalDate.parse(employeeInfo[4]);
+        LocalDate dateOfEmployment = LocalDate.parse(employeeInfo[5]);
+        String phone = employeeInfo[6];
+        String email = employeeInfo[7];
+        try {
+            boolean ifUpdated = sqlEngine.updateEmployee(employeeID, name, surname, position, dateOfBirth,dateOfEmployment, phone, email);
+            if (ifUpdated) {
+                System.out.println("Employee " + employeeID + " updated");
+                SendToClient.println("True");
+            } else {
+                System.out.println("Employee " + employeeID + " wasn't updated");
+                SendToClient.println("False");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating employee: " + e.getMessage());
+        }
+    }
 }

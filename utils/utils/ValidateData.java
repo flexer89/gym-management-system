@@ -22,7 +22,7 @@ public class ValidateData {
     }
 
     public static boolean validateName(String name) {
-        if (!name.matches("^[a-zA-Z]+$") && (!name.isEmpty() || name.length() > 255)) {
+        if ((!name.isEmpty() && name.length() > 255)) {
             JOptionPane.showMessageDialog(null, "Invalid name!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -97,7 +97,7 @@ public class ValidateData {
     }
 
     public static boolean ValidateCity(String city) {
-        if (!city.matches("^[a-zA-Z]+$") && (!city.isEmpty() || city.length() > 255)) {
+        if ((!city.isEmpty() && city.length() > 255)) {
             JOptionPane.showMessageDialog(null, "Invalid city!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
