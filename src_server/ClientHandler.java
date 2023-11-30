@@ -19,7 +19,7 @@ class ClientHandler implements Callable<String> {
         LOGIN, REGISTER, ADD_GYM, ADD_EMPLOYEE, PAYMENT_REPORT, GYM_REPORT,
         CLIENT_REPORT, EMPLOYEE_REPORT, TRAINING_REPORT, LOAD_GYM, DELETE_GYM,
         DELETE_EMPLOYEE, LOAD_EMPLOYEE, GET_CLIENT, GET_TRAINER, ADD_TRAINING,
-        LOAD_TRAININGS, RESERVE_TRAINING, TIME_SPENT_REPORT, UNKNOWN,SHUTDOWN, GET_MEMBERSHIP_CARD,
+        LOAD_TRAININGS, RESERVE_TRAINING, TIME_SPENT_REPORT, UNKNOWN,SHUTDOWN, GET_MEMBERSHIP_CARD, PAYMENT, 
         CHANGE_PASSWORD
     }
 
@@ -54,7 +54,7 @@ class ClientHandler implements Callable<String> {
                 String command = parts[0];
                 String data= parts[1];
                 
-                System.out.println("Command: " + command + " Data: " + data);
+                System.out.println("Command: " + command + ", Data: " + data);
                 
                 CommandType commandType = getCommandType(command);
                 
@@ -140,6 +140,9 @@ class ClientHandler implements Callable<String> {
                         break;
                     case GET_MEMBERSHIP_CARD:
                         ClientHandlers.getMembershipCard(data);
+                        break;
+                    case PAYMENT:
+                        ClientHandlers.payment(data);
                         break;
                     default:
                         System.out.println("Unknown command: " + command);

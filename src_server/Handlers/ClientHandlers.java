@@ -4,7 +4,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 
 public class ClientHandlers {
@@ -84,6 +83,24 @@ public class ClientHandlers {
             SendToClient.println(report);
         } catch (SQLException e) {
             System.out.println("Error getting membership card: " + e.getMessage());
+        }
+    }
+
+
+    public void payment(String data) {
+        String[] paymentInfo = data.split(",");
+
+        int amount = Integer.parseInt(paymentInfo[0]);
+        String paymentMethod = paymentInfo[1];
+        int userID = Integer.parseInt(paymentInfo[2]);
+        
+        System.out.println("User " + userID + " wants to pay " + amount + " PLN using " + paymentMethod);
+        try {
+            boolean paymentSuccessful = sqlEngine.payment(userID, amount, paymentMethod);
+            String membershipCard = sqlEngine.addMembershipCard(userID, LocalDate.now().plusDays(1), "membership", true, 1);
+            SendToClient.println(paymentSuccessful+":"+membershipCard);
+        } catch (SQLException e) {
+            System.out.println("Error processing payment: " + e.getMessage());
         }
     }
 

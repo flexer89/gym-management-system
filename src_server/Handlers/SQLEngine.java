@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import utils.GenerateCard;
 import utils.Secure;
+import utils.GenerateCard;
 
 public class SQLEngine {
 
@@ -972,14 +974,14 @@ public class SQLEngine {
     }
 
     public String getMembershipCard(int userID) throws SQLException {
-        String query = "SELECT * FROM membership_card WHERE client_id = ?";
+        String query = "SELECT * FROM membership_card WHERE client_id = ? AND expiration_date > CURDATE()";
         PreparedStatement pstmt = connection.prepareStatement(query);
         pstmt.setInt(1, userID);
         ResultSet resultSet = pstmt.executeQuery();
 
         String report = "";
         if (resultSet.next()) {
-            report += resultSet.getInt("card_number") + "," + resultSet.getDate("expiration_date") + "," + resultSet.getString("type");
+            report += resultSet.getString("card_number") + "," + resultSet.getDate("expiration_date") + "," + resultSet.getString("type");
             
             if (resultSet.getInt("all_gyms_access") == 1) {
                 report += ",Yes";
@@ -1006,5 +1008,65 @@ public class SQLEngine {
         }
         System.out.println(report);
         return report;
+    }
+
+    public boolean payment(int userID, int amount, String paymentMethod) throws SQLException {
+        String query = "INSERT INTO payment (payment_date, amount, payment_method, client_id) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
+            pstmt.setInt(2, amount);
+            pstmt.setString(3, paymentMethod);
+            pstmt.setInt(4, userID);
+            int count = pstmt.executeUpdate();
+            System.out.println("Inserted " + count + " rows into payment");
+            if (count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+        }
+        return false;
+    }
+
+    public String addMembershipCard(int userID, LocalDate expirationDate, String type, boolean allGymsAccess, int originalGymID) throws SQLException {
+        // generate card number 
+        boolean isUnique = false;
+        String cardNumber = "";
+
+        while (!isUnique) {
+            cardNumber = GenerateCard.generateClientCardNumber();
+            System.out.println("Generated card number: " + cardNumber);
+            String query = "SELECT * FROM membership_card WHERE card_number = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, cardNumber);
+            ResultSet resultSet = pstmt.executeQuery();
+            if (!resultSet.next()) {
+                isUnique = true;
+            }
+        }
+
+        String query = "INSERT INTO membership_card (card_number, expiration_date, type, all_gyms_access, original_gym_id, client_id) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, cardNumber);
+            pstmt.setDate(2, java.sql.Date.valueOf(expirationDate));
+            pstmt.setString(3, type);
+            pstmt.setBoolean(4, allGymsAccess);
+            pstmt.setInt(5, originalGymID);
+            pstmt.setInt(6, userID);
+            int count = pstmt.executeUpdate();
+            if (count > 0) {
+                return cardNumber;
+            } else {
+                return "--------";
+            }
+        } catch (SQLException e) {
+            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+        }
+        return "--------";
     }
 }

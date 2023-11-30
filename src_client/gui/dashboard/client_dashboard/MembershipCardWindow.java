@@ -69,60 +69,71 @@ public class MembershipCardWindow extends JFrame{
         
         // Split the response
         String[] responseSplit = response.split(",");
-        String membershipNumber = responseSplit[0];
-        String expirationDate = responseSplit[1];
-        String membershipType = responseSplit[2];
-        String originalGym = responseSplit[3];
-        String allGymAccess = responseSplit[4];
-        
-        // Debug prints
-        System.out.println("Membership Number: " + membershipNumber);
-        System.out.println("Expiration Date: " + expirationDate);
-        System.out.println("Membership Type: " + membershipType);
-        System.out.println("Original Gym: " + originalGym);
-        System.out.println("All Gym Access: " + allGymAccess);
+        if (responseSplit.length != 5) {
+            JLabel noMembershipLabel = new JLabel("<html><b>You don't have a membership card!</b></html>");
+            noMembershipLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+            noMembershipLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            currentData.add(noMembershipLabel);
+        } else {
+            String membershipNumber = responseSplit[0];
+            String expirationDate = responseSplit[1];
+            String membershipType = responseSplit[2];
+            String allGymAccess = responseSplit[3];
+            String originalGym = responseSplit[4];
+            
+            // Debug prints
+            System.out.println("Membership Number: " + membershipNumber);
+            System.out.println("Expiration Date: " + expirationDate);
+            System.out.println("Membership Type: " + membershipType);
+            System.out.println("Original Gym: " + originalGym);
+            System.out.println("All Gym Access: " + allGymAccess);
 
 
 
-        // Create labels for the current data panel
-        JLabel membershipNumberLabel = new JLabel("<html><b>Membership Number: </b> " + membershipNumber + "</html>");
-        membershipNumberLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        membershipNumberLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            // Create labels for the current data panel
+            JLabel membershipNumberLabel = new JLabel("<html><b>Membership Number: </b> " + membershipNumber + "</html>");
+            membershipNumberLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+            membershipNumberLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JLabel expirationDateLabel = new JLabel("<html><b>Expiration Date: </b> " +  expirationDate + "</html>");
-        expirationDateLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        expirationDateLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            JLabel expirationDateLabel = new JLabel("<html><b>Expiration Date: </b> " +  expirationDate + "</html>");
+            expirationDateLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+            expirationDateLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JLabel membershipTypeLabel = new JLabel("<html><b>Membership Type </b> " + membershipType + "</html>");
-        membershipTypeLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        membershipTypeLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            JLabel membershipTypeLabel = new JLabel("<html><b>Membership Type </b> " + membershipType + "</html>");
+            membershipTypeLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+            membershipTypeLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JLabel originalGymLabel = new JLabel("<html><b>Main Gym: </b> " + originalGym + "</html>");
-        originalGymLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        originalGymLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            JLabel originalGymLabel = new JLabel("<html><b>Main Gym: </b> " + originalGym + "</html>");
+            originalGymLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+            originalGymLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JLabel allGymAccessLabel = new JLabel("<html><b>All gym Access: </b> " + allGymAccess + "</html>");
-        allGymAccessLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        allGymAccessLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            JLabel allGymAccessLabel = new JLabel("<html><b>All gym Access: </b> " + allGymAccess + "</html>");
+            allGymAccessLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+            allGymAccessLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        // Add the labels to the current data panel
-        currentData.add(membershipNumberLabel);
-        currentData.add(expirationDateLabel);
-        currentData.add(membershipTypeLabel);
-        currentData.add(originalGymLabel);
-        currentData.add(allGymAccessLabel);
+            // Add the labels to the current data panel
+            currentData.add(membershipNumberLabel);
+            currentData.add(expirationDateLabel);
+            currentData.add(membershipTypeLabel);
+            currentData.add(originalGymLabel);
+            currentData.add(allGymAccessLabel);
+
+            // Add the multisport button if the membership type is not multisport
+            if (!membershipType.equals("multisport")) {
+                // Create multisport button
+                JButton multisportButton = new JButton("I have multisport button");
+                multisportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+                multisportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
+                multisportButton.setFont(new Font("Arial", Font.PLAIN, 14));
+                mainPanel.add(multisportButton, BorderLayout.SOUTH);
+            }
+        }
 
         // Create cancel subscription button
         JButton cancelSubscriptionButton = new JButton("Cancel Subscription");
         cancelSubscriptionButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
         cancelSubscriptionButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         cancelSubscriptionButton.setFont(new Font("Arial", Font.PLAIN, 14));
-
-        // Create multisport button
-        JButton multisportButton = new JButton("I have multisport button");
-        multisportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
-        multisportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
-        multisportButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Create an extend membership panel
         JPanel extendMembershipPanel = new JPanel(new GridLayout(1, 3));
@@ -200,11 +211,6 @@ public class MembershipCardWindow extends JFrame{
         mainPanel.add(contentPanel, BorderLayout.CENTER);
         mainPanel.add(cancelSubscriptionButton, BorderLayout.NORTH);
 
-        // Add the multisport button if the membership type is not multisport
-        if (!membershipType.equals("multisport")) {
-            mainPanel.add(multisportButton, BorderLayout.SOUTH);
-        }
-
         // Add the main panel to the frame
         this.add(mainPanel);
         
@@ -221,7 +227,7 @@ public class MembershipCardWindow extends JFrame{
         // Add event listener for training management button
         oneDayMembershipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new PaymentWindow(utils.Prices.ONE_DAY_MEMBERSHIP_PRICE);
+                new PaymentWindow(message, ReadFromServer, SendToServer, userID, utils.Prices.ONE_DAY_MEMBERSHIP_PRICE);
             }
         });
 
