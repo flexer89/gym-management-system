@@ -59,7 +59,7 @@ public class LoginWindow extends JFrame{
                 String username = usernameTextField.getText();
                 String password = new String(passwordField.getPassword());
 
-                if (!ValidateData.ValidateUsername(username) || !ValidateData.ValidatePassword(password)) {
+                if (!ValidateData.ValidateUsername(username)) {
                     return;
                 }
 

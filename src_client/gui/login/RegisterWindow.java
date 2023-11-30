@@ -109,7 +109,7 @@ public class RegisterWindow extends JFrame{
                     return;
                 }
 
-                if (!ValidateData.validateMail(email) || !ValidateData.validatePhoneNumber(phone) || !ValidateData.validateName(name) || !ValidateData.validateName(surname)) {
+                if (!ValidateData.validateMail(email) || !ValidateData.validatePhoneNumber(phone) || !ValidateData.validateName(name) || !ValidateData.validateName(surname) || !ValidateData.ValidateDate(dateOfBirth) || !ValidateData.ValidateUsername(username) || !ValidateData.ValidatePassword(password)) {
                     return;
                 }
 
