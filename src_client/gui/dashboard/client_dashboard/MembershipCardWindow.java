@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import gui.dashboard.client_dashboard.membership_extension.AllGymMembership;
+import gui.dashboard.client_dashboard.membership_extension.OneGymMembership;
 import gui.dashboard.client_dashboard.membership_extension.PaymentWindow;
 import utils.*;
 
@@ -239,13 +240,14 @@ public class MembershipCardWindow extends JFrame{
         // Add event listener for training management button
         oneDayMembershipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new PaymentWindow(message, ReadFromServer, SendToServer, userID, utils.Prices.ONE_DAY_MEMBERSHIP_PRICE);
+                new PaymentWindow(message, ReadFromServer, SendToServer, userID, utils.Prices.ONE_DAY_MEMBERSHIP_PRICE, 1, 1);
             }
         });
 
         // Add event listener for membership management button
         oneGymMembershipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                new OneGymMembership(message, ReadFromServer, SendToServer, userID);
             }
         });
         
