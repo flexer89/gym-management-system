@@ -186,7 +186,12 @@ public class ValidateData {
 
     public static boolean ValidatePassword(String password) {
         if (password.length() > 255) {
-            JOptionPane.showMessageDialog(null, "Password is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Password is too long", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        // at least one digit, one lowercase, one uppercase and be at least 8 characters long
+        if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$")) {
+            JOptionPane.showMessageDialog(null, "Password must contain at least one digit, one lowercase, one uppercase and be at least 8 characters long", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;

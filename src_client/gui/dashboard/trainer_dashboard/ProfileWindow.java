@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import utils.Message;
+import utils.ValidateData;
 
 public class ProfileWindow extends JFrame {
     private JButton changePasswordButton;
@@ -111,6 +112,9 @@ public class ProfileWindow extends JFrame {
                 try {
                     if (!newPassword.equals(confirmPassword)) {
                         throw new Exception("Passwords do not match");
+                    }
+                    if (!ValidateData.ValidatePassword(confirmPassword)) {
+                        return;
                     }
                     System.out.println("New password and confirm password match");
 
