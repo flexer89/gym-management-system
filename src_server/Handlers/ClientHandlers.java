@@ -93,14 +93,28 @@ public class ClientHandlers {
         int amount = Integer.parseInt(paymentInfo[0]);
         String paymentMethod = paymentInfo[1];
         int userID = Integer.parseInt(paymentInfo[2]);
-        
+        int gymID = Integer.parseInt(paymentInfo[3]);
+        boolean allGymAccess = Boolean.parseBoolean(paymentInfo[4]);
+
         System.out.println("User " + userID + " wants to pay " + amount + " PLN using " + paymentMethod);
         try {
             boolean paymentSuccessful = sqlEngine.payment(userID, amount, paymentMethod);
-            String membershipCard = sqlEngine.addMembershipCard(userID, LocalDate.now().plusDays(1), "membership", true, 1);
+            String membershipCard = sqlEngine.addMembershipCard(userID, LocalDate.now().plusDays(1), "membership", allGymAccess, gymID);
             SendToClient.println(paymentSuccessful+":"+membershipCard);
         } catch (SQLException e) {
             System.out.println("Error processing payment: " + e.getMessage());
+        }
+    }
+
+
+    public void cancelSubscription(String data) {
+        int userID = Integer.parseInt(data);
+        System.out.println("User " + userID + " wants to cancel subscription");
+        try {
+            boolean subscriptionCancelled = sqlEngine.cancelSubscription(userID);
+            SendToClient.println(subscriptionCancelled);
+        } catch (SQLException e) {
+            System.out.println("Error cancelling subscription: " + e.getMessage());
         }
     }
 

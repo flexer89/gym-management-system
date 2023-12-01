@@ -14,7 +14,7 @@ import java.io.PrintWriter;
 
 public class PaymentWindow extends JFrame {
 
-    public PaymentWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, int userID, int amount) {
+    public PaymentWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, int userID, int amount, int gymId, int allGymAccess) {
         setTitle("Payment");
         setSize(400, 300);
         setLocationRelativeTo(null);
@@ -90,7 +90,7 @@ public class PaymentWindow extends JFrame {
                 JOptionPane.showMessageDialog(PaymentWindow.this, "Payment processing...", "Payment", JOptionPane.INFORMATION_MESSAGE);
 
                 // Log payment
-                message.sendPaymentMessage(SendToServer, amount + "," + paymentMethod.toLowerCase() + "," + userID);
+                message.sendPaymentMessage(SendToServer, amount + "," + paymentMethod.toLowerCase() + "," + userID + "," + gymId + "," + allGymAccess);
 
                 // Get response from server
                 String serverResponse;
@@ -106,6 +106,7 @@ public class PaymentWindow extends JFrame {
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(PaymentWindow.this, "Payment failed!", "Payment", JOptionPane.ERROR_MESSAGE);
+                        dispose();
                     }
                 } catch (IOException e1) {
                     System.out.println(utils.Color.ANSI_RED + "Error: " + e1.getMessage() + utils.Color.ANSI_RESET);

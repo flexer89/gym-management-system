@@ -53,7 +53,7 @@ public class GymClient {
             // Create the login/register window
             loginRegisterWindow = new LoginRegisterWindow(message, ReadFromServer, SendToServer, clientSocket);
         } catch (ConnectException e) {
-            JOptionPane.showMessageDialog(null, "Connection refused: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Server is not running", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
         }

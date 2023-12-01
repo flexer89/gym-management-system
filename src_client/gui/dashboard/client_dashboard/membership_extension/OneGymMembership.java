@@ -21,22 +21,17 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-public class AllGymMembership extends JFrame {
+public class OneGymMembership extends JFrame {
     private JTextField startDateField;
     private JTextField monthsField;
     private JButton addButton;
     private JButton cancelButton;
 
-    public AllGymMembership(Message message, BufferedReader readFromServer, PrintWriter sendToServer, int userId){
+    public OneGymMembership(Message message, BufferedReader readFromServer, PrintWriter sendToServer, int userId) {
         // Create the main window
         this.setSize(960, 600);
         this.setVisible(true);
         this.setTitle("Gym Management System | Membership Card Management");
-
-        // Create set original gym label
-        JPanel setOriginalGymPanel = new JPanel();
-        setOriginalGymPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Set Original Gym"));
-        this.add(setOriginalGymPanel);
 
         // Add the report table
         DefaultTableModel reportTableModel = new DefaultTableModel(new String[]{"ID", "Name", "Address", "Postal Code", "City", "Phone", "Email"}, 0) {
@@ -96,7 +91,7 @@ public class AllGymMembership extends JFrame {
 
         // Add the original gym id label
         c.gridy = 2;
-        formPanel.add(new JLabel("Set main gym for this membership"), c);
+        formPanel.add(new JLabel("You can only set one gym for this membership"), c);
 
         // Create the panel for the buttons
         JPanel buttonPanel = new JPanel();
@@ -148,7 +143,7 @@ public class AllGymMembership extends JFrame {
                 // Get the gym ID
                 int gymId = Integer.parseInt(reportTable.getValueAt(selectedRow, 0).toString());
 
-                new PaymentWindow(message, readFromServer, sendToServer, userId, utils.Prices.FULL_MEMBERSHIP_PRICE * months, gymId, 1);
+                new PaymentWindow(message, readFromServer, sendToServer, userId, utils.Prices.ONE_GYM_MEMBERSHIP_PRICE * months, gymId, 0);
             }
         });
 

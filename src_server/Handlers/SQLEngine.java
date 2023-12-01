@@ -15,7 +15,6 @@ import java.util.List;
 
 import utils.GenerateCard;
 import utils.Secure;
-import utils.GenerateCard;
 
 public class SQLEngine {
 
@@ -248,7 +247,7 @@ public class SQLEngine {
     }
 
     public boolean canEnterGym(int card_number, int gymID) throws SQLException {
-        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.card_number = ?";
+        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id, isCanceled FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.card_number = ?";
         PreparedStatement pstmt = connection.prepareStatement(query);
         pstmt.setInt(1, card_number);
         ResultSet resultSet = pstmt.executeQuery();
@@ -258,13 +257,14 @@ public class SQLEngine {
             boolean allGymAccess = resultSet.getBoolean("all_gyms_access");
             int originalGymID = resultSet.getInt("original_gym_id");
             int clientID = resultSet.getInt("client_id");
+            boolean isCanceled = resultSet.getBoolean("isCanceled");
     
             // Format time
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             LocalTime now = LocalTime.now();
             String formattedTime = formatter.format(now);
     
-            if ((allGymAccess || originalGymID == gymID) && expirationDate.isAfter(LocalDate.now())) {
+            if ((allGymAccess || originalGymID == gymID) && expirationDate.isAfter(LocalDate.now()) && !isCanceled) {
                 // Check if client entered already
                 query = "SELECT * FROM gym_visits WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
                 pstmt = connection.prepareStatement(query);
@@ -891,7 +891,7 @@ public class SQLEngine {
 
     public boolean reserveTraining(int userID, int trainingID) throws SQLException {
         // check if client has a valid membership card
-        String query = "SELECT * FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = ? AND expiration_date > CURDATE()";
+        String query = "SELECT * FROM membership_card JOIN client ON client.id = membership_card.client_id WHERE client.id = ? AND expiration_date > CURDATE() AND isCanceled = 0";
         PreparedStatement pstmt = connection.prepareStatement(query);
         pstmt.setInt(1, userID);
         ResultSet resultSet = pstmt.executeQuery();
@@ -974,7 +974,7 @@ public class SQLEngine {
     }
 
     public String getMembershipCard(int userID) throws SQLException {
-        String query = "SELECT * FROM membership_card WHERE client_id = ? AND expiration_date > CURDATE()";
+        String query = "SELECT * FROM membership_card WHERE client_id = ? AND expiration_date > CURDATE() AND isCanceled = 0";
         PreparedStatement pstmt = connection.prepareStatement(query);
         pstmt.setInt(1, userID);
         ResultSet resultSet = pstmt.executeQuery();
@@ -1068,5 +1068,77 @@ public class SQLEngine {
             System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
         }
         return "--------";
+    }
+
+    public boolean cancelSubscription(int userID) throws SQLException {
+        String query = "UPDATE membership_card SET isCanceled = 1 WHERE client_id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, userID);
+            int count = pstmt.executeUpdate();
+            if (count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+        }
+        return false;
+    }
+
+    public boolean updateGym(int gymID, String name, String address, String postalCode, String city, String phone,
+            String email) throws SQLException{
+        String query = "UPDATE gym SET name = ?, address = ?, postal_code = ?, city = ?, phone = ?, email = ? WHERE id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, name);
+            pstmt.setString(2, address);
+            pstmt.setString(3, postalCode);
+            pstmt.setString(4, city);
+            pstmt.setString(5, phone);
+            pstmt.setString(6, email);
+            pstmt.setInt(7, gymID);
+            int count = pstmt.executeUpdate();
+            if (count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+        }
+        return false;
+    }
+
+    public boolean updateEmployee(int employeeID, String name, String surname, String position, LocalDate dateOfBirth,
+            LocalDate dateOfEmployment, String phone, String email) throws SQLException {
+        String query = "UPDATE employee SET first_name = ?, last_name = ?, position = ?, date_of_birth = ?, date_of_employment = ?, phone_number = ?, email = ? WHERE id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, name);
+            pstmt.setString(2, surname);
+            pstmt.setString(3, position);
+            pstmt.setObject(4, dateOfBirth);
+            pstmt.setObject(5, dateOfEmployment);
+            pstmt.setString(6, phone);
+            pstmt.setString(7, email);
+            pstmt.setInt(8, employeeID);
+            int count = pstmt.executeUpdate();
+            if (count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+        }
+        return false;
+    }
+
+    public boolean updateTraining(int trainingID, String name, LocalDate date, LocalTime startHour, LocalTime endHour,
+            int capacity, int room, int trainerID, int gymID) throws SQLException {
+        // TODO
+        return false;
     }
 }

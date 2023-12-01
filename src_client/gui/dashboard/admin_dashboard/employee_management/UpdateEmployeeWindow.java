@@ -139,10 +139,10 @@ public class UpdateEmployeeWindow extends JFrame {
                     String response = ReadFromServer.readLine();
 
                     // Check if the update was successful
-                    if (response.equals("Update successful.")) {
-                        JOptionPane.showMessageDialog(null, response, "Updated succesfully.", JOptionPane.INFORMATION_MESSAGE);
+                    if (response.equals("True")) {
+                        JOptionPane.showMessageDialog(null, "Employee updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(null, response, "Error updating Employee", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error updating employee", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException ex) {
                     System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);

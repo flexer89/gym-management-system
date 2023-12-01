@@ -3,10 +3,6 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-
 
 public class GymHandlers {
 
@@ -67,6 +63,32 @@ public class GymHandlers {
             }
         } catch (SQLException e) {
             System.out.println("Error deleting gym: " + e.getMessage());
+        }
+    }
+
+    public void updateGym(String data) {
+        String[] gymInfo = data.split(",");
+        int gymID = Integer.parseInt(gymInfo[0]);
+        String name = gymInfo[1];
+        String address = gymInfo[2];
+        String postalCode = gymInfo[3];
+        String city = gymInfo[4];
+        String phone = gymInfo[5];
+        String email = gymInfo[6];
+
+        System.out.println("Updating gym " + gymID);
+
+        try {
+            boolean ifUpdated = sqlEngine.updateGym(gymID, name, address, postalCode, city, phone, email);
+            if (ifUpdated) {
+                System.out.println("Gym " + gymID + " updated");
+                SendToClient.println("Update successful.");
+            } else {
+                System.out.println("Gym " + gymID + " wasn't updated");
+                SendToClient.println("Error updating gym.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating gym: " + e.getMessage());
         }
     }
     

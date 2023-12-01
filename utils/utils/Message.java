@@ -123,4 +123,12 @@ public class Message {
     public void sendPaymentMessage(PrintWriter writer, String message) {
         writer.println("PAYMENT:" + message);
     }
+
+    public void sendCancelSubscriptionMessage(PrintWriter writer, String message) {
+        writer.println("CANCEL_SUBSCRIPTION:" + message);
+    }
+
+    public void sendUpdateTrainingMessage(PrintWriter writer, String message) {
+        writer.println("UPDATE_TRAINING:" + message);
+    }
 }

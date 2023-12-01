@@ -1,5 +1,7 @@
 package utils;
 
+import java.time.LocalDate;
+
 import javax.swing.JOptionPane;
 
 public class ValidateData {
@@ -20,7 +22,7 @@ public class ValidateData {
     }
 
     public static boolean validateName(String name) {
-        if (!name.matches("^[a-zA-Z]+$") && (!name.isEmpty() || name.length() > 255)) {
+        if ((!name.isEmpty() && name.length() > 255)) {
             JOptionPane.showMessageDialog(null, "Invalid name!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -95,7 +97,7 @@ public class ValidateData {
     }
 
     public static boolean ValidateCity(String city) {
-        if (!city.matches("^[a-zA-Z]+$") && (!city.isEmpty() || city.length() > 255)) {
+        if ((!city.isEmpty() && city.length() > 255)) {
             JOptionPane.showMessageDialog(null, "Invalid city!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -216,6 +218,14 @@ public class ValidateData {
     public static boolean ValidateBlik(String blikCode) {
         if (!blikCode.matches("\\d{6}") || blikCode.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Invalid BLIK code!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+    public static boolean ValidateIsBefore(String date) {
+        // Validate if the date is in the correct range
+        if (!date.isEmpty() && date.compareTo(LocalDate.now().toString()) < 0) {
+            JOptionPane.showMessageDialog(null, "From date must be before to date!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;

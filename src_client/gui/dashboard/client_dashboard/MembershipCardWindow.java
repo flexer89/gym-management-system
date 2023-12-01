@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import gui.dashboard.client_dashboard.membership_extension.AllGymMembership;
+import gui.dashboard.client_dashboard.membership_extension.OneGymMembership;
 import gui.dashboard.client_dashboard.membership_extension.PaymentWindow;
 import utils.*;
 
@@ -218,7 +219,19 @@ public class MembershipCardWindow extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to cancel your subscription?", "Confirmation", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    // Code to cancel the subscription
+                    message.sendCancelSubscriptionMessage(SendToServer, Integer.toString(userID));
+                    dispose();
+
+                    try {
+                        boolean subscriptionCancelled = Boolean.parseBoolean(ReadFromServer.readLine());
+                        if (subscriptionCancelled) {
+                            JOptionPane.showMessageDialog(null, "Subscription cancelled successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error cancelling subscription!", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
@@ -227,13 +240,14 @@ public class MembershipCardWindow extends JFrame{
         // Add event listener for training management button
         oneDayMembershipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new PaymentWindow(message, ReadFromServer, SendToServer, userID, utils.Prices.ONE_DAY_MEMBERSHIP_PRICE);
+                new PaymentWindow(message, ReadFromServer, SendToServer, userID, utils.Prices.ONE_DAY_MEMBERSHIP_PRICE, 1, 1);
             }
         });
 
         // Add event listener for membership management button
         oneGymMembershipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                new OneGymMembership(message, ReadFromServer, SendToServer, userID);
             }
         });
         
