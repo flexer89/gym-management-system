@@ -140,5 +140,23 @@ public class TrainingHandlers {
         }
     }
 
+    public void deleteTraining(String data) {
+        int trainingID = Integer.parseInt(data);
+        System.out.println("Deleting training " + trainingID);
+
+        try {
+            boolean ifDeleted = sqlEngine.deleteTraining(trainingID);
+            if (ifDeleted) {
+                System.out.println("Training " + trainingID + " deleted");
+                SendToClient.println("True");
+            } else {
+                System.out.println("Training " + trainingID + " wasn't deleted");
+                SendToClient.println("False");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error deleting training: " + e.getMessage());
+        }
+    }
+
 
 }

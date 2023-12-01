@@ -163,7 +163,7 @@ public class TrainerDashboard extends JFrame {
         // Add event listener for delete training button
         deleteTrainingButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new DeleteTrainingWindow(message, ReadFromServer, SendToServer);
+                new DeleteTrainingWindow(message, ReadFromServer, SendToServer, employeeID);
             }
         });
 

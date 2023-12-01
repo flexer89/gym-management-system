@@ -22,12 +22,16 @@ public class ClientHandlers {
     {
         String[] loginInfo = serverMessage.split(",");
 
-        int userID = Integer.parseInt(loginInfo[0]);
+        String userID = loginInfo[0];
         int roomID = Integer.parseInt(loginInfo[1]);
-        System.out.println("User " + userID + " wants to enter room " + roomID);
+        System.out.println("User with membership card with ID: " + userID + " wants to enter room " + roomID);
         try {
             boolean canEnterTraining = sqlEngine.canEnterTraining(userID, roomID);
-            SendToClient.println(canEnterTraining);
+            if (canEnterTraining) {
+                SendToClient.println("True");
+            } else {
+                SendToClient.println("False");
+            }
         } catch (SQLException e) {
             System.out.println("Error checking if user can enter training: " + e.getMessage());
         }
