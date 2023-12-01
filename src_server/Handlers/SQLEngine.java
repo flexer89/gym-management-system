@@ -1138,7 +1138,118 @@ public class SQLEngine {
 
     public boolean updateTraining(int trainingID, String name, LocalDate date, LocalTime startHour, LocalTime endHour,
             int capacity, int room, int trainerID, int gymID) throws SQLException {
-        // TODO
-        return false;
+        // Check if room is available (start and end hours should not be between start and end hours of another training in the same room)
+        String query = "SELECT * FROM training WHERE room = ? AND gym_id = ? AND date = ? AND start_hour <= ? AND end_hour >= ? AND id != ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, room);
+        pstmt.setInt(2, gymID);
+        pstmt.setDate(3, java.sql.Date.valueOf(date));
+        pstmt.setTime(4, java.sql.Time.valueOf(endHour));
+        pstmt.setTime(5, java.sql.Time.valueOf(startHour));
+        pstmt.setInt(6, trainingID);
+
+        if (pstmt.executeQuery().next()) {
+            return false;
+        }
+
+        // Check if trainer is available (start and end hours should not be between start and end hours of another training of the same trainer)
+        query = "SELECT * FROM training WHERE trainer_id = ? AND date = ? AND start_hour <= ? AND end_hour >= ? AND id != ?";
+        pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, trainerID);
+        pstmt.setDate(2, java.sql.Date.valueOf(date));
+        pstmt.setTime(3, java.sql.Time.valueOf(endHour));
+        pstmt.setTime(4, java.sql.Time.valueOf(startHour));
+        pstmt.setInt(5, trainingID);
+
+        if (pstmt.executeQuery().next()) {
+            return false;
+        }
+
+        // Update training
+        query = "UPDATE training SET name = ?, date = ?, start_hour = ?, end_hour = ?, capacity = ?, room = ?, trainer_id = ?, gym_id = ? WHERE id = ?";
+        pstmt = connection.prepareStatement(query);
+        pstmt.setString(1, name);
+        pstmt.setDate(2, java.sql.Date.valueOf(date));
+        pstmt.setTime(3, java.sql.Time.valueOf(startHour));
+        pstmt.setTime(4, java.sql.Time.valueOf(endHour));
+        pstmt.setInt(5, capacity);
+        pstmt.setInt(6, room);
+        pstmt.setInt(7, trainerID);
+        pstmt.setInt(8, gymID);
+        pstmt.setInt(9, trainingID);
+        int count = pstmt.executeUpdate();
+        if (count > 0) {
+            return true; 
+        } else {
+            return false;
+        }
+    }
+
+    public String timeSpentEmployeeReport(LocalDate entranceFromDate, LocalDate entranceToDate,
+            LocalTime entranceFromHour, LocalTime entranceToHour, LocalDate exitFromDate, LocalDate exitToDate,
+            LocalTime exitFromHour, LocalTime exitToHour, int employeeID) throws SQLException {
+        String query = "SELECT * FROM employee_work_time WHERE employee_id = ? AND entrance_date BETWEEN ? AND ? AND entrance_time BETWEEN ? AND ? AND exit_date BETWEEN ? AND ? AND exit_time BETWEEN ? AND ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, employeeID);
+        pstmt.setDate(2, java.sql.Date.valueOf(entranceFromDate));
+        pstmt.setDate(3, java.sql.Date.valueOf(entranceToDate));
+        pstmt.setTime(4, java.sql.Time.valueOf(entranceFromHour));
+        pstmt.setTime(5, java.sql.Time.valueOf(entranceToHour));
+        pstmt.setDate(6, java.sql.Date.valueOf(exitFromDate));
+        pstmt.setDate(7, java.sql.Date.valueOf(exitToDate));
+        pstmt.setTime(8, java.sql.Time.valueOf(exitFromHour));
+        pstmt.setTime(9, java.sql.Time.valueOf(exitToHour));
+        ResultSet resultSet = pstmt.executeQuery();
+
+        String report = "";
+        
+        // Calculate time spent (hh:mm)
+        while (resultSet.next()) {
+            LocalTime entranceTime = resultSet.getTime("entrance_time").toLocalTime();
+            LocalTime exitTime = resultSet.getTime("exit_time").toLocalTime();
+            int hours = exitTime.getHour() - entranceTime.getHour();
+            int minutes = exitTime.getMinute() - entranceTime.getMinute();
+
+            // count time spent (if minute is below 10 add 0 before)
+            String timeSpent = hours + ":";
+            if (minutes < 10) {
+                timeSpent += "0" + minutes;
+            } else {
+                timeSpent += minutes;
+            }
+
+            report += resultSet.getInt("id") + "," + resultSet.getDate("entrance_date") + "," + resultSet.getTime("entrance_time") + "," + resultSet.getDate("exit_date") + "," + resultSet.getTime("exit_time") + "," + timeSpent + "///";
+        }
+
+        return report;
+    }
+
+    public String loadEmployeeTrainings(int employeeID) throws SQLException {
+        String query = "SELECT * FROM training WHERE trainer_id = ? AND date >= CURDATE()";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, employeeID);
+            ResultSet resultSet = pstmt.executeQuery();
+
+            String report = "";
+            while (resultSet.next()) {
+                report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getTime("end_hour") + "," + resultSet.getInt("capacity") + "," + resultSet.getInt("room") + "," + resultSet.getInt("gym_id");
+
+                // Get the gym name
+                query = "SELECT name FROM gym WHERE id = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, resultSet.getInt("gym_id"));
+                ResultSet gymResultSet = pstmt.executeQuery();
+                String gymName = "";
+                if (gymResultSet.next()) {
+                    gymName = gymResultSet.getString("name");
+                }
+
+                report += "," + gymName + "///";
+            }
+            return report;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

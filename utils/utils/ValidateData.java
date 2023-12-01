@@ -105,7 +105,7 @@ public class ValidateData {
     }
 
     public static boolean ValidateHourRange(String fromHour, String toHour) {
-        if ((!fromHour.matches("\\d{2}:\\d{2}") && !fromHour.isEmpty()) || (!toHour.matches("\\d{2}:\\d{2}") && !toHour.isEmpty())) {
+        if (((!fromHour.matches("\\d{2}:\\d{2}") && !fromHour.matches("\\d{2}:\\d{2}:00")) && !fromHour.isEmpty()) || ((!toHour.matches("\\d{2}:\\d{2}") && !toHour.matches("\\d{2}:\\d{2}:00")) && !toHour.isEmpty())) {
             JOptionPane.showMessageDialog(null, "Hour must be in the format hh:mm!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }

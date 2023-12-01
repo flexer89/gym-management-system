@@ -131,4 +131,8 @@ public class Message {
     public void sendUpdateTrainingMessage(PrintWriter writer, String message) {
         writer.println("UPDATE_TRAINING:" + message);
     }
+
+    public void sendLoadEmployeeTrainingsMessage(PrintWriter writer, int message) {
+        writer.println("LOAD_EMPLOYEE_TRAININGS:" + message);
+    }
 }
