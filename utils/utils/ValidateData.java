@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 public class ValidateData {
     public static boolean validateMail(String email) {
-        if (!email.matches("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$") || email.length() > 255) {
+        if ((!email.matches("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$") || email.length() > 255) && !email.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Invalid email address!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -14,7 +14,7 @@ public class ValidateData {
     }
 
     public static boolean validateAddress(String address) {
-        if (!address.matches("^[a-zA-Z0-9 ]+$") || address.length() > 255 || address.isBlank()) {
+        if ((!address.matches("^[a-zA-Z0-9 ]+$") || address.length() > 255 || address.isBlank()) && !address.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Invalid address!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -22,7 +22,7 @@ public class ValidateData {
     }
 
     public static boolean validateName(String name) {
-        if (name.length() > 255 || (!name.matches("^[a-zA-Z]+$"))) {
+        if ((name.length() > 255 || (!name.matches("^[a-zA-Z]+$") && !name.isEmpty()))) {
             JOptionPane.showMessageDialog(null, "Invalid name!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
