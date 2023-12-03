@@ -1,7 +1,10 @@
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import utils.GenerateCard;
 
+@RunWith(org.junit.runners.JUnit4.class)
 public class GenerateCardTest {
     @Test
     public void testGenerateClientCardNumber() {
