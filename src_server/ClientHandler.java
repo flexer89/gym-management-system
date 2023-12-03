@@ -21,7 +21,8 @@ class ClientHandler implements Callable<String> {
         DELETE_EMPLOYEE, LOAD_EMPLOYEE, GET_CLIENT, GET_TRAINER, ADD_TRAINING,
         LOAD_TRAININGS, RESERVE_TRAINING, TIME_SPENT_REPORT, UNKNOWN,SHUTDOWN, 
         GET_MEMBERSHIP_CARD, PAYMENT, CANCEL_SUBSCRIPTION, UPDATE_TRAINING,
-        CHANGE_PASSWORD, UPDATE_GYM, UPDATE_EMPLOYEE, TIME_SPENT_EMPLOYEE_REPORT
+        CHANGE_PASSWORD, UPDATE_GYM, UPDATE_EMPLOYEE, TIME_SPENT_EMPLOYEE_REPORT,
+        LOAD_EMPLOYEE_TRAININGS, DELETE_TRAINING
     }
 
     CommandType getCommandType(String command) {
@@ -156,6 +157,15 @@ class ClientHandler implements Callable<String> {
                         break;
                     case UPDATE_TRAINING:
                         TrainingHandlers.updateTraining(data);
+                        break;
+                    case TIME_SPENT_EMPLOYEE_REPORT:
+                        ReportsHandlers.timeSpentEmployeeReport(data);
+                        break;
+                    case LOAD_EMPLOYEE_TRAININGS:
+                        EmployeeHandlers.loadEmployeeTrainings(data);
+                        break;
+                    case DELETE_TRAINING:
+                        TrainingHandlers.deleteTraining(data);
                         break;
                     default:
                         System.out.println("Unknown command: " + command);

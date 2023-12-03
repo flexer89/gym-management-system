@@ -62,7 +62,7 @@ public class TrainingEntranceWindow extends JFrame{
 
                 try {
                     String message = ReadFromServer.readLine();
-                    if (message.equals("true")) {
+                    if (message.equals("True")) {
                         JOptionPane.showMessageDialog(null, "Enjoy your training!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(null, "You can't enter the training room yet or you don't have a reservation for this room", "Error", JOptionPane.ERROR_MESSAGE);

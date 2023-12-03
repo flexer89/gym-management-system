@@ -156,14 +156,14 @@ public class TrainerDashboard extends JFrame {
         // Add event listener for update training button
         updateTrainingButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new UpdateTrainingWindow(message, ReadFromServer, SendToServer);
+                new UpdateTrainingWindow(message, ReadFromServer, SendToServer, employeeID);
             }
         });
 
         // Add event listener for delete training button
         deleteTrainingButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new DeleteTrainingWindow(message, ReadFromServer, SendToServer);
+                new DeleteTrainingWindow(message, ReadFromServer, SendToServer, employeeID);
             }
         });
 
@@ -171,7 +171,7 @@ public class TrainerDashboard extends JFrame {
         // Add event listener for training report button
         trainingReportButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new TrainingReportWindow(message, ReadFromServer, SendToServer);
+                new TrainingReportWindow(message, ReadFromServer, SendToServer, employeeID);
             }
         });
 

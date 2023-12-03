@@ -104,4 +104,15 @@ public class EmployeeHandlers {
             System.out.println("Error updating employee: " + e.getMessage());
         }
     }
+
+    public void loadEmployeeTrainings(String data) {
+        int employeeID = Integer.parseInt(data);
+        System.out.println("Loading trainings for employee " + employeeID);
+        try {
+            String report = sqlEngine.loadEmployeeTrainings(employeeID);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error loading trainings: " + e.getMessage());
+        }
+    }
 }
