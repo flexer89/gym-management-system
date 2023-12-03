@@ -445,7 +445,7 @@ public class MessageTest {
         Message message = new Message();
         String expectedOutput ="LOAD_EMPLOYEE_TRAININGS:1";
         
-        message.sendLoadEmployeeTrainingsMessage(writer, 1);
+        message.sendLoadEmployeeTrainingsMessage(writer, "1");
         String actualOutput = stringWriter.toString().trim();
         
         Assert.assertEquals(expectedOutput, actualOutput);

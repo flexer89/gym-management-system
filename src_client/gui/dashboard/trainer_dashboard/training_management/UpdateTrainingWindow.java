@@ -77,7 +77,7 @@ public class UpdateTrainingWindow extends JFrame {
         loadGymButton.addActionListener(new ActionListener() {    
             public void actionPerformed(ActionEvent e) {
                 // Send the message to the server
-                message.sendLoadEmployeeTrainingsMessage(SendToServer, employeeID);
+                message.sendLoadEmployeeTrainingsMessage(SendToServer, employeeID + "");
 
                 // Clear the table
                 reportTableModel.setRowCount(0);
