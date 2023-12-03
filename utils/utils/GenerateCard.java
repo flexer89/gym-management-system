@@ -30,4 +30,19 @@ public class GenerateCard {
 
         return cardNumber.toString();
     }
+
+    // Getter for CARD_NUMBER_LENGTH
+    public static int getCardNumberLength() {
+        return CARD_NUMBER_LENGTH;
+    }
+
+    // Getter for CLIENT_NUMBER_PREFIX
+    public static String getClientNumberPrefix() {
+        return CLIENT_NUMBER_PREFIX;
+    }
+
+    // Getter for EMPLOYEE_NUMBER_PREFIX
+    public static String getEmployeeNumberPrefix() {
+        return EMPLOYEE_NUMBER_PREFIX;
+    }
 }

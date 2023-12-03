@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 public class ValidateData {
     public static boolean validateMail(String email) {
-        if (!email.matches("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$") && (!email.isEmpty() || email.length() > 255)) {
+        if (!email.matches("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$") || email.length() > 255) {
             JOptionPane.showMessageDialog(null, "Invalid email address!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -14,7 +14,7 @@ public class ValidateData {
     }
 
     public static boolean validateAddress(String address) {
-        if (!address.matches("^[a-zA-Z0-9 ]+$") && (!address.isEmpty() || address.length() > 255))  {
+        if (!address.matches("^[a-zA-Z0-9 ]+$") || address.length() > 255 || address.isBlank()) {
             JOptionPane.showMessageDialog(null, "Invalid address!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -22,7 +22,7 @@ public class ValidateData {
     }
 
     public static boolean validateName(String name) {
-        if ((!name.isEmpty() && name.length() > 255)) {
+        if (name.length() > 255 || (!name.matches("^[a-zA-Z]+$"))) {
             JOptionPane.showMessageDialog(null, "Invalid name!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -81,7 +81,7 @@ public class ValidateData {
 
     public static boolean ValidatePaymentAmount(String minimumPayment, String maximumPayment) 
     {
-        if ((!minimumPayment.matches("\\d+") && !minimumPayment.isEmpty()) || (!maximumPayment.matches("\\d+") && !maximumPayment.isEmpty()) || (!minimumPayment.isEmpty() && !maximumPayment.isEmpty() && Integer.parseInt(minimumPayment) > Integer.parseInt(maximumPayment))) {
+        if ((!minimumPayment.matches("\\d+") && !minimumPayment.isEmpty()) || (!maximumPayment.matches("\\d+") && !maximumPayment.isEmpty()) || (!minimumPayment.isEmpty() && !maximumPayment.isEmpty() && Integer.parseInt(minimumPayment) >= Integer.parseInt(maximumPayment))) {
             JOptionPane.showMessageDialog(null, "Invalid payment amount!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -90,14 +90,16 @@ public class ValidateData {
 
     public static boolean ValidatePostalCode(String postalCode) {
         if (!postalCode.matches("^[0-9]{2}-[0-9]{3}$") && !postalCode.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Invalid postal code!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Invalid postal code! (Should be xx-xxx)", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
     }
 
     public static boolean ValidateCity(String city) {
-        if ((!city.isEmpty() && city.length() > 255)) {
+        if (city.length() > 255 ||
+            (!city.matches("^[a-zA-Z]+ [a-zA-Z]+$") && 
+            (!city.matches("^[a-zA-Z]+$")))) {
             JOptionPane.showMessageDialog(null, "Invalid city!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -192,16 +194,40 @@ public class ValidateData {
             return false;
         }
         // at least one digit, one lowercase, one uppercase and be at least 8 characters long
-        if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$")) {
-            JOptionPane.showMessageDialog(null, "Password must contain at least one digit, one lowercase, one uppercase and be at least 8 characters long", "Error", JOptionPane.ERROR_MESSAGE);
+        if (password.contains(" ")) {
+            JOptionPane.showMessageDialog(null, "Password cannot contain spaces", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!password.matches(".*\\d.*")) {
+            JOptionPane.showMessageDialog(null, "Password must contain at least one digit", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (!password.matches(".*[a-z].*")) {
+            JOptionPane.showMessageDialog(null, "Password must contain at least one lowercase letter", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            JOptionPane.showMessageDialog(null, "Password must contain at least one uppercase letter", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (!password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
+            JOptionPane.showMessageDialog(null, "Password must contain at least one special character", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (password.length() < 8) {
+            JOptionPane.showMessageDialog(null, "Password must be at least 8 characters long", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
     }
 
     public static boolean ValidateUsername(String username) {
-        if (username.length() > 255) {
-            JOptionPane.showMessageDialog(null, "Username is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+        if (!username.matches("^[a-zA-Z0-9_]+$")) {
+            JOptionPane.showMessageDialog(null, "Username can only contain letters, numbers or _ sign", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -224,8 +250,8 @@ public class ValidateData {
     }
     public static boolean ValidateIsBefore(String date) {
         // Validate if the date is in the correct range
-        if (!date.isEmpty() && date.compareTo(LocalDate.now().toString()) < 0) {
-            JOptionPane.showMessageDialog(null, "From date must be before to date!", "Error", JOptionPane.ERROR_MESSAGE);
+        if (!ValidateDate(date) || (ValidateDate(date) && date.compareTo(LocalDate.now().toString()) < 0)) {
+            JOptionPane.showMessageDialog(null, "Date must be after today!", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
