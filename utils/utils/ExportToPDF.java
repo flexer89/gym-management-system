@@ -27,7 +27,7 @@ public class ExportToPDF {
                 float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
                 float yPosition = yStart;
                 float tableHeight = 20f;
-                float cellMargin = 5f;
+                float cellMargin = 2f;
 
                 // Write the table headers
                 contentStream.newLineAtOffset(margin, yPosition);

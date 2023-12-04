@@ -256,4 +256,13 @@ public class ValidateData {
         }
         return true;
     }
+
+    public static boolean ValidateCardNumber(String cardNumber) {
+        if (!cardNumber.matches("\\d{8}") || (!cardNumber.startsWith("00") && 
+        !cardNumber.startsWith("99"))) {
+            JOptionPane.showMessageDialog(null, "Invalid card number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
 }

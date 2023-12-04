@@ -100,7 +100,11 @@ public class PaymentReportWindow extends JFrame {
 
         // Add the "Generate Report" button
         generateReportButton = new JButton("Generate Report");
-        mainPanel.add(generateReportButton);
+        JButton exportButton = new JButton("Export to PDF");
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
+        buttonPanel.add(generateReportButton);
+        buttonPanel.add(exportButton);
+        mainPanel.add(buttonPanel);
         mainPanel.add(paymentReportPanel);
 
         // Add the report table
@@ -159,6 +163,13 @@ public class PaymentReportWindow extends JFrame {
                 } catch (IOException e1) {
                     System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
+            }
+        });
+        
+        // Add action listener to the "Export to PDF" button
+        exportButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                utils.ExportToPDF.ExportTableToPDF(reportTableModel, "report.pdf");
             }
         });
     }

@@ -33,7 +33,7 @@ public class TrainingEntranceWindow extends JFrame{
         // Create Entrance panel
         JPanel entrancePanel = new JPanel(new GridLayout(3, 1));
         entrancePanel.setBorder(new EmptyBorder(10, 40, 10, 40));
-        JLabel entranceLabel = new JLabel("Enter your ID:"); 
+        JLabel entranceLabel = new JLabel("Enter Card Number:"); 
         entranceLabel.setFont(entranceLabel.getFont().deriveFont(30.0f));
         entranceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -57,8 +57,14 @@ public class TrainingEntranceWindow extends JFrame{
 
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String clientID = idTextField.getText();
-                message.sendCanEnterTrainingMessage(SendToServer, clientID + "," + roomID);
+                String cardNumber = idTextField.getText();
+
+                // Check if the card number is valid
+                if (!utils.ValidateData.ValidateCardNumber(cardNumber)) {
+                    return;
+                }
+
+                message.sendCanEnterTrainingMessage(SendToServer, cardNumber + "," + roomID);
 
                 try {
                     String message = ReadFromServer.readLine();
@@ -67,6 +73,8 @@ public class TrainingEntranceWindow extends JFrame{
                     } else {
                         JOptionPane.showMessageDialog(null, "You can't enter the training room yet or you don't have a reservation for this room", "Error", JOptionPane.ERROR_MESSAGE);
                     }
+                    // Clear the text field
+                    idTextField.setText("");
                     System.out.println(message);
                 } catch (IOException e1) {
                     System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);

@@ -121,7 +121,11 @@ public class TimeSpentReportWindow extends JFrame {
 
         // Add the "Generate Report" button
         generateReportButton = new JButton("Generate Report");
-        mainPanel.add(generateReportButton);
+        JButton exportButton = new JButton("Export to PDF");
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
+        buttonPanel.add(generateReportButton);
+        buttonPanel.add(exportButton);
+        mainPanel.add(buttonPanel);
         mainPanel.add(timeSpentPanel);
 
         // Add the report table
@@ -187,6 +191,13 @@ public class TimeSpentReportWindow extends JFrame {
                 } catch (IOException ex) {
                     System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
                 }
+            }
+        });
+
+        // Add action listener to the "Export to PDF" button
+        exportButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                utils.ExportToPDF.ExportTableToPDF(reportTableModel, "report.pdf");
             }
         });
     }

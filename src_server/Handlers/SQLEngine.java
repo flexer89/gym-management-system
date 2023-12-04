@@ -138,8 +138,8 @@ public class SQLEngine {
             clientStatement.setString(2, hash);
             try (ResultSet clientResultSet = clientStatement.executeQuery()) {
                 if (clientResultSet.next()) {
-                    int cardNumber = clientResultSet.getInt("client_id");
-                    return "client" + "," + cardNumber;
+                    int card_number = clientResultSet.getInt("client_id");
+                    return "client" + "," + card_number;
                 }
             }
         }
@@ -222,12 +222,12 @@ public class SQLEngine {
         }
     }
 
-    public boolean canEnterTraining(String cardNumber, int roomID) throws SQLException {
+    public boolean canEnterTraining(String card_number, int roomID) throws SQLException {
         // get client id by card number
         // We dont have to check if membership card is valid, because it is checked before entering gym at all, not before entering training
         String query = "SELECT client_id FROM client JOIN membership_card ON client.id = membership_card.client_id WHERE card_number = ?";
         PreparedStatement pstmt = connection.prepareStatement(query);
-        pstmt.setString(1, cardNumber);
+        pstmt.setString(1, card_number);
         ResultSet resultSet = pstmt.executeQuery();
 
         if (resultSet.next()) {
@@ -257,18 +257,25 @@ public class SQLEngine {
         return false;
     }
 
-    public boolean canEnterGym(int cardNumber, int gymID) throws SQLException {
-        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id, isCanceled FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.cardNumber = ?";
+    public boolean canEnterGym(String card_number, int gymID) throws SQLException {
+        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id, isCanceled FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.card_number = ? AND membership_card.isCanceled = 0";
         PreparedStatement pstmt = connection.prepareStatement(query);
-        pstmt.setInt(1, cardNumber);
+        pstmt.setString(1, card_number);
         ResultSet resultSet = pstmt.executeQuery();
     
         if (resultSet.next()) {
             LocalDate expirationDate = resultSet.getDate("expiration_date").toLocalDate();
             boolean allGymAccess = resultSet.getBoolean("all_gyms_access");
             int originalGymID = resultSet.getInt("original_gym_id");
-            cardNumber = resultSet.getInt("client_id");
+            int userID = resultSet.getInt("client_id");
             boolean isCanceled = resultSet.getBoolean("isCanceled");
+
+            // print all the data
+            System.out.println("Expiration date: " + expirationDate);
+            System.out.println("All gym access: " + allGymAccess);
+            System.out.println("Original gym id: " + originalGymID);
+            System.out.println("User id: " + userID);
+            System.out.println("Is canceled: " + isCanceled);
     
             // Format time
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -279,7 +286,7 @@ public class SQLEngine {
                 // Check if client entered already
                 query = "SELECT * FROM gym_visits WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
                 pstmt = connection.prepareStatement(query);
-                pstmt.setInt(1, cardNumber);
+                pstmt.setInt(1, userID);
                 pstmt.setInt(2, gymID);
                 resultSet = pstmt.executeQuery();
     
@@ -289,7 +296,7 @@ public class SQLEngine {
     
                 query = "INSERT INTO gym_visits (client_id, gym_id, entrance_date, entrance_time) VALUES (?, ?, ?, ?)";
                 pstmt = connection.prepareStatement(query);
-                pstmt.setInt(1, cardNumber);
+                pstmt.setInt(1, userID);
                 pstmt.setInt(2, gymID);
                 pstmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
                 pstmt.setString(4, formattedTime);
@@ -304,17 +311,17 @@ public class SQLEngine {
         return false;
     }
     
-    public boolean canExitGym(int cardNumber, int gymID) throws SQLException {
-        String query = "SELECT client_id FROM membership_card WHERE cardNumber = ?";
+    public boolean canExitGym(String userID, int gymID) throws SQLException {
+        String query = "SELECT client_id FROM membership_card WHERE card_number = ?";
         PreparedStatement pstmt = connection.prepareStatement(query);
-        pstmt.setInt(1, cardNumber);
+        pstmt.setString(1, userID);
         ResultSet resultSet = pstmt.executeQuery();
     
         if (resultSet.next()) {
-            cardNumber = resultSet.getInt("client_id");
+            int ID = resultSet.getInt("client_id");
             query = "SELECT * FROM gym_visits WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
             pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, cardNumber);
+            pstmt.setInt(1, ID);
             pstmt.setInt(2, gymID);
             resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
@@ -327,7 +334,7 @@ public class SQLEngine {
                 pstmt = connection.prepareStatement(query);
                 pstmt.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
                 pstmt.setString(2, formattedTime);
-                pstmt.setInt(3, cardNumber);
+                pstmt.setInt(3, ID);
                 pstmt.setInt(4, gymID);
                 pstmt.executeUpdate();
                 return true;
@@ -398,7 +405,7 @@ public class SQLEngine {
         return false;
     }
 
-    public String paymentReport(LocalDate fromDate, LocalDate toDate, int minimumPayment, int maximumPayment, String paymentMethod, int cardNumber)
+    public String paymentReport(LocalDate fromDate, LocalDate toDate, int minimumPayment, int maximumPayment, String paymentMethod, int card_number)
         throws SQLException {
         StringBuilder query = new StringBuilder("SELECT * FROM payment WHERE payment_date BETWEEN ? AND ? AND amount BETWEEN ? AND ?");
 
@@ -406,7 +413,7 @@ public class SQLEngine {
             query.append(" AND payment_method = ?");
         }
 
-        if (cardNumber != 0) {
+        if (card_number != 0) {
         query.append(" AND client_id = ?");
         }
 
@@ -421,8 +428,8 @@ public class SQLEngine {
             pstmt.setString(index++, paymentMethod);
         }
 
-        if (cardNumber != 0) {
-            pstmt.setInt(index, cardNumber);
+        if (card_number != 0) {
+            pstmt.setInt(index, card_number);
         }
 
         ResultSet resultSet = pstmt.executeQuery();
@@ -611,7 +618,7 @@ public class SQLEngine {
 
 
     public String trainingReport(String name, LocalDate fromDate, LocalDate toDate, LocalTime fromHour, LocalTime toHour,
-                                int capacity, int room, int trainerId, int cardNumber) throws SQLException {
+                                int capacity, int room, int trainerId, int card_number) throws SQLException {
         StringBuilder query = new StringBuilder("SELECT * FROM training WHERE date BETWEEN ? AND ? AND start_hour BETWEEN ? AND ?");
 
         List<Object> parameters = new ArrayList<>();
@@ -636,9 +643,9 @@ public class SQLEngine {
             query.append(" AND trainer_id = ?");
             parameters.add(trainerId);
         }
-        if (cardNumber != 0) {
+        if (card_number != 0) {
             query.append(" AND id IN (SELECT training_id FROM reservation WHERE client_id = ?)");
-            parameters.add(cardNumber);
+            parameters.add(card_number);
         }
 
         PreparedStatement pstmt = connection.prepareStatement(query.toString());
@@ -765,11 +772,11 @@ public class SQLEngine {
         }
     }
 
-    public String getClient(int cardNumber) throws SQLException {
+    public String getClient(int card_number) throws SQLException {
         String query = "SELECT * FROM client WHERE id = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, cardNumber);
+            pstmt.setInt(1, card_number);
             ResultSet resultSet = pstmt.executeQuery();
     
             String report = "";
@@ -992,7 +999,7 @@ public class SQLEngine {
 
         String report = "";
         if (resultSet.next()) {
-            report += resultSet.getString("cardNumber") + "," + resultSet.getDate("expiration_date") + "," + resultSet.getString("type");
+            report += resultSet.getString("card_number") + "," + resultSet.getDate("expiration_date") + "," + resultSet.getString("type");
             
             if (resultSet.getInt("all_gyms_access") == 1) {
                 report += ",Yes";
@@ -1045,25 +1052,25 @@ public class SQLEngine {
     public String addMembershipCard(int userID, LocalDate expirationDate, String type, boolean allGymsAccess, int originalGymID) throws SQLException {
         // generate card number 
         boolean isUnique = false;
-        String cardNumber = "";
+        String card_number = "";
 
         while (!isUnique) {
-            cardNumber = GenerateCard.generateClientCardNumber();
-            System.out.println("Generated card number: " + cardNumber);
-            String query = "SELECT * FROM membership_card WHERE cardNumber = ?";
+            card_number = GenerateCard.generateClientCardNumber();
+            System.out.println("Generated card number: " + card_number);
+            String query = "SELECT * FROM membership_card WHERE card_number = ?";
             PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setString(1, cardNumber);
+            pstmt.setString(1, card_number);
             ResultSet resultSet = pstmt.executeQuery();
             if (!resultSet.next()) {
                 isUnique = true;
             }
         }
 
-        String query = "INSERT INTO membership_card (cardNumber, expiration_date, type, all_gyms_access, original_gym_id, client_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO membership_card (card_number, expiration_date, type, all_gyms_access, original_gym_id, client_id) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setString(1, cardNumber);
+            pstmt.setString(1, card_number);
             pstmt.setDate(2, java.sql.Date.valueOf(expirationDate));
             pstmt.setString(3, type);
             pstmt.setBoolean(4, allGymsAccess);
@@ -1071,7 +1078,23 @@ public class SQLEngine {
             pstmt.setInt(6, userID);
             int count = pstmt.executeUpdate();
             if (count > 0) {
-                return cardNumber;
+                // get membership_card_id
+                query = "SELECT id FROM membership_card WHERE card_number = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setString(1, card_number);
+                ResultSet resultSet = pstmt.executeQuery();
+                if (resultSet.next()) {
+                    int membership_card_id = resultSet.getInt("id");
+                    // set membership_card_id in client
+                    query = "UPDATE client SET membership_card_id = ? WHERE id = ?";
+                    pstmt = connection.prepareStatement(query);
+                    pstmt.setInt(1, membership_card_id);
+                    pstmt.setInt(2, userID);
+                    count = pstmt.executeUpdate();
+                    if (count > 0) {
+                        return card_number;
+                    }
+                }
             } else {
                 return "--------";
             }
@@ -1088,7 +1111,20 @@ public class SQLEngine {
             pstmt.setInt(1, userID);
             int count = pstmt.executeUpdate();
             if (count > 0) {
-                return true;
+                // Delete all reservations
+                query = "DELETE FROM reservation WHERE client_id = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, userID);
+                count = pstmt.executeUpdate();
+                
+                // Set membership_card_id to null in client
+                query = "UPDATE client SET membership_card_id = NULL WHERE id = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, userID);
+                count = pstmt.executeUpdate();
+                if (count > 0) {
+                    return true;
+                }
             } else {
                 return false;
             }

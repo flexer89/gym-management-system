@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import utils.Message;
+import utils.ValidateData;
 
 public class ExitEntranceWindow extends JFrame{
     public ExitEntranceWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, Socket clientSocket, int gymID) {
@@ -40,7 +41,7 @@ public class ExitEntranceWindow extends JFrame{
         entrancePanel.setBorder(new EmptyBorder(10, 40, 10, 40));
 
         // Create Entrance Label
-        JLabel entranceLabel = new JLabel("Enter your card number");
+        JLabel entranceLabel = new JLabel("Enter Card Number");
         entranceLabel.setFont(entranceLabel.getFont().deriveFont(20.0f));
         entranceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -51,13 +52,11 @@ public class ExitEntranceWindow extends JFrame{
         // Create Buttons
         JButton enterButton = new JButton("Enter");
         JButton backButton = new JButton("Back");
-        JButton buyTicketButton = new JButton("Buy a ticket");
         
         // Add the labels and the text fields to the panel
         entrancePanel.add(entranceLabel);
         entrancePanel.add(entranceTextField);
         entrancePanel.add(enterButton);
-        entrancePanel.add(buyTicketButton);
         entrancePanel.add(backButton);
 
         // Create Exit Panel
@@ -100,14 +99,6 @@ public class ExitEntranceWindow extends JFrame{
         });
 
         // Add event listener for buy ticket button
-        buyTicketButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // TODO Create the buy ticket window
-                
-            }
-        });
-
-        // Add event listener for buy ticket button
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Clear the window
@@ -146,7 +137,12 @@ public class ExitEntranceWindow extends JFrame{
         exitGymButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Get the ID
-                String card_number = exitTextField.getText();
+                String card_number = exitTextField.getText(); 
+
+                if (!ValidateData.ValidateCardNumber(card_number)) {
+                    return;
+                }
+
                 // Send the ID to the server
                 message.sendCanExitGymMessage(SendToServer, card_number + "," + gymID);
                 try {
@@ -160,6 +156,12 @@ public class ExitEntranceWindow extends JFrame{
                 } catch (IOException e1) {
                     System.out.println(utils.Color.ANSI_RED + "Error reading from server: " + e1.getMessage() + utils.Color.ANSI_RESET);
                 }
+                // Clear the window
+                getContentPane().removeAll();
+                add(entranceButton);
+                add(exitButton);
+                revalidate();
+                SwingUtilities.updateComponentTreeUI(getContentPane());
             }
         });
 
@@ -168,6 +170,11 @@ public class ExitEntranceWindow extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 // Get the ID
                 String clientID = entranceTextField.getText();
+
+                if (!ValidateData.ValidateCardNumber(clientID)) {
+                    return;
+                }
+
                 // Send the ID to the server
                 message.sendCanEnterGymMessage(SendToServer, clientID + "," + gymID);
                 try {
