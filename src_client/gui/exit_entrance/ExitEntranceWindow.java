@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import utils.Message;
+import utils.ValidateData;
 
 public class ExitEntranceWindow extends JFrame{
     public ExitEntranceWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, Socket clientSocket, int gymID) {
@@ -136,7 +137,12 @@ public class ExitEntranceWindow extends JFrame{
         exitGymButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Get the ID
-                String card_number = exitTextField.getText();
+                String card_number = exitTextField.getText(); 
+
+                if (!ValidateData.ValidateCardNumber(card_number)) {
+                    return;
+                }
+
                 // Send the ID to the server
                 message.sendCanExitGymMessage(SendToServer, card_number + "," + gymID);
                 try {
@@ -164,6 +170,11 @@ public class ExitEntranceWindow extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 // Get the ID
                 String clientID = entranceTextField.getText();
+
+                if (!ValidateData.ValidateCardNumber(clientID)) {
+                    return;
+                }
+
                 // Send the ID to the server
                 message.sendCanEnterGymMessage(SendToServer, clientID + "," + gymID);
                 try {

@@ -58,6 +58,12 @@ public class TrainingEntranceWindow extends JFrame{
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String cardNumber = idTextField.getText();
+
+                // Check if the card number is valid
+                if (!utils.ValidateData.ValidateCardNumber(cardNumber)) {
+                    return;
+                }
+
                 message.sendCanEnterTrainingMessage(SendToServer, cardNumber + "," + roomID);
 
                 try {
