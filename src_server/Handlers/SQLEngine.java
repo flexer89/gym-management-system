@@ -257,18 +257,25 @@ public class SQLEngine {
         return false;
     }
 
-    public boolean canEnterGym(int cardNumber, int gymID) throws SQLException {
-        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id, isCanceled FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.cardNumber = ?";
+    public boolean canEnterGym(String cardNumber, int gymID) throws SQLException {
+        String query = "SELECT expiration_date, all_gyms_access, original_gym_id, client_id, isCanceled FROM client join membership_card on client.id = membership_card.client_id WHERE membership_card.card_number = ? AND membership_card.isCanceled = 0";
         PreparedStatement pstmt = connection.prepareStatement(query);
-        pstmt.setInt(1, cardNumber);
+        pstmt.setString(1, cardNumber);
         ResultSet resultSet = pstmt.executeQuery();
     
         if (resultSet.next()) {
             LocalDate expirationDate = resultSet.getDate("expiration_date").toLocalDate();
             boolean allGymAccess = resultSet.getBoolean("all_gyms_access");
             int originalGymID = resultSet.getInt("original_gym_id");
-            cardNumber = resultSet.getInt("client_id");
+            int userID = resultSet.getInt("client_id");
             boolean isCanceled = resultSet.getBoolean("isCanceled");
+
+            // print all the data
+            System.out.println("Expiration date: " + expirationDate);
+            System.out.println("All gym access: " + allGymAccess);
+            System.out.println("Original gym id: " + originalGymID);
+            System.out.println("User id: " + userID);
+            System.out.println("Is canceled: " + isCanceled);
     
             // Format time
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -279,7 +286,7 @@ public class SQLEngine {
                 // Check if client entered already
                 query = "SELECT * FROM gym_visits WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
                 pstmt = connection.prepareStatement(query);
-                pstmt.setInt(1, cardNumber);
+                pstmt.setInt(1, userID);
                 pstmt.setInt(2, gymID);
                 resultSet = pstmt.executeQuery();
     
@@ -289,7 +296,7 @@ public class SQLEngine {
     
                 query = "INSERT INTO gym_visits (client_id, gym_id, entrance_date, entrance_time) VALUES (?, ?, ?, ?)";
                 pstmt = connection.prepareStatement(query);
-                pstmt.setInt(1, cardNumber);
+                pstmt.setInt(1, userID);
                 pstmt.setInt(2, gymID);
                 pstmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
                 pstmt.setString(4, formattedTime);
@@ -304,17 +311,17 @@ public class SQLEngine {
         return false;
     }
     
-    public boolean canExitGym(int cardNumber, int gymID) throws SQLException {
-        String query = "SELECT client_id FROM membership_card WHERE cardNumber = ?";
+    public boolean canExitGym(String userID, int gymID) throws SQLException {
+        String query = "SELECT client_id FROM membership_card WHERE card_number = ?";
         PreparedStatement pstmt = connection.prepareStatement(query);
-        pstmt.setInt(1, cardNumber);
+        pstmt.setString(1, userID);
         ResultSet resultSet = pstmt.executeQuery();
     
         if (resultSet.next()) {
-            cardNumber = resultSet.getInt("client_id");
+            int ID = resultSet.getInt("client_id");
             query = "SELECT * FROM gym_visits WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
             pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, cardNumber);
+            pstmt.setInt(1, ID);
             pstmt.setInt(2, gymID);
             resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
@@ -327,7 +334,7 @@ public class SQLEngine {
                 pstmt = connection.prepareStatement(query);
                 pstmt.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
                 pstmt.setString(2, formattedTime);
-                pstmt.setInt(3, cardNumber);
+                pstmt.setInt(3, ID);
                 pstmt.setInt(4, gymID);
                 pstmt.executeUpdate();
                 return true;

@@ -40,8 +40,7 @@ public class ClientHandlers {
     public void canExitGym(String serverMessage)
     {
         String[] loginInfo = serverMessage.split(",");
-
-        int userID = Integer.parseInt(loginInfo[0]);
+        String userID = loginInfo[0];
         int gymID = Integer.parseInt(loginInfo[1]);
         System.out.println("User " + userID + " wants to exit gym " + gymID);
         try {
@@ -56,7 +55,7 @@ public class ClientHandlers {
     {
         String[] loginInfo = serverMessage.split(",");
 
-        int card_number = Integer.parseInt(loginInfo[0]);
+        String card_number = loginInfo[0];
         int gymID = Integer.parseInt(loginInfo[1]);
         System.out.println("User with card " + card_number + " wants to enter gym " + gymID);
         try {
