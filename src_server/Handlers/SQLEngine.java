@@ -267,7 +267,7 @@ public class SQLEngine {
             LocalDate expirationDate = resultSet.getDate("expiration_date").toLocalDate();
             boolean allGymAccess = resultSet.getBoolean("all_gyms_access");
             int originalGymID = resultSet.getInt("original_gym_id");
-            int cardNumber = resultSet.getInt("client_id");
+            cardNumber = resultSet.getInt("client_id");
             boolean isCanceled = resultSet.getBoolean("isCanceled");
     
             // Format time
@@ -311,7 +311,7 @@ public class SQLEngine {
         ResultSet resultSet = pstmt.executeQuery();
     
         if (resultSet.next()) {
-            int cardNumber = resultSet.getInt("client_id");
+            cardNumber = resultSet.getInt("client_id");
             query = "SELECT * FROM gym_visits WHERE client_id = ? AND gym_id = ? AND exit_date IS NULL";
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, cardNumber);

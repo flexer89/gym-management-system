@@ -103,7 +103,7 @@ public class DeleteTrainingWindow extends JFrame {
                     if (report.equals("True")) {
                         JOptionPane.showMessageDialog(null, "Training deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
                         // Send the message to the server
-                        message.sendLoadEmployeeTrainingsMessage(SendToServer, employeeID);
+                        message.sendLoadEmployeeTrainingsMessage(SendToServer, employeeID + "");
 
                         // Clear the table
                         reportTableModel.setRowCount(0);
@@ -134,7 +134,7 @@ public class DeleteTrainingWindow extends JFrame {
         loadGymButton.addActionListener(new ActionListener() {    
             public void actionPerformed(ActionEvent e) {
                 // Send the message to the server
-                message.sendLoadEmployeeTrainingsMessage(SendToServer, employeeID);
+                message.sendLoadEmployeeTrainingsMessage(SendToServer, employeeID + "");
 
                 // Clear the table
                 reportTableModel.setRowCount(0);

@@ -132,7 +132,7 @@ public class Message {
         writer.println("UPDATE_TRAINING:" + message);
     }
 
-    public void sendLoadEmployeeTrainingsMessage(PrintWriter writer, int message) {
+    public void sendLoadEmployeeTrainingsMessage(PrintWriter writer, String message) {
         writer.println("LOAD_EMPLOYEE_TRAININGS:" + message);
     }
 
