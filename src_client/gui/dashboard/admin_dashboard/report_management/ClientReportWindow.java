@@ -124,7 +124,6 @@ public class ClientReportWindow extends JFrame {
         buttonPanel.add(exportButton);
         mainPanel.add(buttonPanel);
         mainPanel.add(ClientReportPanel);
-        //this.add(exportButton, constraints);
 
         // Add the report table
         reportTableModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Date of birth", "Phone Number", "Email", "Membership Card ID"}, 0);
