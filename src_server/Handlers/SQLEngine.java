@@ -691,7 +691,45 @@ public class SQLEngine {
     }
 
     public boolean deleteGym(int gymID) throws SQLException {
-        String query = "DELETE FROM gym WHERE id = ?";
+        // Delete all reservations on trainings that are in the gym
+        String query = "DELETE FROM reservation WHERE training_id IN (SELECT id FROM training WHERE gym_id = ?)";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, gymID);
+            pstmt.executeUpdate();
+            System.out.println("Deleted reservations");
+
+            // Delete all trainings that are in the gym
+            query = "DELETE FROM training WHERE gym_id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, gymID);
+            pstmt.executeUpdate();
+            System.out.println("Deleted trainings");
+
+            // Delete employee_work_time
+            query = "DELETE FROM employee_work_time WHERE gym_id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, gymID);
+            pstmt.executeUpdate();
+            System.out.println("Deleted employee_work_time");
+
+            // Delete the gym
+            query = "DELETE FROM gym WHERE id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, gymID);
+            int count = pstmt.executeUpdate();
+            System.out.println("Deleted " + count + " rows from gym");
+
+            if (count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        query = "DELETE FROM gym WHERE id = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, gymID);
@@ -708,19 +746,26 @@ public class SQLEngine {
     
     public boolean deleteEmployee(int employeeID) throws SQLException {
         try {
-            // First set the trainer_id in training to -1
-            String query = "UPDATE training SET trainer_id = -1 WHERE trainer_id = ?";
+            // Delete all reservations on trainings that the employee is a trainer of
+            String query = "DELETE FROM reservation WHERE training_id IN (SELECT id FROM training WHERE trainer_id = ?)";
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, employeeID);
             pstmt.executeUpdate();
-            System.out.println("Set trainer_id to -1 in training");
-    
-            // Then set the employee_id in employee_work_time to -1
-            query = "UPDATE employee_work_time SET employee_id = -1 WHERE employee_id = ?";
+            System.out.println("Deleted reservations");
+
+            // Delete training
+            query = "DELETE FROM training WHERE trainer_id = ?";
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, employeeID);
             pstmt.executeUpdate();
-            System.out.println("Set employee_id to -1 in employee_work_time");
+            System.out.println("Deleted trainings");
+    
+            // Delete employee from employee_work_time
+            query = "DELETE FROM employee_work_time WHERE employee_id = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, employeeID);
+            pstmt.executeUpdate();
+            System.out.println("Deleted employee_work_time")
     
             // Now delete the employee credentials
             query = "DELETE FROM employee_credentials WHERE employee_id = ?";
@@ -1301,7 +1346,17 @@ public class SQLEngine {
     }
 
     public boolean deleteTraining(int trainingID) throws SQLException {
-        String query = "DELETE FROM training WHERE id = ?";
+        // Delete all reservations on the training
+        String query = "DELETE FROM reservation WHERE training_id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, trainingID);
+            pstmt.executeUpdate();
+            System.out.println("Deleted reservations");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        query = "DELETE FROM training WHERE id = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, trainingID);

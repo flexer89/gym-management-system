@@ -92,7 +92,7 @@ CREATE TABLE training (
   end_hour TIME NOT NULL,
   capacity INT NOT NULL,
   room int NOT NULL,
-  trainer_id INT NOT NULL,
+  trainer_id INT,
   gym_id INT NOT NULL,
   PRIMARY KEY (id)
 );
