@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -240,7 +241,8 @@ public class MembershipCardWindow extends JFrame{
         // Add event listener for training management button
         oneDayMembershipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new PaymentWindow(message, ReadFromServer, SendToServer, userID, utils.Prices.ONE_DAY_MEMBERSHIP_PRICE, 1, 1);
+                LocalDate endDate = LocalDate.now().plusDays(1);
+                new PaymentWindow(message, ReadFromServer, SendToServer, userID, utils.Prices.ONE_DAY_MEMBERSHIP_PRICE, 1, 1, endDate);
             }
         });
 

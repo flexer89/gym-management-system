@@ -139,4 +139,8 @@ public class Message {
     public void sendDeleteTrainingMessage(PrintWriter writer, String message) {
         writer.println("DELETE_TRAINING:" + message);
     }
+
+    public void sendLoadClientTrainingsMessage(PrintWriter writer, String message) {
+        writer.println("LOAD_CLIENT_TRAININGS:" + message);
+    }
 }

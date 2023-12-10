@@ -11,10 +11,11 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 
 public class PaymentWindow extends JFrame {
 
-    public PaymentWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, int userID, int amount, int gymId, int allGymAccess) {
+    public PaymentWindow(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, int userID, int amount, int gymId, int allGymAccess, LocalDate endDate) {
         setTitle("Payment");
         setSize(400, 300);
         setLocationRelativeTo(null);
@@ -90,7 +91,7 @@ public class PaymentWindow extends JFrame {
                 JOptionPane.showMessageDialog(PaymentWindow.this, "Payment processing...", "Payment", JOptionPane.INFORMATION_MESSAGE);
 
                 // Log payment
-                message.sendPaymentMessage(SendToServer, amount + "," + paymentMethod.toLowerCase() + "," + userID + "," + gymId + "," + allGymAccess);
+                message.sendPaymentMessage(SendToServer, amount + "," + paymentMethod.toLowerCase() + "," + userID + "," + gymId + "," + allGymAccess + "," + endDate);
 
                 // Get response from server
                 String serverResponse;

@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -143,7 +145,10 @@ public class OneGymMembership extends JFrame {
                 // Get the gym ID
                 int gymId = Integer.parseInt(reportTable.getValueAt(selectedRow, 0).toString());
 
-                new PaymentWindow(message, readFromServer, sendToServer, userId, utils.Prices.ONE_GYM_MEMBERSHIP_PRICE * months, gymId, 0);
+                // Calculate end date
+                LocalDate endDate = LocalDate.parse(startDate).plusMonths(months);
+
+                new PaymentWindow(message, readFromServer, sendToServer, userId, utils.Prices.ONE_GYM_MEMBERSHIP_PRICE * months, gymId, 0, endDate);
             }
         });
 

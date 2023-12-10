@@ -23,7 +23,7 @@ import utils.*;
 public class ClientDashboard extends JFrame{
     public ClientDashboard(Message message, BufferedReader ReadFromServer, PrintWriter SendToServer, LoginRegisterWindow loginRegisterWindow, int userID) {
         // Create the main window
-        this.setSize(800, 600);
+        this.setSize(960, 700);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
         this.setVisible(true);
@@ -86,6 +86,7 @@ public class ClientDashboard extends JFrame{
 
         // Create buttons for the employee management panel
         JButton trainingManagementButton = new JButton("Training Management");
+        JButton bookedTrainingButton = new JButton("My Trainings");
         JButton membershipManagementButton = new JButton("Membership Management");
         JButton profileManagementButton = new JButton("My Profile");
 
@@ -99,9 +100,13 @@ public class ClientDashboard extends JFrame{
         membershipManagementButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
         membershipManagementButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
         membershipManagementButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        bookedTrainingButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        bookedTrainingButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
+        bookedTrainingButton.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Add the buttons to the employee management panel
         generalClientManagementButton.add(trainingManagementButton);
+        generalClientManagementButton.add(bookedTrainingButton);
         generalClientManagementButton.add(profileManagementButton);
         generalClientManagementButton.add(membershipManagementButton);
 
@@ -181,6 +186,13 @@ public class ClientDashboard extends JFrame{
                 } catch (IOException e1) {
                     System.out.println(utils.Color.ANSI_RED + "Error creating profile window." + utils.Color.ANSI_RESET);
                 }
+            }
+        });
+
+        // Add event listener for booked training button
+        bookedTrainingButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                 new BookedTrainingWindow(message, ReadFromServer, SendToServer, userID);
             }
         });
 
