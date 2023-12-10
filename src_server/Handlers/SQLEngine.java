@@ -1066,10 +1066,38 @@ public class SQLEngine {
             }
         }
 
-        String query = "INSERT INTO membership_card (card_number, expiration_date, type, all_gyms_access, original_gym_id, client_id) VALUES (?, ?, ?, ?, ?, ?)";
+        // if client already has a membership card, cancel it
+        String query = "SELECT * FROM client WHERE id = ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, userID);
+        ResultSet resultSet = pstmt.executeQuery();
+        if (resultSet.next()) {
+            int membership_card_id = resultSet.getInt("membership_card_id");
+            if (membership_card_id != 0) {
+                query = "UPDATE membership_card SET isCanceled = 1 WHERE id = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, membership_card_id);
+                int count = pstmt.executeUpdate();
+                if (count > 0) {
+                    // Delete all reservations
+                    query = "DELETE FROM reservation WHERE client_id = ?";
+                    pstmt = connection.prepareStatement(query);
+                    pstmt.setInt(1, userID);
+                    count = pstmt.executeUpdate();
+                    
+                    // Set membership_card_id to null in client
+                    query = "UPDATE client SET membership_card_id = NULL WHERE id = ?";
+                    pstmt = connection.prepareStatement(query);
+                    pstmt.setInt(1, userID);
+                    count = pstmt.executeUpdate();
+                }
+            }
+        }
+
+        query = "INSERT INTO membership_card (card_number, expiration_date, type, all_gyms_access, original_gym_id, client_id) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
-            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt = connection.prepareStatement(query);
             pstmt.setString(1, card_number);
             pstmt.setDate(2, java.sql.Date.valueOf(expirationDate));
             pstmt.setString(3, type);
@@ -1082,7 +1110,7 @@ public class SQLEngine {
                 query = "SELECT id FROM membership_card WHERE card_number = ?";
                 pstmt = connection.prepareStatement(query);
                 pstmt.setString(1, card_number);
-                ResultSet resultSet = pstmt.executeQuery();
+                resultSet = pstmt.executeQuery();
                 if (resultSet.next()) {
                     int membership_card_id = resultSet.getInt("id");
                     // set membership_card_id in client
