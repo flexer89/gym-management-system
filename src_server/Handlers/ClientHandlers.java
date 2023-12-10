@@ -122,4 +122,16 @@ public class ClientHandlers {
         }
     }
 
+
+    public void loadClientTrainings(String data) {
+        int userID = Integer.parseInt(data);
+        System.out.println("Loading trainings for client " + userID);
+        try {
+            String report = sqlEngine.loadClientTrainings(userID);
+            SendToClient.println(report);
+        } catch (SQLException e) {
+            System.out.println("Error loading trainings: " + e.getMessage());
+        }
+    }
+
 }

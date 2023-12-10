@@ -924,22 +924,31 @@ public class SQLEngine {
                 return false;
             }
     
-            // check if there is still space for this training
-            query = "SELECT COUNT(*) AS current_reservations, capacity FROM reservation JOIN training ON training.id = reservation.training_id WHERE training_id = ?";
+            // get training capacity
+            query = "SELECT capacity FROM training WHERE id = ?";
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, trainingID);
             resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
-                int currentReservations = resultSet.getInt("current_reservations");
                 int capacity = resultSet.getInt("capacity");
-                if (currentReservations < capacity) {
-                    query = "INSERT INTO reservation (client_id, training_id) VALUES (?, ?)";
-                    pstmt = connection.prepareStatement(query);
-                    pstmt.setInt(1, userID);
-                    pstmt.setInt(2, trainingID);
-                    int count = pstmt.executeUpdate();
-                    if (count > 0) {
-                        return true;
+    
+                // check if there is still space for this training
+                query = "SELECT COUNT(*) AS current_reservations FROM reservation WHERE training_id = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, trainingID);
+                resultSet = pstmt.executeQuery();
+                if (resultSet.next()) {
+                    int currentReservations = resultSet.getInt("current_reservations");
+                    if (currentReservations < capacity) {
+                        // reserve training
+                        query = "INSERT INTO reservation (client_id, training_id) VALUES (?, ?)";
+                        pstmt = connection.prepareStatement(query);
+                        pstmt.setInt(1, userID);
+                        pstmt.setInt(2, trainingID);
+                        int count = pstmt.executeUpdate();
+                        if (count > 0) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -1339,6 +1348,47 @@ public class SQLEngine {
             } else {
                 return false;
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String loadClientTrainings(int userID) throws SQLException {
+        String query = "SELECT * FROM training WHERE id IN (SELECT training_id FROM reservation WHERE client_id = ?) AND date >= CURDATE()";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, userID);
+            ResultSet resultSet = pstmt.executeQuery();
+
+            String report = "";
+            while (resultSet.next()) {
+                report += resultSet.getInt("id") + "," + resultSet.getString("name") + "," + resultSet.getDate("date") + "," + resultSet.getTime("start_hour") + "," + resultSet.getTime("end_hour") + "," + resultSet.getInt("room");
+
+                // Get trainer name
+                query = "SELECT first_name, last_name FROM employee WHERE id = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, resultSet.getInt("trainer_id"));
+                ResultSet trainerResultSet = pstmt.executeQuery();
+                String trainerName = "";
+                if (trainerResultSet.next()) {
+                    trainerName = trainerResultSet.getString("first_name") + " " + trainerResultSet.getString("last_name");
+                }
+
+                report += "," + trainerName;
+
+                // Get the gym location
+                query = "SELECT address, city FROM gym WHERE id = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, resultSet.getInt("gym_id"));
+                ResultSet gymResultSet = pstmt.executeQuery();
+                String gymLocation = "";
+                if (gymResultSet.next()) {
+                    gymLocation = gymResultSet.getString("address") + ", " + gymResultSet.getString("city");
+                }
+
+                report += "," + gymLocation + "///";
+            }
+            return report;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
