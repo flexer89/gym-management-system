@@ -57,7 +57,7 @@ class ClientHandler implements Callable<String> {
                 String command = parts[0];
                 String data= parts[1];
                 
-                CustomLogger.logInfo("Received command: " + command + " with data: " + String.join(" | ", data));
+                CustomLogger.logInfo("Received command: " + command);
                 
                 CommandType commandType = getCommandType(command);
                 

@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.*;
 
 import gui.training_entrance.TrainingEntranceWindow;
-import utils.Color;
 import utils.CustomLogger;
 import utils.Message;
 

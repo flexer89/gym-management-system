@@ -22,7 +22,6 @@ public class GymServer {
 
     public static void main(String[] args) throws IOException {
 
-        // TODO: is it better to move server socket and db connecitos seperate functions/SQLEngine?
         // Create server socket
         try {
             serverSocket = new ServerSocket(SERVER_PORT);
@@ -47,7 +46,6 @@ public class GymServer {
             System.exit(-1);
         }
 
-        // TODO: imo its better to run this after succesfull db connection
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
         scheduledExecutorService.scheduleAtFixedRate(() -> {

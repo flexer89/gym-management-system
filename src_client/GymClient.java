@@ -13,7 +13,6 @@ public class GymClient {
     private static BufferedReader ReadFromServer;
     private static PrintWriter SendToServer;
     private static Message message;
-    private static LoginRegisterWindow loginRegisterWindow;
     private static JFrame frame;
 
     public static void main(String[] args) throws IOException {
@@ -51,7 +50,7 @@ public class GymClient {
             message = new Message();
 
             // Create the login/register window
-            loginRegisterWindow = new LoginRegisterWindow(message, ReadFromServer, SendToServer, clientSocket);
+            new LoginRegisterWindow(message, ReadFromServer, SendToServer, clientSocket);
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(null, "Server is not running", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
