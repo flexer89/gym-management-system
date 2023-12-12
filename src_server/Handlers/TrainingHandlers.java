@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import utils.CustomLogger;
+
 public class TrainingHandlers {
 
     private PrintWriter SendToClient;
@@ -19,13 +21,13 @@ public class TrainingHandlers {
 
     public void getTrainer(String data) {
         int trainerID = Integer.parseInt(data);
-        System.out.println("Getting trainer " + trainerID);
+        CustomLogger.logInfo("Getting trainer " + trainerID);
 
         try {
             String report = sqlEngine.getTrainer(trainerID);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error getting trainer: " + e.getMessage());
+            CustomLogger.logError("Error getting trainer: " + e.getMessage());
         }
     }
 
@@ -40,31 +42,31 @@ public class TrainingHandlers {
         int room = Integer.parseInt(trainingInfo[5]);
         int trainerID = Integer.parseInt(trainingInfo[6]);
         int gymID = Integer.parseInt(trainingInfo[7]);
-        System.out.println("Adding training " + name + " " + date + " " + startHour + " " + endHour +" " + capacity + " " + room + " " + trainerID + " " + gymID);
+        CustomLogger.logInfo("Adding training | Name: " + name + " Date: " + date + " Start hour: " + startHour + " End hour: " + endHour + " Capacity: " + capacity + " Room: " + room + " Trainer ID: " + trainerID + " Gym ID: " + gymID);
 
         try {
             boolean ifAdded = sqlEngine.addTraining(name, date, startHour, endHour, capacity, room, trainerID, gymID);
             if (ifAdded) {
-                System.out.println("Training " + name + " added");
+                CustomLogger.logInfo("Training | Name: " + name + " Date: " + date + " Start hour: " + startHour + " End hour: " + endHour + " Capacity: " + capacity + " Room: " + room + " Trainer ID: " + trainerID + " Gym ID: " + gymID + " added");
                 SendToClient.println("True");
             } else {
-                System.out.println("Training " + name + " wasn't added");
+                CustomLogger.logError("Training | Name: " + name + " Date: " + date + " Start hour: " + startHour + " End hour: " + endHour + " Capacity: " + capacity + " Room: " + room + " Trainer ID: " + trainerID + " Gym ID: " + gymID + " wasn't added");
                 SendToClient.println("False");
             }
         } catch (SQLException e) {
-            System.out.println("Error adding training: " + e.getMessage());
+            CustomLogger.logError("Error adding training: " + e.getMessage());
         }
     }
 
 
     public void loadTrainings(String data) {
         int userID = Integer.parseInt(data);
-        System.out.println("Loading available trainings for client " + userID);
+        CustomLogger.logInfo("Loading trainings for client " + userID);
         try {
             String report = sqlEngine.loadTrainings(userID);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error loading trainings: " + e.getMessage());
+            CustomLogger.logError("Error loading trainings: " + e.getMessage());
         }
     }
 
@@ -73,19 +75,19 @@ public class TrainingHandlers {
         String[] trainingInfo = data.split(",");
         int userID = Integer.parseInt(trainingInfo[0]);
         int trainingID = Integer.parseInt(trainingInfo[1]);
-        System.out.println("Reserving training " + trainingID + " for client " + userID);
+        CustomLogger.logInfo("Reserving training " + trainingID + " for client " + userID);
 
         try {
             boolean ifReserved = sqlEngine.reserveTraining(userID, trainingID);
             if (ifReserved) {
-                System.out.println("Training " + trainingID + " reserved");
+                CustomLogger.logInfo("Training " + trainingID + " reserved for client " + userID);
                 SendToClient.println("Reservation successful.");
             } else {
-                System.out.println("Training " + trainingID + " wasn't reserved");
+                CustomLogger.logError("Training " + trainingID + " wasn't reserved for client " + userID);
                 SendToClient.println("Reservation failed.");
             }
         } catch (SQLException e) {
-            System.out.println("Error reserving training: " + e.getMessage());
+            CustomLogger.logError("Error reserving training: " + e.getMessage());
         }
     }
 
@@ -103,13 +105,13 @@ public class TrainingHandlers {
         int userID = Integer.parseInt(reportData[8]);
 
         // Generate time spent report
-        System.out.println("Generating time spent report");
-        System.out.println("Entrance from date: " + entranceFromDate + " Entrance to date: " + entranceToDate + " Entrance from hour: " + entranceFromHour + " Entrance to hour: " + entranceToHour + " Exit from date: " + exitFromDate + " Exit to date: " + exitToDate + " Exit from hour: " + exitFromHour + " Exit to hour: " + exitToHour + " User ID: " + userID);
+        CustomLogger.logInfo("Generating time spent report | Entrance from date: " + entranceFromDate + " Entrance to date: " + entranceToDate + " Entrance from hour: " + entranceFromHour + " Entrance to hour: " + entranceToHour + " Exit from date: " + exitFromDate + " Exit to date: " + exitToDate + " Exit from hour: " + exitFromHour + " Exit to hour: " + exitToHour + " User ID: " + userID);
         try {
             String report = sqlEngine.timeSpentReport(entranceFromDate, entranceToDate, entranceFromHour, entranceToHour, exitFromDate, exitToDate, exitFromHour, exitToHour, userID);
             SendToClient.println(report);
+            CustomLogger.logInfo("Time spent report generated");
         } catch (SQLException e) {
-            System.out.println(utils.Color.ANSI_RED + "Error generating time spent report: " + e.getMessage() + utils.Color.ANSI_RESET);
+            CustomLogger.logError("Error generating time spent report: " + e.getMessage());
         }
     }
 
@@ -124,37 +126,38 @@ public class TrainingHandlers {
         int room = Integer.parseInt(trainingInfo[6]);
         int trainerID = Integer.parseInt(trainingInfo[7]);
         int gymID = Integer.parseInt(trainingInfo[8]);
-        System.out.println("Updating training " + trainingID + " " + name + " " + date + " " + startHour + " " + endHour +" " + capacity + " " + room + " " + trainerID + " " + gymID);
+
+        CustomLogger.logInfo("Updating training " + trainingID + " | Name: " + name + " Date: " + date + " Start hour: " + startHour + " End hour: " + endHour + " Capacity: " + capacity + " Room: " + room + " Trainer ID: " + trainerID + " Gym ID: " + gymID);
 
         try {
             boolean ifUpdated = sqlEngine.updateTraining(trainingID, name, date, startHour, endHour, capacity, room, trainerID, gymID);
             if (ifUpdated) {
-                System.out.println("Training " + trainingID + " updated");
+                CustomLogger.logInfo("Training " + trainingID + " updated");
                 SendToClient.println("True");
             } else {
-                System.out.println("Training " + trainingID + " wasn't updated");
+                CustomLogger.logError("Training " + trainingID + " wasn't updated");
                 SendToClient.println("False");
             }
         } catch (SQLException e) {
-            System.out.println("Error updating training: " + e.getMessage());
+            CustomLogger.logError("Error updating training: " + e.getMessage());
         }
     }
 
     public void deleteTraining(String data) {
         int trainingID = Integer.parseInt(data);
-        System.out.println("Deleting training " + trainingID);
+        CustomLogger.logInfo("Deleting training " + trainingID);
 
         try {
             boolean ifDeleted = sqlEngine.deleteTraining(trainingID);
             if (ifDeleted) {
-                System.out.println("Training " + trainingID + " deleted");
+                CustomLogger.logInfo("Training " + trainingID + " deleted");
                 SendToClient.println("True");
             } else {
-                System.out.println("Training " + trainingID + " wasn't deleted");
+                CustomLogger.logError("Training " + trainingID + " wasn't deleted");
                 SendToClient.println("False");
             }
         } catch (SQLException e) {
-            System.out.println("Error deleting training: " + e.getMessage());
+            CustomLogger.logError("Error deleting training: " + e.getMessage());
         }
     }
 

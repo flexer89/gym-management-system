@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import utils.CustomLogger;
+
 
 public class ReportsHandlers {
 
@@ -28,13 +30,12 @@ public class ReportsHandlers {
         int clientID = Integer.parseInt(reportData[5]);
 
         // Generate payment report
-        System.out.println("Generating payment report");
-        System.out.println("From date: " + fromDate + " To date: " + toDate + " Minimum payment: " + minimumPayment + " Maximum payment: " + maximumPayment + " Payment method: " + paymentMethod);
+    CustomLogger.logInfo("Generating payment report, Data: " + fromDate + " " + toDate + " | " + minimumPayment + " " + maximumPayment + " | " + paymentMethod + " | " + clientID);
         try {
             String report = sqlEngine.paymentReport(fromDate, toDate, minimumPayment, maximumPayment, paymentMethod, clientID);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error generating payment report: " + e.getMessage());
+            CustomLogger.logError("Error generating payment report: " + e.getMessage());
         }
     }
 
@@ -48,13 +49,12 @@ public class ReportsHandlers {
         String email = reportData[5];
 
         // Generate gym report
-        System.out.println("Generating gym report");
-        System.out.println("Name: " + name + " Address: " + address + " Postal code: " + postalCode + " City: " + city + " Phone number: " + phoneNumber + " Email: " + email);
+        CustomLogger.logInfo("Generating gym report, Data: " + name + " " + address + " | " + postalCode + " " + city + " | " + phoneNumber + " | " + email);
         try {
             String report = sqlEngine.gymReport(name, address, postalCode, city, phoneNumber, email);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error generating gym report: " + e.getMessage());
+            CustomLogger.logError("Error generating gym report: " + e.getMessage());
         }
     }
 
@@ -69,13 +69,12 @@ public class ReportsHandlers {
         String membershipCard = reportData[6];
 
         // Generate client report
-        System.out.println("Generating client report");
-        System.out.println("Name: " + name + " Surname: " + surname + "From date: " + fromDate + " To date: " + toDate + " Phone number: " + phoneNumber + " Email: " + email + " Membership card: " + membershipCard);
+        CustomLogger.logInfo("Generating client report, Data: " + name + " " + surname + " | " + fromDate + " " + toDate + " | " + phoneNumber + " | " + email + " | " + membershipCard);
         try {
             String report = sqlEngine.clientReport(name, surname, fromDate, toDate, phoneNumber, email, membershipCard);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error generating client report: " + e.getMessage());
+            CustomLogger.logError("Error generating client report: " + e.getMessage());
         }
     }
 
@@ -93,13 +92,12 @@ public class ReportsHandlers {
         String position = reportData[8];
 
         // Generate employee report
-        System.out.println("Generating employee report");
-        System.out.println("Name: " + name + " Surname: " + surname + " From date birth: " + fromDateBirth + " To date birth: " + toDateBirth + " From date employment: " + fromDateEmployment + " To date employment: " + toDateEmployment + " Phone number: " + phoneNumber + " Email: " + email + " Position: " + position);
+        CustomLogger.logInfo("Generating employee report, Data: " + name + " " + surname + " | " + fromDateBirth + " " + toDateBirth + " | " + fromDateEmployment + " " + toDateEmployment + " | " + phoneNumber + " | " + email + " | " + position);
         try {
             String report = sqlEngine.employeeReport(name, surname, fromDateBirth, toDateBirth, fromDateEmployment, toDateEmployment, phoneNumber, email, position);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error generating employee report: " + e.getMessage());
+            CustomLogger.logError("Error generating employee report: " + e.getMessage());
         }
     }
 
@@ -117,13 +115,12 @@ public class ReportsHandlers {
         int clientID = Integer.parseInt(reportData[8]);
 
         // Generate training report
-        System.out.println("Generating training report");
-        System.out.println("Name: " + name + " From date: " + fromDate + " To date: " + toDate + " From hour: " + fromHour + " To hour: " + toHour + " Capacity: " + capacity + " Room: " + room + " Trainer ID: " + trainerId);
+        CustomLogger.logInfo("Generating training report, Data: " + name + " | " + fromDate + " " + toDate + " | " + fromHour + " " + toHour + " | " + capacity + " | " + room + " | " + trainerId + " | " + clientID);
         try {
             String report = sqlEngine.trainingReport(name, fromDate, toDate, fromHour, toHour, capacity, room, trainerId, clientID);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error generating training report: " + e.getMessage());
+            CustomLogger.logError("Error generating training report: " + e.getMessage());
         }
     }
 
@@ -140,13 +137,12 @@ public class ReportsHandlers {
         int userID = Integer.parseInt(reportData[8]);
 
         // Generate time spent report
-        System.out.println("Generating time spent report");
-        System.out.println("Entrance from date: " + entranceFromDate + " Entrance to date: " + entranceToDate + " Entrance from hour: " + entranceFromHour + " Entrance to hour: " + entranceToHour + " Exit from date: " + exitFromDate + " Exit to date: " + exitToDate + " Exit from hour: " + exitFromHour + " Exit to hour: " + exitToHour + " User ID: " + userID);
+        CustomLogger.logInfo("Generating time spent report, Data: " + entranceFromDate + " " + entranceToDate + " | " + entranceFromHour + " " + entranceToHour + " | " + exitFromDate + " " + exitToDate + " | " + exitFromHour + " " + exitToHour + " | " + userID);
         try {
             String report = sqlEngine.timeSpentReport(entranceFromDate, entranceToDate, entranceFromHour, entranceToHour, exitFromDate, exitToDate, exitFromHour, exitToHour, userID);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println(utils.Color.ANSI_RED + "Error generating time spent report: " + e.getMessage() + utils.Color.ANSI_RESET);
+            CustomLogger.logError("Error generating time spent report: " + e.getMessage());
         }
     }
 
@@ -165,13 +161,12 @@ public class ReportsHandlers {
         int employeeID = Integer.parseInt(reportData[8]);
 
         // Generate time spent report
-        System.out.println("Generating time spent report");
-        System.out.println("Entrance from date: " + entranceFromDate + " Entrance to date: " + entranceToDate + " Entrance from hour: " + entranceFromHour + " Entrance to hour: " + entranceToHour + " Exit from date: " + exitFromDate + " Exit to date: " + exitToDate + " Exit from hour: " + exitFromHour + " Exit to hour: " + exitToHour + " Employee ID: " + employeeID);
+        CustomLogger.logInfo("Generating time spent report, Data: " + entranceFromDate + " " + entranceToDate + " | " + entranceFromHour + " " + entranceToHour + " | " + exitFromDate + " " + exitToDate + " | " + exitFromHour + " " + exitToHour + " | " + employeeID);
         try {
             String report = sqlEngine.timeSpentEmployeeReport(entranceFromDate, entranceToDate, entranceFromHour, entranceToHour, exitFromDate, exitToDate, exitFromHour, exitToHour, employeeID);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println(utils.Color.ANSI_RED + "Error generating time spent report: " + e.getMessage() + utils.Color.ANSI_RESET);
+            CustomLogger.logError("Error generating time spent report: " + e.getMessage());
         }
     }
 }

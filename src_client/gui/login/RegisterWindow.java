@@ -15,6 +15,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import utils.CustomLogger;
 import utils.Message;
 import utils.ValidateData;
 
@@ -122,12 +123,11 @@ public class RegisterWindow extends JFrame{
                 // Get the response from the server (the user ID)
                 try {
                     userID = Integer.parseInt(ReadFromServer.readLine());
-                    System.out.println(userID);
                     if (userID > 0) {
                         JOptionPane.showMessageDialog(null, "Account registered successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + e1.getMessage());
                 }
             }
         });

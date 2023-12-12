@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.time.LocalDate;
+
+import utils.CustomLogger;
 import utils.Secure;
 
 public class CredentialHandlers {
@@ -33,19 +35,17 @@ public class CredentialHandlers {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
-        System.out.println("Generated salt: " + salt);
         String saltString = salt.toString();
         password = Secure.hashWithSalt(password, saltString);
 
-
-        System.out.println("Passwd: " + password + " Salt: " + salt);
+        CustomLogger.logInfo("Registering user " + username + " " + firstName + " " + lastName + " " + birthDate + " " + phoneNumber + " " + email);
 
         try {
             int userID = sqlEngine.registerAccount(username, password, saltString, firstName, lastName, birthDate, phoneNumber, email);
-            System.out.println("User " + userID + " registered");
+            CustomLogger.logInfo("User " + username + " registered");
             SendToClient.println(userID);
         } catch (SQLException e) {
-            System.out.println("Error registering account: " + e.getMessage());
+            CustomLogger.logError("Error registering user: " + e.getMessage());
         }
     }
 
@@ -57,25 +57,23 @@ public class CredentialHandlers {
         String userType = registerInfo[2];
         
         try {
-            System.out.println("User " + userIDString + " changing password");
+            CustomLogger.logInfo("Changing password for user " + userIDString);
             SecureRandom random = new SecureRandom();
             byte[] salt = new byte[16];
             random.nextBytes(salt);
-            System.out.println("Generated salt: " + salt);
             String saltString = salt.toString();
             newPassword = Secure.hashWithSalt(newPassword, saltString);
-            System.out.println("Passwd: " + newPassword + " Salt: " + salt);
 
             boolean ifChanged = sqlEngine.changePassword(userIDString, newPassword, saltString, userType);
             if (ifChanged) {
-                System.out.println("Password changed");
+                CustomLogger.logInfo("Password changed for user " + userIDString);
                 SendToClient.println("True");
             } else {
-                System.out.println("Password wasn't changed");
+                CustomLogger.logInfo("Password wasn't changed for user " + userIDString);
                 SendToClient.println("False");
             }
         } catch (Exception e) {
-            System.out.println("Error changing password: " + e.getMessage());
+            CustomLogger.logError("Error changing password: " + e.getMessage());
         }
 
     }
@@ -88,42 +86,39 @@ public class CredentialHandlers {
 
         try {
             String fetchedData = sqlEngine.getIDbyLogin(username);
-            System.out.println("Fetched data: " + fetchedData);
             
             String[] parts = fetchedData.split(",");
             String ID = parts[0];
             String table = parts[1];
             
-            System.out.println("Testing creds for table: " + table);
             String storedHash = sqlEngine.getHashByID(Integer.parseInt(ID), table);
             String salt = sqlEngine.getSaltByID(Integer.parseInt(ID), table);
-            System.out.println("ID: " + ID + "   Hash: " + storedHash + " Salt: " + salt);
             String hashedInput = Secure.hashWithSalt(password, salt);
-            System.out.println("Hashed input: " + hashedInput);
+
+            CustomLogger.logInfo("Logging in user " + username);
             
             if (storedHash.equals(hashedInput)) {
-                System.out.println("Hashes match");
                 try {
                     String data = sqlEngine.loginToAccount(username, hashedInput);
                     String type = data.split(",")[0];
                     int userID = Integer.parseInt(data.split(",")[1]);
             
-                    System.out.println(type + " " + userID + " logged in");
+                    CustomLogger.logInfo("User " + username + " logged in");
                     SendToClient.println(userID);
                     SendToClient.println(type);
                 } catch (SQLException e) {
-                    System.out.println("SQL Error logging in: " + e.getMessage());
+                    CustomLogger.logError("Error logging in: " + e.getMessage());
                     SendToClient.println(-1);
                     SendToClient.println("ERROR");
                 }
             } else {
-                System.out.println("Hashes don't match");
+                CustomLogger.logInfo("Hashes don't match for user " + username);
                 SendToClient.println(-1);
                 SendToClient.println("ERROR");
             }
         }
-        catch (Exception all) {
-            System.out.println("Error logging in: " + all.getMessage());
+        catch (Exception e) {
+            CustomLogger.logError("Error logging in: " + e.getMessage());
             SendToClient.println(-1);
             SendToClient.println("ERROR");
         }

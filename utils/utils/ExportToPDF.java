@@ -56,8 +56,9 @@ public class ExportToPDF {
 
             document.save(filePath);
             document.close();
+            CustomLogger.logInfo("Table exported to PDF");
         } catch (IOException e) {
-            e.printStackTrace();
+            CustomLogger.logError("Error exporting table to PDF: " + e.getMessage());
         }
     }
     

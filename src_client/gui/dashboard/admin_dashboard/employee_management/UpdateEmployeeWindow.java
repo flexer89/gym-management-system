@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import utils.CustomLogger;
 import utils.Message;
 import utils.ValidateData;
 
@@ -93,7 +94,7 @@ public class UpdateEmployeeWindow extends JFrame {
                         reportTableModel.addRow(reportLineParts);
                     }
                 } catch (IOException ex) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading response from server: " + ex.getMessage());
                 }
             }
         });
@@ -145,7 +146,7 @@ public class UpdateEmployeeWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Error updating employee", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException ex) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + ex.getMessage());
                 }
             }
         });

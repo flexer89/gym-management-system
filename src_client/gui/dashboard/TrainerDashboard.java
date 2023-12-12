@@ -18,6 +18,7 @@ import gui.dashboard.trainer_dashboard.training_management.*;
 import gui.dashboard.trainer_dashboard.*;
 
 import gui.login.LoginRegisterWindow;
+import utils.CustomLogger;
 import utils.Message;
 import utils.UIFormat;
 
@@ -190,7 +191,7 @@ public class TrainerDashboard extends JFrame {
                 try {
                     new ProfileWindow(message, ReadFromServer, SendToServer, employeeID);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    CustomLogger.logError("Error opening profile window: " + ex.getMessage());
                 }
             }
         });

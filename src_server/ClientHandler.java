@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.concurrent.*;
 
 import Handlers.*;
+import utils.CustomLogger;
 
 // Client handler class
 class ClientHandler implements Callable<String> {
@@ -56,7 +57,7 @@ class ClientHandler implements Callable<String> {
                 String command = parts[0];
                 String data= parts[1];
                 
-                System.out.println("Command: " + command + ", Data: " + data);
+                CustomLogger.logInfo("Received command: " + command);
                 
                 CommandType commandType = getCommandType(command);
                 
@@ -171,7 +172,7 @@ class ClientHandler implements Callable<String> {
                         ClientHandlers.loadClientTrainings(data);
                         break;
                     default:
-                        System.out.println("Unknown command: " + command);
+                        CustomLogger.logWarning("Unknown command: " + command);
                         break;
                 }
                 if (commandType == CommandType.SHUTDOWN) {
@@ -184,7 +185,7 @@ class ClientHandler implements Callable<String> {
             SendToClient.close();
             clientSocket.close();
         } catch (Exception e) {
-            System.out.println(utils.Color.ANSI_RED + "Exception in client handler: " + e.getMessage() + utils.Color.ANSI_RESET);
+            CustomLogger.logError("Error in client handler: " + e.getMessage());
         }
         return "Task completed";
     }

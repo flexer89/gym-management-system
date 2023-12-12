@@ -18,6 +18,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import utils.CustomLogger;
 import utils.Message;
 import utils.ValidateData;
 
@@ -154,7 +155,7 @@ public class ExitEntranceWindow extends JFrame{
                         JOptionPane.showMessageDialog(null, "You haven't even entered the gym yet!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading from server: " + e1.getMessage() + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + e1.getMessage());
                 }
                 // Clear the window
                 getContentPane().removeAll();
@@ -186,7 +187,7 @@ public class ExitEntranceWindow extends JFrame{
                         JOptionPane.showMessageDialog(null, "You cannot enter the gym, sorry!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading from server: " + e1.getMessage() + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + e1.getMessage());
                 }
                 // Clear the window
                 getContentPane().removeAll();

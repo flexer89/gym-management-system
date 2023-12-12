@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import utils.CustomLogger;
 import utils.Message;
 
 public class LoginRegisterWindow extends JFrame{
@@ -41,7 +42,7 @@ public class LoginRegisterWindow extends JFrame{
                     SendToServer.close();
                     clientSocket.close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    CustomLogger.logError("Error closing streams and socket in LoginRegisterWindow");
                 }
                 // Close the window
                 dispose();

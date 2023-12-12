@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import utils.CustomLogger;
+
 
 public class ClientHandlers {
 
@@ -24,16 +26,18 @@ public class ClientHandlers {
 
         String userID = loginInfo[0];
         int roomID = Integer.parseInt(loginInfo[1]);
-        System.out.println("User with membership card with ID: " + userID + " wants to enter room " + roomID);
+        CustomLogger.logInfo("User " + userID + " wants to enter training room " + roomID);
         try {
             boolean canEnterTraining = sqlEngine.canEnterTraining(userID, roomID);
             if (canEnterTraining) {
                 SendToClient.println("True");
+                CustomLogger.logInfo("User " + userID + " entered training room " + roomID);
             } else {
                 SendToClient.println("False");
+                CustomLogger.logInfo("User " + userID + " didn't enter training room " + roomID);
             }
         } catch (SQLException e) {
-            System.out.println("Error checking if user can enter training: " + e.getMessage());
+            CustomLogger.logError("Error checking if user can enter training room: " + e.getMessage());
         }
     }
 
@@ -42,12 +46,13 @@ public class ClientHandlers {
         String[] loginInfo = serverMessage.split(",");
         String userID = loginInfo[0];
         int gymID = Integer.parseInt(loginInfo[1]);
-        System.out.println("User " + userID + " wants to exit gym " + gymID);
+        CustomLogger.logInfo("User " + userID + " wants to exit gym " + gymID);
         try {
             boolean canExitGym = sqlEngine.canExitGym(userID, gymID);
             SendToClient.println(canExitGym);
+            CustomLogger.logInfo("User " + userID + " exited gym " + gymID);
         } catch (SQLException e) {
-            System.out.println("Error checking if user can exit gym: " + e.getMessage());
+            CustomLogger.logError("Error checking if user can exit gym: " + e.getMessage());
         }
     }
 
@@ -57,35 +62,38 @@ public class ClientHandlers {
 
         String card_number = loginInfo[0];
         int gymID = Integer.parseInt(loginInfo[1]);
-        System.out.println("User with card " + card_number + " wants to enter gym " + gymID);
+        CustomLogger.logInfo("User " + card_number + " wants to enter gym " + gymID);
         try {
             boolean canEnterGym = sqlEngine.canEnterGym(card_number, gymID);
             SendToClient.println(canEnterGym);
+            CustomLogger.logInfo("User " + card_number + " entered gym " + gymID);
         } catch (SQLException e) {
-            System.out.println("Error checking if user can enter gym: " + e.getMessage());
+            CustomLogger.logError("Error checking if user can enter gym: " + e.getMessage());
         }
     }
 
     public void getClient(String data) {
         int clientID = Integer.parseInt(data);
-        System.out.println("Getting client " + clientID);
+        CustomLogger.logInfo("Getting client " + clientID);
 
         try {
             String report = sqlEngine.getClient(clientID);
             SendToClient.println(report);
+            CustomLogger.logInfo("Client " + clientID + " got");
         } catch (SQLException e) {
-            System.out.println("Error getting client: " + e.getMessage());
+            CustomLogger.logError("Error getting client: " + e.getMessage());
         }
     }
 
     public void getMembershipCard(String data) {
         int userID = Integer.parseInt(data);
-        System.out.println("Getting membership card for client " + userID);
+        CustomLogger.logInfo("Getting membership card for user " + userID);
         try {
             String report = sqlEngine.getMembershipCard(userID);
             SendToClient.println(report);
+            CustomLogger.logInfo("Membership card for user " + userID + " got");
         } catch (SQLException e) {
-            System.out.println("Error getting membership card: " + e.getMessage());
+            CustomLogger.logError("Error getting membership card: " + e.getMessage());
         }
     }
 
@@ -100,37 +108,40 @@ public class ClientHandlers {
         boolean allGymAccess = Boolean.parseBoolean(paymentInfo[4]);
         LocalDate endDate = LocalDate.parse(paymentInfo[5]);
 
-        System.out.println("User " + userID + " wants to pay " + amount + " PLN using " + paymentMethod);
+        CustomLogger.logInfo("Processing payment for user " + userID + ", amount: " + amount + ", payment method: " + paymentMethod);
         try {
             boolean paymentSuccessful = sqlEngine.payment(userID, amount, paymentMethod);
             String membershipCard = sqlEngine.addMembershipCard(userID, endDate, "membership", allGymAccess, gymID);
             SendToClient.println(paymentSuccessful + ":" + membershipCard);
+            CustomLogger.logInfo("Payment for user " + userID + " processed");
         } catch (SQLException e) {
-            System.out.println("Error processing payment: " + e.getMessage());
+            CustomLogger.logError("Error processing payment: " + e.getMessage());
         }
     }
 
 
     public void cancelSubscription(String data) {
         int userID = Integer.parseInt(data);
-        System.out.println("User " + userID + " wants to cancel subscription");
+        CustomLogger.logInfo("Cancelling subscription for user " + userID);
         try {
             boolean subscriptionCancelled = sqlEngine.cancelSubscription(userID);
             SendToClient.println(subscriptionCancelled);
+            CustomLogger.logInfo("Subscription for user " + userID + " cancelled");
         } catch (SQLException e) {
-            System.out.println("Error cancelling subscription: " + e.getMessage());
+            CustomLogger.logError("Error cancelling subscription: " + e.getMessage());
         }
     }
 
 
     public void loadClientTrainings(String data) {
         int userID = Integer.parseInt(data);
-        System.out.println("Loading trainings for client " + userID);
+        CustomLogger.logInfo("Loading trainings for user " + userID);
         try {
             String report = sqlEngine.loadClientTrainings(userID);
             SendToClient.println(report);
+            CustomLogger.logInfo("Trainings loaded for user " + userID);
         } catch (SQLException e) {
-            System.out.println("Error loading trainings: " + e.getMessage());
+            CustomLogger.logError("Error loading trainings: " + e.getMessage());
         }
     }
 

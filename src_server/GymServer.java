@@ -4,6 +4,7 @@ import java.util.concurrent.*;
 
 import Handlers.SQLEngine;
 import utils.Color;
+import utils.CustomLogger;
 
 public class GymServer {
     // Server properties
@@ -21,48 +22,48 @@ public class GymServer {
 
     public static void main(String[] args) throws IOException {
 
-        // TODO: is it better to move server socket and db connecitos seperate functions/SQLEngine?
         // Create server socket
         try {
             serverSocket = new ServerSocket(SERVER_PORT);
-            System.out.println("Server started on port " + SERVER_PORT);
+            CustomLogger.logInfo("Server started on port " + SERVER_PORT);
         } catch (IOException e) {
-            System.out.println("Could not listen on port " + SERVER_PORT);
+            CustomLogger.logError("Could not start server: " + e.getMessage());
             System.exit(-1);
         }
 
         try {
             // Create DB engine
             sqlEngine = new SQLEngine(host, DBPort, DBName, username, password);
-            System.out.println(Color.ColorString("DB engine created", Color.ANSI_GREEN));
 
             // Connect to DB
             sqlEngine.getConnection();
-            System.out.println(Color.ColorString("DB connection established", Color.ANSI_GREEN));
+            CustomLogger.logInfo("Connected to DB");
 
         } 
         catch (Exception e) 
         {
-            System.out.println(Color.ColorString(e.getMessage(), Color.ANSI_RED));
-            e.printStackTrace();
+            CustomLogger.logError("Could not connect to DB: " + e.getMessage());
             System.exit(-1);
         }
 
-        // TODO: imo its better to run this after succesfull db connection
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
         scheduledExecutorService.scheduleAtFixedRate(() -> {
             // Log the server state
-            // TODO: Create guide to server log messages
             String message = "  Number of active tasks: " + ((ThreadPoolExecutor) executorService).getActiveCount();
             System.out.println(Color.ColorString("Server state:", Color.ANSI_GREEN));
             System.out.println(Color.ColorString(message, Color.ANSI_YELLOW));
-        }, 0, 5, TimeUnit.SECONDS);
+
+            // log the server state
+            CustomLogger.logInfo("Server state:");
+            CustomLogger.logInfo(message);
+        }, 0, 10, TimeUnit.SECONDS);
 
         // Listen for client connections
         while (true) {
             Socket clientSocket = serverSocket.accept();
             System.out.println("Client connected: " + clientSocket.getInetAddress().getHostAddress());
+            CustomLogger.logInfo("Client connected: " + clientSocket.getInetAddress().getHostAddress());
 
             // Submit new task to thread pool
             FutureTask<String> task = new FutureTask<>(new ClientHandler(clientSocket, sqlEngine));
