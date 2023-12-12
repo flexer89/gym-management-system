@@ -1,2 +1,4 @@
 bin
 database/cloudbeaver
+report.pdf
+logs.log

@@ -1,5 +1,6 @@
 package gui.dashboard.client_dashboard.membership_extension;
 
+import utils.CustomLogger;
 import utils.Message;
 
 import java.awt.BorderLayout;
@@ -63,7 +64,7 @@ public class OneGymMembership extends JFrame {
                 reportTableModel.addRow(reportLineParts);
             }
         } catch (IOException ex) {
-            System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+            CustomLogger.logError("Error while reading the report from the server: " +  ex);
         }
 
         // Create the panel for the form

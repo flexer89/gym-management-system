@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import utils.CustomLogger;
 import utils.Message;
 import utils.ValidateData;
 
@@ -115,7 +116,6 @@ public class ProfileWindow extends JFrame {
                     if (!ValidateData.ValidatePassword(confirmPassword)) {
                         return;
                     }
-                    System.out.println("New password and confirm password match");
 
                     message.sendChangePasswordMessage(SendToServer, newPassword + "," + trainerIDString + "," + "employee");
                     String status =ReadFromServer.readLine();
@@ -129,7 +129,7 @@ public class ProfileWindow extends JFrame {
                     }
                     
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    CustomLogger.logError("Error changing password: " + ex.getMessage());
                 }
                 
             }

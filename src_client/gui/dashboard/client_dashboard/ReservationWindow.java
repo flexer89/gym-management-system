@@ -18,6 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import utils.CustomLogger;
 import utils.Message;
 
 public class ReservationWindow extends JFrame {
@@ -95,7 +96,7 @@ public class ReservationWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, response, "Error reserving training", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException ex) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + ex.getMessage());
                 }
             }
         });
@@ -120,7 +121,7 @@ public class ReservationWindow extends JFrame {
                         reportTableModel.addRow(reportLineParts);
                     }
                 } catch (IOException ex) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + ex.getMessage());
                 }
             }
         });

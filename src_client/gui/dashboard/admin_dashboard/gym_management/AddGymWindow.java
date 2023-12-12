@@ -1,5 +1,6 @@
 package gui.dashboard.admin_dashboard.gym_management;
 
+import utils.CustomLogger;
 import utils.Message;
 import utils.ValidateData;
 
@@ -146,7 +147,7 @@ public class AddGymWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Error adding gym!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + e1.getMessage());
                 }
             }
         });

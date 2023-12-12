@@ -173,7 +173,7 @@ public class ClientDashboard extends JFrame{
                 try {
                     new MembershipCardWindow(message, ReadFromServer, SendToServer, userID);
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error creating Membership window." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error opening membership card window: " + e1.getMessage());
                 }
             }
         });
@@ -184,7 +184,7 @@ public class ClientDashboard extends JFrame{
                 try {
                     new ProfileWindow(message, ReadFromServer, SendToServer, userID);
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error creating profile window." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error opening profile window: " + e1.getMessage());
                 }
             }
         });

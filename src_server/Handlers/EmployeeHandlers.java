@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import utils.CustomLogger;
+
 public class EmployeeHandlers {
 
     private PrintWriter SendToClient;
@@ -30,54 +32,56 @@ public class EmployeeHandlers {
         try {
             boolean ifAdded = sqlEngine.addEmployee(name, surname, position, dateOfBirth,dateOfEmployment, phone, email, login);
             if (ifAdded) {
-                System.out.println("Employee " + name + " added");
+                CustomLogger.logInfo("Employee " + name + " added");
                 SendToClient.println("True");
             } else {
-                System.out.println("Employee " + name + " wasn't added");
+                CustomLogger.logInfo("Employee " + name + " wasn't added");
                 SendToClient.println("False");
             }
         } catch (SQLException e) {
-            System.out.println("Error adding employee: " + e.getMessage());
+            CustomLogger.logError("Error adding employee: " + e.getMessage());
         }
 
     }
 
     public void loadGym() {
-        System.out.println("Loading gyms");
+        CustomLogger.logInfo("Loading gyms");
         try {
             String report = sqlEngine.loadGym();
+            CustomLogger.logInfo("Gyms loaded");
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error loading gym: " + e.getMessage());
+            CustomLogger.logError("Error loading gyms: " + e.getMessage());
         }
     }
 
     public void deleteEmployee(String data) {
         int employeeID = Integer.parseInt(data);
-        System.out.println("Deleting employee " + employeeID);
+        CustomLogger.logInfo("Deleting employee " + employeeID);
 
         try {
             boolean ifDeleted = sqlEngine.deleteEmployee(employeeID);
             if (ifDeleted) {
-                System.out.println("Employee " + employeeID + " deleted");
+                CustomLogger.logInfo("Employee " + employeeID + " deleted");
                 SendToClient.println("True");
             } else {
-                System.out.println("Employee " + employeeID + " wasn't deleted");
+                CustomLogger.logInfo("Employee " + employeeID + " wasn't deleted");
                 SendToClient.println("False");
             }
         } catch (SQLException e) {
-            System.out.println("Error deleting employee: " + e.getMessage());
+            CustomLogger.logError("Error deleting employee: " + e.getMessage());
         }
     }
 
 
     public void loadEmployees(String data) {
-        System.out.println("Loading employees");
+        CustomLogger.logInfo("Loading employees");
         try {
             String report = sqlEngine.loadEmployees();
+            CustomLogger.logInfo("Employees loaded");
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error loading employee: " + e.getMessage());
+            CustomLogger.logError("Error loading employees: " + e.getMessage());
         }
     }
 
@@ -91,28 +95,31 @@ public class EmployeeHandlers {
         LocalDate dateOfEmployment = LocalDate.parse(employeeInfo[5]);
         String phone = employeeInfo[6];
         String email = employeeInfo[7];
+
+        CustomLogger.logInfo("Updating employee " + employeeID + " with data: " + name + " " + surname + " | " + position + " | " + dateOfBirth + " | " + dateOfEmployment + " | " + phone + " | " + email);
         try {
             boolean ifUpdated = sqlEngine.updateEmployee(employeeID, name, surname, position, dateOfBirth,dateOfEmployment, phone, email);
             if (ifUpdated) {
-                System.out.println("Employee " + employeeID + " updated");
+                CustomLogger.logInfo("Employee " + employeeID + " updated");
                 SendToClient.println("True");
             } else {
-                System.out.println("Employee " + employeeID + " wasn't updated");
+                CustomLogger.logInfo("Employee " + employeeID + " wasn't updated");
                 SendToClient.println("False");
             }
         } catch (SQLException e) {
-            System.out.println("Error updating employee: " + e.getMessage());
+            CustomLogger.logError("Error updating employee: " + e.getMessage());
         }
     }
 
     public void loadEmployeeTrainings(String data) {
         int employeeID = Integer.parseInt(data);
-        System.out.println("Loading trainings for employee " + employeeID);
+        CustomLogger.logInfo("Loading trainings for employee " + employeeID);
         try {
             String report = sqlEngine.loadEmployeeTrainings(employeeID);
+            CustomLogger.logInfo("Trainings loaded for employee " + employeeID);
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error loading trainings: " + e.getMessage());
+            CustomLogger.logError("Error loading trainings: " + e.getMessage());
         }
     }
 }

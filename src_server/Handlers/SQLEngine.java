@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import utils.CustomLogger;
 import utils.GenerateCard;
 import utils.Secure;
 
@@ -35,6 +36,7 @@ public class SQLEngine {
             try {
                 connection = DriverManager.getConnection(url, username, password);
             } catch (SQLException e) {
+                CustomLogger.logError("Error while connecting to database: " + e.getMessage());
                 throw new RuntimeException(e);
             }
         }
@@ -67,17 +69,19 @@ public class SQLEngine {
                 if (resultSet.next()) {
                     return resultSet.getInt("id")+","+"client_credentials";
                 } else {
+                    CustomLogger.logInfo("No user found with login " + login);
                     throw new SQLException("No user found with login " + login);
                 }
             }
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while getting user ID by login: " + e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    CustomLogger.logInfo("Error while closing ResultSet: " + e.getMessage());
                 }
             }
         }
@@ -91,9 +95,11 @@ public class SQLEngine {
             if (resultSet.next()) {
                 return resultSet.getString("password");
             } else {
+                CustomLogger.logInfo("No user found with id " + id + " in table " + table);
                 throw new SQLException("No user found with id " + id + " in table " + table);
             }
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while getting hash by ID: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -106,16 +112,18 @@ public class SQLEngine {
             if (resultSet.next()) {
                 return resultSet.getString("salt");
             } else {
+                CustomLogger.logInfo("No user found with id " + id + " in table " + table);
                 throw new SQLException("No user found with id " + id + " in table " + table);
             }
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while getting salt by ID: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
     public String loginToAccount(String username, String hash) throws SQLException {
 
-        System.out.println("Trying to log a employee");
+        CustomLogger.logInfo("Trying to log as employee");
         String roleQuery = "SELECT position, employee_id FROM employee_credentials " +
                 "JOIN employee ON employee.id = employee_credentials.employee_id " +
                 "WHERE login = ? AND password = ? AND position IN ('admin', 'employee', 'trainer')";
@@ -131,7 +139,7 @@ public class SQLEngine {
             }
         }
     
-        System.out.println("Trying to log as client");
+        CustomLogger.logInfo("Trying to log as client");
         String clientQuery = "SELECT client_id FROM client_credentials WHERE login = ? AND password = ?";
         try (PreparedStatement clientStatement = connection.prepareStatement(clientQuery)) {
             clientStatement.setString(1, username);
@@ -143,7 +151,7 @@ public class SQLEngine {
                 }
             }
         }
-    
+        CustomLogger.logInfo("Invalid login credentials");
         throw new SQLException("Invalid login credentials");
     }
     
@@ -156,6 +164,7 @@ public class SQLEngine {
             table = "employee_credentials";
         }
         else {
+            CustomLogger.logInfo("Invalid user type");
             throw new RuntimeException("Invalid user type");
         }
     
@@ -169,9 +178,11 @@ public class SQLEngine {
             if (count == 1) {
                 return true;
             } else {
+                CustomLogger.logInfo("Invalid change happened");
                 throw new SQLException("Invalid change happened");
             }
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while changing password: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -207,16 +218,18 @@ public class SQLEngine {
     
                 return userID;
             } else {
+                CustomLogger.logInfo("Invalid register credentials");
                 throw new SQLException("Invalid register credentials");
             }
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while registering account: " + e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    CustomLogger.logInfo("Error while closing ResultSet: " + e.getMessage());
                 }
             }
         }
@@ -232,7 +245,7 @@ public class SQLEngine {
 
         if (resultSet.next()) {
             int clientID = resultSet.getInt("client_id");
-            System.out.println("Client id: " + clientID);
+
             // check if client has a reservation for this room
             query = "SELECT training.date, training.start_hour FROM reservation JOIN training ON training.id = reservation.training_id WHERE client_id = ? and room = ?";
             pstmt = connection.prepareStatement(query);
@@ -271,11 +284,7 @@ public class SQLEngine {
             boolean isCanceled = resultSet.getBoolean("isCanceled");
 
             // print all the data
-            System.out.println("Expiration date: " + expirationDate);
-            System.out.println("All gym access: " + allGymAccess);
-            System.out.println("Original gym id: " + originalGymID);
-            System.out.println("User id: " + userID);
-            System.out.println("Is canceled: " + isCanceled);
+            CustomLogger.logInfo("User membership card data: Expiration Date: " + expirationDate + " | All gyms access: " + allGymAccess + " | Original gym ID: " + originalGymID + " | User ID: " + userID + " | Is canceled: " + isCanceled);
     
             // Format time
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -686,6 +695,7 @@ public class SQLEngine {
             }
             return report;
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while loading gym: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -698,31 +708,32 @@ public class SQLEngine {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, gymID);
             int count = pstmt.executeUpdate();
-            System.out.println("Deleted " + count + " rows from reservation");
+            CustomLogger.logInfo("Deleted " + count + " rows from reservation");
 
             // Delete all trainings for this gym
             query = "DELETE FROM training WHERE gym_id = ?";
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, gymID);
             count = pstmt.executeUpdate();
-            System.out.println("Deleted " + count + " rows from training");
+            CustomLogger.logInfo("Deleted " + count + " rows from training");
 
             // Delete all gym visits for this gym
             query = "DELETE FROM gym_visits WHERE gym_id = ?";
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, gymID);
             count = pstmt.executeUpdate();
-            System.out.println("Deleted " + count + " rows from gym_visits");
+            CustomLogger.logInfo("Deleted " + count + " rows from gym_visits");
 
             // Delete the gym
             query = "DELETE FROM gym WHERE id = ?";
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, gymID);
             count = pstmt.executeUpdate();
-            System.out.println("Deleted " + count + " rows from gym");
+            CustomLogger.logInfo("Deleted " + count + " rows from gym");
 
             return true;
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while deleting gym: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -734,45 +745,44 @@ public class SQLEngine {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, employeeID);
             int count = pstmt.executeUpdate();
-            System.out.println("Deleted " + count + " rows from reservation");
+            CustomLogger.logInfo("Deleted " + count + " rows from reservation");
 
             // Delete trainings that are led by this employee
             query = "DELETE FROM training WHERE trainer_id = ?";
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, employeeID);
             count = pstmt.executeUpdate();
-            System.out.println("Deleted " + count + " rows from training");
+            CustomLogger.logInfo("Deleted " + count + " rows from training");
     
             // Now delete the employee credentials
             query = "DELETE FROM employee_credentials WHERE employee_id = ?";
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, employeeID);
-            int count = pstmt.executeUpdate();
-            System.out.println("Deleted " + count + " rows from employee_credentials");
+            count = pstmt.executeUpdate();
+            CustomLogger.logInfo("Deleted " + count + " rows from employee_credentials");
     
             if (count > 0) {
                 query = "DELETE FROM employee_card WHERE employee_id = ?";
                 pstmt = connection.prepareStatement(query);
                 pstmt.setInt(1, employeeID);
                 count = pstmt.executeUpdate();
-                System.out.println("Deleted " + count + " rows from employee_card");
+                CustomLogger.logInfo("Deleted " + count + " rows from employee_card");
     
                 if (count > 0) {
                     query = "DELETE FROM employee WHERE id = ?";
                     pstmt = connection.prepareStatement(query);
                     pstmt.setInt(1, employeeID);
                     count = pstmt.executeUpdate();
-                    System.out.println("Deleted " + count + " rows from employee");
+                    CustomLogger.logInfo("Deleted " + count + " rows from employee");
     
                     return true;
                 }
-                System.out.println("No rows deleted from employee_card");
                 return false;
             } else {
-                System.out.println("No rows deleted from employee_credentials");
                 return false;
             }
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while deleting employee: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -789,6 +799,7 @@ public class SQLEngine {
             }
             return report;
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while loading employees: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -806,6 +817,7 @@ public class SQLEngine {
             }
             return report;
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while getting client: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -823,6 +835,7 @@ public class SQLEngine {
             }
             return report;
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while getting trainer: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -919,6 +932,7 @@ public class SQLEngine {
             }
             return report;
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while loading trainings: " + e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (pstmt != null) {
@@ -1043,18 +1057,13 @@ public class SQLEngine {
             pstmt = connection.prepareStatement(query);
             int originalGymId = resultSet.getInt("original_gym_id");
             pstmt.setInt(1, originalGymId);
-            System.out.println("original_gym_id: " + originalGymId);
             ResultSet gymResultSet = pstmt.executeQuery();
 
             if (gymResultSet.next()) {
                 String gymName = gymResultSet.getString("name");
                 report += "," + gymName;
-                System.out.println("Gym Name: " + gymName);  // Debug print
-            } else {
-                System.out.println("No gym found with id: " + originalGymId);  // Debug print
             }
         }
-        System.out.println(report);
         return report;
     }
 
@@ -1067,14 +1076,14 @@ public class SQLEngine {
             pstmt.setString(3, paymentMethod);
             pstmt.setInt(4, userID);
             int count = pstmt.executeUpdate();
-            System.out.println("Inserted " + count + " rows into payment");
+            CustomLogger.logInfo("Inserted " + count + " rows into payment");
             if (count > 0) {
                 return true;
             } else {
                 return false;
             }
         } catch (SQLException e) {
-            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+            CustomLogger.logInfo("Error while inserting into payment: " + e.getMessage());
         }
         return false;
     }
@@ -1086,7 +1095,7 @@ public class SQLEngine {
 
         while (!isUnique) {
             card_number = GenerateCard.generateClientCardNumber();
-            System.out.println("Generated card number: " + card_number);
+            CustomLogger.logInfo("Generated card number: " + card_number);
             String query = "SELECT * FROM membership_card WHERE card_number = ?";
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setString(1, card_number);
@@ -1157,7 +1166,7 @@ public class SQLEngine {
                 return "--------";
             }
         } catch (SQLException e) {
-            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+            CustomLogger.logInfo("Error while inserting into membership_card: " + e.getMessage());
         }
         return "--------";
     }
@@ -1187,7 +1196,7 @@ public class SQLEngine {
                 return false;
             }
         } catch (SQLException e) {
-            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+            CustomLogger.logInfo("Error while updating membership_card: " + e.getMessage());
         }
         return false;
     }
@@ -1211,7 +1220,7 @@ public class SQLEngine {
                 return false;
             }
         } catch (SQLException e) {
-            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+            CustomLogger.logInfo("Error while updating gym: " + e.getMessage());
         }
         return false;
     }
@@ -1236,7 +1245,7 @@ public class SQLEngine {
                 return false;
             }
         } catch (SQLException e) {
-            System.out.println(utils.Color.ANSI_RED + "Error: " + e.getMessage() + utils.Color.ANSI_RESET);
+            CustomLogger.logInfo("Error while updating employee: " + e.getMessage());
         }
         return false;
     }
@@ -1354,6 +1363,7 @@ public class SQLEngine {
             }
             return report;
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while loading employee trainings: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -1365,17 +1375,18 @@ public class SQLEngine {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, trainingID);
             int count = pstmt.executeUpdate();
-            System.out.println("Deleted " + count + " rows from reservation");
+            CustomLogger.logInfo("Deleted " + count + " rows from reservation");
 
             // Delete the training
             query = "DELETE FROM training WHERE id = ?";
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, trainingID);
             count = pstmt.executeUpdate();
-            System.out.println("Deleted " + count + " rows from training");
+            CustomLogger.logInfo("Deleted " + count + " rows from training");
 
             return true;
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while deleting training: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -1417,6 +1428,7 @@ public class SQLEngine {
             }
             return report;
         } catch (SQLException e) {
+            CustomLogger.logInfo("Error while loading client trainings: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

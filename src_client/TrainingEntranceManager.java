@@ -3,13 +3,14 @@ import java.net.*;
 
 import gui.training_entrance.TrainingEntranceWindow;
 import utils.Color;
+import utils.CustomLogger;
 import utils.Message;
 
 public class TrainingEntranceManager {
     public static void main(String[] args) throws IOException {
         // Create client socket
         Socket clientSocket = new Socket("localhost", 5000);
-        System.out.println(Color.ColorString("Connected to server", Color.ANSI_GREEN));
+        CustomLogger.logInfo("Training entrance manager connected to server");
 
         // Create input and output streams
         BufferedReader ReadFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));

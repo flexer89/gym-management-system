@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.SQLException;
 
+import utils.CustomLogger;
+
 public class GymHandlers {
 
     private PrintWriter SendToClient;
@@ -27,42 +29,43 @@ public class GymHandlers {
         try {
             boolean ifAdded = sqlEngine.addGym(name, address, postalCode, city, phone, email);
             if (ifAdded) {
-                System.out.println("Gym " + name + " added");
+                CustomLogger.logInfo("Gym " + name + " added");
                 SendToClient.println("True");
             } else {
-                System.out.println("Gym " + name + " wasn't added");
+                CustomLogger.logInfo("Gym " + name + " wasn't added");
                 SendToClient.println("False");
             }
         } catch (SQLException e) {
-            System.out.println("Error adding gym: " + e.getMessage());
+            CustomLogger.logError("Error adding gym: " + e.getMessage());
         }
     }
 
     public void loadGym() {
-        System.out.println("Loading gyms");
+        CustomLogger.logInfo("Loading gyms");
         try {
             String report = sqlEngine.loadGym();
+            CustomLogger.logInfo("Gyms loaded");
             SendToClient.println(report);
         } catch (SQLException e) {
-            System.out.println("Error loading gym: " + e.getMessage());
+            CustomLogger.logError("Error loading gyms: " + e.getMessage());
         }
     }
 
     public void deleteGym(String data) {
         int gymID = Integer.parseInt(data);
-        System.out.println("Deleting gym " + gymID);
+        CustomLogger.logInfo("Deleting gym " + gymID);
 
         try {
             boolean ifDeleted = sqlEngine.deleteGym(gymID);
             if (ifDeleted) {
-                System.out.println("Gym " + gymID + " deleted");
+                CustomLogger.logInfo("Gym " + gymID + " deleted");
                 SendToClient.println("True");
             } else {
-                System.out.println("Gym " + gymID + " wasn't deleted");
+                CustomLogger.logInfo("Gym " + gymID + " wasn't deleted");
                 SendToClient.println("False");
             }
         } catch (SQLException e) {
-            System.out.println("Error deleting gym: " + e.getMessage());
+            CustomLogger.logError("Error deleting gym: " + e.getMessage());
         }
     }
 
@@ -76,19 +79,19 @@ public class GymHandlers {
         String phone = gymInfo[5];
         String email = gymInfo[6];
 
-        System.out.println("Updating gym " + gymID);
+        CustomLogger.logInfo("Updating gym " + gymID + " with data: " + name + " " + address + " | " + postalCode + " " + city + " | " + phone + " | " + email);
 
         try {
             boolean ifUpdated = sqlEngine.updateGym(gymID, name, address, postalCode, city, phone, email);
             if (ifUpdated) {
-                System.out.println("Gym " + gymID + " updated");
+                CustomLogger.logInfo("Gym " + gymID + " updated");
                 SendToClient.println("Update successful.");
             } else {
-                System.out.println("Gym " + gymID + " wasn't updated");
+                CustomLogger.logInfo("Gym " + gymID + " wasn't updated");
                 SendToClient.println("Error updating gym.");
             }
         } catch (SQLException e) {
-            System.out.println("Error updating gym: " + e.getMessage());
+            CustomLogger.logError("Error updating gym: " + e.getMessage());
         }
     }
     

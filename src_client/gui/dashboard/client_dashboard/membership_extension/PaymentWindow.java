@@ -2,6 +2,7 @@ package gui.dashboard.client_dashboard.membership_extension;
 
 import javax.swing.*;
 
+import utils.CustomLogger;
 import utils.Message;
 import utils.ValidateData;
 
@@ -110,7 +111,7 @@ public class PaymentWindow extends JFrame {
                         dispose();
                     }
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error: " + e1.getMessage() + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + e1.getMessage());
                 }
 
             }

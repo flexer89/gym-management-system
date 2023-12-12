@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 import gui.dashboard.AdminDashboard;
 import gui.dashboard.ClientDashboard;
 import gui.dashboard.TrainerDashboard;
+import utils.CustomLogger;
 import utils.Message;
 import utils.ValidateData;
 
@@ -73,7 +74,6 @@ public class LoginWindow extends JFrame{
                     // Read the response from the server (type to know which dashboard should be created and userID to know the user's ID)
                     int userID = Integer.parseInt(ReadFromServer.readLine());
                     String type = ReadFromServer.readLine();
-                    System.out.println(type + " ID: " + userID);
 
                     if (userID > 0) {
                         JOptionPane.showMessageDialog(null, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -81,31 +81,27 @@ public class LoginWindow extends JFrame{
 
                         switch (type) {
                             case "admin":
-                                System.out.println("Admin dashboard opened");
                                 new AdminDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow);
                                 break;
                             case "client":
-                                System.out.println("Client dashboard opened");
                                 new ClientDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow, userID);
                                 break;
                             case "trainer":
-                                System.out.println("Trainer dashboard opened");
                                 new TrainerDashboard(message, ReadFromServer, SendToServer, loginRegisterWindow, userID);
                                 break;
                             default:
-                                System.out.println("Unhandled type");
                                 throw new IOException("Unhandled type");
                         }
                     }
                     else 
                     {
-                        throw new IOException("Invalid login credentials");
+                        CustomLogger.logError("Error logging in user " + username);
                     }
                 }
                 catch (IOException e1) 
                 {
                     JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    System.out.println(utils.Color.ANSI_RED + e1.getMessage() + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + e1.getMessage());
                 }
             }
         });

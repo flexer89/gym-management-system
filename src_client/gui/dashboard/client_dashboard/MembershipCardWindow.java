@@ -65,9 +65,6 @@ public class MembershipCardWindow extends JFrame{
 
         // Get the response from the server
         String response = ReadFromServer.readLine();
-
-        // Debug print
-        System.out.println("Response: " + response);
         
         // Split the response
         String[] responseSplit = response.split(",");
@@ -82,15 +79,6 @@ public class MembershipCardWindow extends JFrame{
             String membershipType = responseSplit[2];
             String allGymAccess = responseSplit[3];
             String originalGym = responseSplit[4];
-            
-            // Debug prints
-            System.out.println("Membership Number: " + membershipNumber);
-            System.out.println("Expiration Date: " + expirationDate);
-            System.out.println("Membership Type: " + membershipType);
-            System.out.println("Original Gym: " + originalGym);
-            System.out.println("All Gym Access: " + allGymAccess);
-
-
 
             // Create labels for the current data panel
             JLabel membershipNumberLabel = new JLabel("<html><b>Membership Number: </b> " + membershipNumber + "</html>");
@@ -231,7 +219,7 @@ public class MembershipCardWindow extends JFrame{
                             JOptionPane.showMessageDialog(null, "Error cancelling subscription!", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (IOException e1) {
-                        e1.printStackTrace();
+                        CustomLogger.logError("Error reading from server: " + e1.getMessage());
                     }
                 }
             }

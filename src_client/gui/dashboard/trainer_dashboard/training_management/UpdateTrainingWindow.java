@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import utils.CustomLogger;
 import utils.Message;
 import utils.ValidateData;
 
@@ -93,7 +94,7 @@ public class UpdateTrainingWindow extends JFrame {
                         reportTableModel.addRow(reportLineParts);
                     }
                 } catch (IOException ex) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + ex.getMessage());
                 }
             }
         });
@@ -150,7 +151,7 @@ public class UpdateTrainingWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Training update failed! Trainer is busy or the room is occupied!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading from server: " + e1.getMessage() + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + e1.getMessage());
                 }
             }
         });

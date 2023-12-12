@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import utils.CustomLogger;
 import utils.Message;
 
 public class BookedTrainingWindow extends JFrame {
@@ -67,7 +68,7 @@ public class BookedTrainingWindow extends JFrame {
                 reportTableModel.addRow(reportLineParts);
             }
         } catch (IOException ex) {
-            System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+            CustomLogger.logError("Error while reading the report from the server: " + ex.getMessage());
         }
 
         // Add the report panel to the main window

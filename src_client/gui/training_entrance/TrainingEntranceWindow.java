@@ -20,6 +20,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import utils.CustomLogger;
 import utils.Message;
 
 public class TrainingEntranceWindow extends JFrame{
@@ -75,9 +76,8 @@ public class TrainingEntranceWindow extends JFrame{
                     }
                     // Clear the text field
                     idTextField.setText("");
-                    System.out.println(message);
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + e1.getMessage());
                 }
             }
         });

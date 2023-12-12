@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import utils.CustomLogger;
 import utils.Message;
 
 public class DeleteTrainingWindow extends JFrame {
@@ -119,13 +120,13 @@ public class DeleteTrainingWindow extends JFrame {
                                 reportTableModel.addRow(reportLineParts);
                             }
                         } catch (IOException ex) {
-                            ex.printStackTrace();
+                            CustomLogger.logError("Error reading from server: " + ex.getMessage());
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "Training not deleted", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IOException e1) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + e1.getMessage());
                 }
             }
         });
@@ -150,7 +151,7 @@ public class DeleteTrainingWindow extends JFrame {
                         reportTableModel.addRow(reportLineParts);
                     }
                 } catch (IOException ex) {
-                    System.out.println(utils.Color.ANSI_RED + "Error reading response from server." + utils.Color.ANSI_RESET);
+                    CustomLogger.logError("Error reading from server: " + ex.getMessage());
                 }
             }
         });
