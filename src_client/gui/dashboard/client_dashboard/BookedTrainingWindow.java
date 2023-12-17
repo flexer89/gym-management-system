@@ -7,7 +7,10 @@ import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -37,6 +40,8 @@ public class BookedTrainingWindow extends JFrame {
         JPanel reservationPanel = new JPanel();
         reservationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Reservation"));
         reservationPanel.setLayout(new GridLayout(2, 4));
+        JButton cancelReservationButton = new JButton("Cancel Reservation");
+        reservationPanel.add(cancelReservationButton);
         mainPanel.add(reservationPanel);
 
         // Add the report table
@@ -73,5 +78,43 @@ public class BookedTrainingWindow extends JFrame {
 
         // Add the report panel to the main window
         this.add(mainPanel);
+
+        // Add the action listeners
+        cancelReservationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                // Get the selected row
+                int selectedRow = reportTable.getSelectedRow();
+
+                // Check if a row is selected
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Please select a row", "Success", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // check if fields aren't edited
+                if (reportTable.isEditing()) {
+                    JOptionPane.showMessageDialog(null, "Please finish editing the table", "Success", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // get the training ID
+                String trainingID = reportTable.getValueAt(selectedRow, 0).toString();
+
+                // Send the message to the server
+                message.sendCancelReservationMessage(SendToServer, trainingID + "," + userIDString);
+
+                // Read the response from the server
+                try {
+                    String response = ReadFromServer.readLine();
+                    if (response.equals("true")) {
+                        JOptionPane.showMessageDialog(null, "Reservation cancelled successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error cancelling reservation", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (IOException ex) {
+                    CustomLogger.logError("Error while reading the response from the server: " + ex.getMessage());
+                }
+            }
+        });
     }
 }

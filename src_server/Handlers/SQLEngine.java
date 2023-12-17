@@ -1432,4 +1432,23 @@ public class SQLEngine {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean cancelReservation(int trainingID, int userID) throws SQLException{
+        String query = "DELETE FROM reservation WHERE training_id = ? AND client_id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, trainingID);
+            pstmt.setInt(2, userID);
+            int count = pstmt.executeUpdate();
+            CustomLogger.logInfo("Deleted " + count + " rows from reservation");
+            if (count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            CustomLogger.logInfo("Error while deleting reservation: " + e.getMessage());
+        }
+        return false;
+    }
 }

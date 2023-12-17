@@ -145,4 +145,20 @@ public class ClientHandlers {
         }
     }
 
+
+    public void cancelReservation(String data) {
+        String[] reservationInfo = data.split(",");
+
+        int trainingID = Integer.parseInt(reservationInfo[0]);
+        int userID = Integer.parseInt(reservationInfo[1]);
+        CustomLogger.logInfo("Cancelling reservation for user " + userID + " for training " + trainingID);
+        try {
+            boolean reservationCancelled = sqlEngine.cancelReservation(trainingID, userID);
+            SendToClient.println(reservationCancelled);
+            CustomLogger.logInfo("Reservation for user " + userID + " for training " + trainingID + " cancelled");
+        } catch (SQLException e) {
+            CustomLogger.logError("Error cancelling reservation: " + e.getMessage());
+        }
+    }
+
 }
