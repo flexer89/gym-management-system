@@ -365,7 +365,7 @@ public class SQLEngine {
         return count > 0;
     }
 
-    public boolean addEmployee(String name, String surname, String position, LocalDate dateOfBirth, LocalDate dateOfEmployment, String phone,
+    public String addEmployee(String name, String surname, String position, LocalDate dateOfBirth, LocalDate dateOfEmployment, String phone,
         String email, String login) throws SQLException {
 
         SecureRandom random = new SecureRandom();
@@ -398,20 +398,35 @@ public class SQLEngine {
                 count = pstmt.executeUpdate();
 
                 if (count > 0) {
+                    // generate card number 
+                    boolean isUnique = false;
+                    String card_number = "";
+
+                    while (!isUnique) {
+                        card_number = GenerateCard.generateEmployeeCardNumber();
+                        CustomLogger.logInfo("Generated card number: " + card_number);
+                        query = "SELECT * FROM employee_card WHERE employee_number = ?";
+                        pstmt = connection.prepareStatement(query);
+                        pstmt.setString(1, card_number);
+                        ResultSet resultSet = pstmt.executeQuery();
+                        if (!resultSet.next()) {
+                            isUnique = true;
+                        }
+                    }
                     query = "INSERT INTO employee_card (employee_number, expiration_date, employee_id) VALUES (?, ?, ?)";
                     pstmt = connection.prepareStatement(query);
-                    pstmt.setInt(1, employeeID);
+                    pstmt.setString(1, card_number);
                     pstmt.setObject(2, dateOfEmployment.plusYears(1));
                     pstmt.setInt(3, employeeID);
                     count = pstmt.executeUpdate();
 
                     if (count > 0) {
-                        return true;
+                        return card_number;
                     }
                 }
             }
         }
-        return false;
+        return "";
     }
 
     public String paymentReport(LocalDate fromDate, LocalDate toDate, int minimumPayment, int maximumPayment, String paymentMethod, int card_number)

@@ -30,13 +30,13 @@ public class EmployeeHandlers {
         String login = employeeInfo[7];
         
         try {
-            boolean ifAdded = sqlEngine.addEmployee(name, surname, position, dateOfBirth,dateOfEmployment, phone, email, login);
-            if (ifAdded) {
-                CustomLogger.logInfo("Employee " + name + " added");
-                SendToClient.println("True");
+            String cardNumber = sqlEngine.addEmployee(name, surname, position, dateOfBirth,dateOfEmployment, phone, email, login);
+            if (!cardNumber.isEmpty()) {
+                CustomLogger.logInfo("Employee " + name + " added with card number " + cardNumber);
+                SendToClient.println(cardNumber);
             } else {
                 CustomLogger.logInfo("Employee " + name + " wasn't added");
-                SendToClient.println("False");
+                SendToClient.println("");
             }
         } catch (SQLException e) {
             CustomLogger.logError("Error adding employee: " + e.getMessage());
