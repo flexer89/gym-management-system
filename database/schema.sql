@@ -128,8 +128,7 @@ CREATE TABLE gym_visits (
 
 ALTER TABLE client ADD FOREIGN KEY (membership_card_id) REFERENCES membership_card (id);
 
--- TODO: idk if its a good way to fix issue with deleteing only employees without their worktime and trainings
--- ALTER TABLE training ADD FOREIGN KEY (trainer_id) REFERENCES employee (id);
+ALTER TABLE training ADD FOREIGN KEY (trainer_id) REFERENCES employee (id);
 
 ALTER TABLE reservation ADD FOREIGN KEY (client_id) REFERENCES client (id);
 
@@ -141,8 +140,7 @@ ALTER TABLE gym_visits ADD FOREIGN KEY (client_id) REFERENCES client (id);
 
 ALTER TABLE employee_card ADD FOREIGN KEY (employee_id) REFERENCES employee (id);
 
--- TODO: idk if its a good way to fix issue with deleteing only employees without their worktime and trainings
--- ALTER TABLE employee_work_time ADD FOREIGN KEY (employee_id) REFERENCES employee (id);
+ALTER TABLE employee_work_time ADD FOREIGN KEY (employee_id) REFERENCES employee (id);
 
 ALTER TABLE gym_visits ADD FOREIGN KEY (gym_id) REFERENCES gym (id);
 
