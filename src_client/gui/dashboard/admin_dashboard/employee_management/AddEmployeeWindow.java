@@ -164,8 +164,8 @@ public class AddEmployeeWindow extends JFrame {
                 // Read the response from the server
                 try {
                     String response = readFromServer.readLine();
-                    if (response.equals("True")) {
-                        JOptionPane.showMessageDialog(null, "Employee added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    if (!response.equals("")) {
+                        JOptionPane.showMessageDialog(null, "Employee added successfully! Card Number: " + response, "Success", JOptionPane.INFORMATION_MESSAGE);
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, "Error adding Employee!", "Error", JOptionPane.ERROR_MESSAGE);
