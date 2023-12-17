@@ -5,6 +5,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 
@@ -57,8 +58,10 @@ public class ExportToPDF {
             document.save(filePath);
             document.close();
             CustomLogger.logInfo("Table exported to PDF");
+            JOptionPane.showMessageDialog(null, "Table exported to PDF", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             CustomLogger.logError("Error exporting table to PDF: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error exporting table to PDF", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     

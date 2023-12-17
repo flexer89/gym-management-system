@@ -95,6 +95,7 @@ public class LoginWindow extends JFrame{
                     }
                     else 
                     {
+                        JOptionPane.showMessageDialog(null, "Login failed!", "Error", JOptionPane.ERROR_MESSAGE);
                         CustomLogger.logError("Error logging in user " + username);
                     }
                 }
