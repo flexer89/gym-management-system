@@ -463,4 +463,30 @@ public class MessageTest {
         
         Assert.assertEquals(expectedOutput, actualOutput);
     }
+
+    @Test
+     public void testSendLoadClientTrainingsMessage() {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        Message message = new Message();
+        String expectedOutput ="LOAD_CLIENT_TRAININGS:1";
+        
+        message.sendLoadClientTrainingsMessage(writer, "1");
+        String actualOutput = stringWriter.toString().trim();
+        
+        Assert.assertEquals(expectedOutput, actualOutput);
+    }
+
+    @Test
+     public void testSendCancelReservationMessage() {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        Message message = new Message();
+        String expectedOutput ="CANCEL_RESERVATION:1,1";
+        
+        message.sendCancelReservationMessage(writer,"1,1");
+        String actualOutput = stringWriter.toString().trim();
+        
+        Assert.assertEquals(expectedOutput, actualOutput);
+    }
 }

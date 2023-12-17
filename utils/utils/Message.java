@@ -143,4 +143,8 @@ public class Message {
     public void sendLoadClientTrainingsMessage(PrintWriter writer, String message) {
         writer.println("LOAD_CLIENT_TRAININGS:" + message);
     }
+
+    public void sendCancelReservationMessage(PrintWriter writer, String message) {
+        writer.println("CANCEL_RESERVATION:" + message);
+    }
 }

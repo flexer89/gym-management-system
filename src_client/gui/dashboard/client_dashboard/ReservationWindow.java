@@ -79,6 +79,12 @@ public class ReservationWindow extends JFrame {
                     return;
                 }
 
+                // check if fields aren't edited
+                if (reportTable.isEditing()) {
+                    JOptionPane.showMessageDialog(null, "Please finish editing the table", "Success", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 // Get the training ID
                 String trainingID = reportTable.getValueAt(selectedRow, 0).toString();
 
