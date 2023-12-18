@@ -267,6 +267,17 @@ public class SQLEngine {
                 }
             }
         }
+        else {
+            // Trainer entrance
+            query = "SELECT * from employee_card WHERE employee_number = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, card_number);
+            resultSet = pstmt.executeQuery();
+
+            if (resultSet.next()) {
+                return true;
+            }
+        }
         return false;
     }
 
