@@ -26,7 +26,7 @@ CREATE TABLE employee (
 
 CREATE TABLE employee_credentials (
   id INT NOT NULL AUTO_INCREMENT,
-  login VARCHAR(255) NOT NULL,
+  login VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   salt VARCHAR(255) NOT NULL,
   employee_id INT NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE client (
 
 CREATE TABLE client_credentials (
   id INT NOT NULL AUTO_INCREMENT,
-  login VARCHAR(255) NOT NULL,
+  login VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   salt VARCHAR(255) NOT NULL,
   client_id INT NOT NULL,
