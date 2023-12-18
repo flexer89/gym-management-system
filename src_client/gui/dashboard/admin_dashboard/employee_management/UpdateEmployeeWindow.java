@@ -41,7 +41,7 @@ public class UpdateEmployeeWindow extends JFrame {
 
         // Create the Update gym panel
         JPanel updateEmployee = new JPanel();
-        updateEmployee.setBorder(javax.swing.BorderFactory.createTitledBorder("Delete Gym"));
+        updateEmployee.setBorder(javax.swing.BorderFactory.createTitledBorder("Update Employee"));
 
         // Create the update button
         updateButton = new JButton("Update");

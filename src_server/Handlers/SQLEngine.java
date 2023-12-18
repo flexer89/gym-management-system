@@ -317,6 +317,42 @@ public class SQLEngine {
                 return false;
             }
         }
+        else {
+            // Trainer entrance
+            query = "SELECT * from employee_card WHERE employee_number = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, card_number);
+            resultSet = pstmt.executeQuery();
+
+            if (resultSet.next()) {
+                int employeeID = resultSet.getInt("employee_id");
+    
+                // Format time
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                LocalTime now = LocalTime.now();
+                String formattedTime = formatter.format(now);
+
+                // Check if employee entered already
+                query = "SELECT * FROM employee_work_time WHERE employee_id = ? AND exit_date IS NULL";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, employeeID);
+                resultSet = pstmt.executeQuery();
+
+                if (resultSet.next()) {
+                    return false;
+                }
+
+                query = "INSERT INTO employee_work_time (employee_id, entrance_date, entrance_time) VALUES (?, ?, ?)";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, employeeID);
+                pstmt.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
+                pstmt.setString(3, formattedTime);
+                pstmt.executeUpdate();
+
+                return true;
+            }
+
+        }
         return false;
     }
     
@@ -347,6 +383,34 @@ public class SQLEngine {
                 pstmt.setInt(4, gymID);
                 pstmt.executeUpdate();
                 return true;
+            }
+        }
+        else {
+            query = "SELECT employee_id FROM employee_card WHERE employee_number = ?";
+            pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, userID);
+            resultSet = pstmt.executeQuery();
+
+            if (resultSet.next()) {
+                int ID = resultSet.getInt("employee_id");
+                query = "SELECT * FROM employee_work_time WHERE employee_id = ? AND exit_date IS NULL";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setInt(1, ID);
+                resultSet = pstmt.executeQuery();
+                if (resultSet.next()) {
+                    // Format time
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                    LocalTime now = LocalTime.now();
+                    String formattedTime = formatter.format(now);
+
+                    query = "UPDATE employee_work_time SET exit_date = ?, exit_time = ? WHERE employee_id = ? AND exit_date IS NULL";
+                    pstmt = connection.prepareStatement(query);
+                    pstmt.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
+                    pstmt.setString(2, formattedTime);
+                    pstmt.setInt(3, ID);
+                    pstmt.executeUpdate();
+                    return true;
+                }
             }
         }
         return false;
