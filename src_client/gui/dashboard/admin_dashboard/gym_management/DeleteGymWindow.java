@@ -31,7 +31,7 @@ public class DeleteGymWindow extends JFrame {
         // Create the main window
         this.setSize(1024, 768);
         this.setVisible(true);
-        this.setTitle("Gym Management System | Training Report");
+        this.setTitle("Gym Management System | Delete Gym");
 
         // Create the main panel
         mainPanel = new JPanel(new GridBagLayout());
