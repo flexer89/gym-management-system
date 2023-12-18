@@ -102,17 +102,17 @@ public class EntranceReportWindow extends JFrame {
         exitDatePanel.add(exitToDateField, constraints);
 
         // Add the from date label and text field
-        entranceFromDateLabel = new JLabel("Exit Date (from):");
+        entranceFromDateLabel = new JLabel("Entrance Date (from):");
         entranceFromDateField = new JTextField(10);
         JPanel entranceDatePanel = new JPanel(new GridLayout(2, 2));
         entranceDatePanel.add(entranceFromDateLabel, constraints);
         entranceDatePanel.add(entranceFromDateField, constraints);
 
         // Add the to date label and text field
-        entranceToDateLabel = new JLabel("Exit Date (to):");
+        entranceToDateLabel = new JLabel("Entrance Date (to):");
         entranceToDateField = new JTextField(10);
         entranceDatePanel.add(entranceToDateLabel, constraints);
-        entranceDatePanel.add(exitToDateField, constraints);
+        entranceDatePanel.add(entranceToDateField, constraints);
 
         // Add panels to the main panel
         timeSpentPanel.add(entranceHourPanel);
