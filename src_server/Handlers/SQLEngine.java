@@ -1105,7 +1105,7 @@ public class SQLEngine {
             // Calculate time spent (hh:mm)
             LocalTime entranceTime = resultSet.getTime("entrance_time").toLocalTime();
             LocalTime exitTime = resultSet.getTime("exit_time").toLocalTime();
-            String timeSpent = String.valueOf(ChronoUnit.HOURS.between(entranceTime, exitTime)) + ":" + String.valueOf(ChronoUnit.MINUTES.between(entranceTime, exitTime));
+            String timeSpent = exitTime.minusHours(entranceTime.getHour()).minusMinutes(entranceTime.getMinute()).toString();
 
             report += resultSet.getInt("id") + "," + resultSet.getDate("entrance_date") + "," + resultSet.getTime("entrance_time") + "," + resultSet.getDate("exit_date") + "," + resultSet.getTime("exit_time") + "," + timeSpent;
 
