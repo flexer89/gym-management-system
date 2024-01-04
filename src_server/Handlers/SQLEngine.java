@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -1104,9 +1105,7 @@ public class SQLEngine {
             // Calculate time spent (hh:mm)
             LocalTime entranceTime = resultSet.getTime("entrance_time").toLocalTime();
             LocalTime exitTime = resultSet.getTime("exit_time").toLocalTime();
-            int hours = exitTime.getHour() - entranceTime.getHour();
-            int minutes = exitTime.getMinute() - entranceTime.getMinute();
-            String timeSpent = hours + ":" + minutes;
+            String timeSpent = String.valueOf(ChronoUnit.HOURS.between(entranceTime, exitTime)) + ":" + String.valueOf(ChronoUnit.MINUTES.between(entranceTime, exitTime));
 
             report += resultSet.getInt("id") + "," + resultSet.getDate("entrance_date") + "," + resultSet.getTime("entrance_time") + "," + resultSet.getDate("exit_date") + "," + resultSet.getTime("exit_time") + "," + timeSpent;
 
