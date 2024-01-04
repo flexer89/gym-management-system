@@ -1,0 +1,23 @@
+#Create account
+#password=@Password123
+INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES ('Name', 'Surname', '2002-11-11', '678678678', 'dlient1@g.com')
+INSERT INTO client_credentials (login, password, salt, client_id) VALUES ('client1', 'f56f7658c5eaba15d7e50e2082f51f1d8db475bd0b9d33a132ec46ad7e62993e', '[B@12fe9fee', 2)
+
+#Payment for 3 or 2 months idk i dont rememver i have goldfish memory
+INSERT INTO payment (payment_date, amount, payment_method, client_id) VALUES ('2024-01-03', 477, 'card', 2)
+
+#insecrting membership card
+INSERT INTO membership_card (card_number, expiration_date, type, all_gyms_access, original_gym_id, client_id) VALUES ('00022074', '2024-04-03', 'membership', 0, 1, 2)
+
+#connectiong client with membership_card
+UPDATE client SET membership_card_id = 2 WHERE id = 2
+
+#entrance to gym
+INSERT INTO gym_visits (client_id, gym_id, entrance_date, entrance_time) VALUES (2, 1, '2024-01-03', '18:05')
+SELECT client_id FROM membership_card WHERE card_number = '00022074'
+SELECT * FROM gym_visits WHERE client_id = 2 AND gym_id = 1 AND exit_date IS NULL
+UPDATE gym_visits SET exit_date = '2024-01-03', exit_time = '18:05' WHERE client_id = 2 AND gym_id = 1 AND exit_date IS NULL
+
+
+INSERT INTO gym_visits (client_id, gym_id, entrance_date, entrance_time) VALUES (_CLIENT_ID_, _GYM_ID_, '2024-01-03', '18:05')
+UPDATE gym_visits SET exit_date = '2024-01-03', exit_time = '18:05' WHERE client_id = _CLIENT_ID_ AND gym_id = _GYM_ID_ AND exit_date IS NULL

@@ -39,6 +39,18 @@ For now data is not persisted, so if you want have clear db schema just restart 
 
 -  `docker compose up` or `docker compose up -d` to run it in background
 
+- Upload mysql dump - `big_backup.sql` for 5000 users, `backup.sql` for 600 users
+
+
+## Restoring local db:
+### Windows:
+- Get-Content backup.sql | docker exec -i mysql mysql -u root -proot GMS
+### Linux:
+- docker exec -i mysql mysql -u root -proot GMS < backup.sql
+## Dumping local db:
+- docker exec mysql mysqldump -u root -proot GMS > backup.sql
+
+
 ## Dependency Management
 
   

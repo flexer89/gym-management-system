@@ -1,0 +1,9 @@
+/usr/sbin/mysqld, Version: 8.2.0 (MySQL Community Server - GPL). started with:
+Tcp port: 3306  Unix socket: /var/run/mysqld/mysqld.sock
+Time                 Id Command    Argument
+2024-01-03T17:00:30.779350Z	   10 Connect	root@172.18.0.1 on GMS using SSL/TLS
+2024-01-03T17:00:30.782556Z	   10 Query	/* mysql-connector-j-8.2.0 (Revision: 06a1f724497fd81c6a659131fda822c9e5085b6c) */SELECT  @@session.auto_increment_increment AS auto_increment_increment, @@character_set_client AS character_set_client, @@character_set_connection AS character_set_connection, @@character_set_results AS character_set_results, @@character_set_server AS character_set_server, @@collation_server AS collation_server, @@collation_connection AS collation_connection, @@init_connect AS init_connect, @@interactive_timeout AS interactive_timeout, @@license AS license, @@lower_case_table_names AS lower_case_table_names, @@max_allowed_packet AS max_allowed_packet, @@net_write_timeout AS net_write_timeout, @@performance_schema AS performance_schema, @@sql_mode AS sql_mode, @@system_time_zone AS system_time_zone, @@time_zone AS time_zone, @@transaction_isolation AS transaction_isolation, @@wait_timeout AS wait_timeout
+2024-01-03T17:00:30.789644Z	   10 Query	SET character_set_results = NULL
+2024-01-03T17:00:30.790744Z	   10 Query	SET autocommit=1
+2024-01-03T17:02:20.629854Z	   10 Query	INSERT INTO client (first_name, last_name, date_of_birth, phone_number, email) VALUES ('Name', 'Surname', '2002-11-11', '678678678', 'dlient1@g.com')
+2024-01-03T17:02:20.650767Z	   10 Query	INSERT INTO client_credentials (login, password, salt, client_id) VALUES ('client1', 'f56f7658c5eaba15d7e50e2082f51f1d8db475bd0b9d33a132ec46ad7e62993e', '[B@12fe9fee', 2)
