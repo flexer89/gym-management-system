@@ -88,6 +88,12 @@ public class ReservationWindow extends JFrame {
                 // Get the training ID
                 String trainingID = reportTable.getValueAt(selectedRow, 0).toString();
 
+                // check if the training is valid
+                if (trainingID.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please select a valid training", "Success", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 // Send the message to the server
                 message.sendReserveTrainingMessage(SendToServer, userIDString + "," + trainingID);
 
