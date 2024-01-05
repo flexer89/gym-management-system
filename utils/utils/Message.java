@@ -147,4 +147,8 @@ public class Message {
     public void sendCancelReservationMessage(PrintWriter writer, String message) {
         writer.println("CANCEL_RESERVATION:" + message);
     }
+
+    public void sendRegisterMultisportCardMessage(PrintWriter writer, String message) {
+        writer.println("REGISTER_MULTISPORT_CARD:" + message);
+    }
 }

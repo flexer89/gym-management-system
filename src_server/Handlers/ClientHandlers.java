@@ -161,4 +161,19 @@ public class ClientHandlers {
         }
     }
 
+
+    public void registerMultisportCard(String data) {
+        String[] cardInfo = data.split(",");
+
+        String cardNumber = cardInfo[0];
+        int userID = Integer.parseInt(cardInfo[1]);
+        CustomLogger.logInfo("Registering multisport card " + cardNumber + " for user " + userID);
+        try {
+            boolean cardRegistered = sqlEngine.registerMultisportCard(cardNumber, userID);
+            SendToClient.println(cardRegistered);
+        } catch (SQLException e) {
+            CustomLogger.logError("Error registering multisport card: " + e.getMessage());
+        }
+    }
+
 }

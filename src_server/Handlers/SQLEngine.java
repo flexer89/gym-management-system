@@ -1540,4 +1540,53 @@ public class SQLEngine {
         }
         return false;
     }
+
+    public boolean registerMultisportCard(String cardNumber, int userID) throws SQLException {
+        // Check if client already has a multisport card 
+        String query = "SELECT * FROM membership_card WHERE client_id = ? AND type = 'multisport' AND expiration_date > CURDATE() AND isCanceled = 0";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        pstmt.setInt(1, userID);
+        ResultSet resultSet = pstmt.executeQuery();
+        if (resultSet.next()) {
+            return false;
+        }
+
+        // Add multisport card
+        query = "INSERT INTO membership_card (card_number, expiration_date, type, all_gyms_access, original_gym_id, client_id) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, cardNumber);
+            pstmt.setDate(2, java.sql.Date.valueOf(LocalDate.now().plusYears(1)));
+            pstmt.setString(3, "multisport");
+            pstmt.setBoolean(4, true);
+            pstmt.setInt(5, 1);
+            pstmt.setInt(6, userID);
+            int count = pstmt.executeUpdate();
+            if (count > 0) {
+                // get membership_card_id
+                query = "SELECT id FROM membership_card WHERE card_number = ?";
+                pstmt = connection.prepareStatement(query);
+                pstmt.setString(1, cardNumber);
+                resultSet = pstmt.executeQuery();
+                if (resultSet.next()) {
+                    int membership_card_id = resultSet.getInt("id");
+                    // set membership_card_id in client
+                    query = "UPDATE client SET membership_card_id = ? WHERE id = ?";
+                    pstmt = connection.prepareStatement(query);
+                    pstmt.setInt(1, membership_card_id);
+                    pstmt.setInt(2, userID);
+                    count = pstmt.executeUpdate();
+                    if (count > 0) {
+                        return true;
+                    }
+                }
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            CustomLogger.logInfo("Error while inserting into membership_card: " + e.getMessage());
+        }
+        return false;
+    }
 }

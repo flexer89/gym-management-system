@@ -64,6 +64,11 @@ public class LoginWindow extends JFrame{
                     return;
                 }
 
+                if (password.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 // Send the username and password to the server
                 message.sendLoginMessage(SendToServer, username + "," + password);
 
