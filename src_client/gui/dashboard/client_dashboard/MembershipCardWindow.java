@@ -60,6 +60,13 @@ public class MembershipCardWindow extends JFrame{
         currentData.setBorder(BorderFactory.createTitledBorder("Current Informations"));
         currentData.setBackground(UIFormat.WHITE_BACKGROUND);
 
+        // Create a multisport button
+        JButton multisportButton = new JButton("I have multisport button");
+        multisportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
+        multisportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
+        multisportButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        mainPanel.add(multisportButton, BorderLayout.SOUTH);
+
         // Send the message to the server
         message.sendGetMembershipCardMessage(SendToServer, Integer.toString(userID));
 
@@ -107,16 +114,6 @@ public class MembershipCardWindow extends JFrame{
             currentData.add(membershipTypeLabel);
             currentData.add(originalGymLabel);
             currentData.add(allGymAccessLabel);
-
-            // Add the multisport button if the membership type is not multisport
-            if (!membershipType.equals("multisport")) {
-                // Create multisport button
-                JButton multisportButton = new JButton("I have multisport button");
-                multisportButton.setBackground(UIFormat.LIGHT_CREAMY_BACKGROUND);
-                multisportButton.setForeground(UIFormat.DARK_GREY_FOREGROUND);
-                multisportButton.setFont(new Font("Arial", Font.PLAIN, 14));
-                mainPanel.add(multisportButton, BorderLayout.SOUTH);
-            }
         }
 
         // Create cancel subscription button
@@ -248,5 +245,11 @@ public class MembershipCardWindow extends JFrame{
             }
         });
 
+        // Add event listener for multisport button
+        multisportButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new MultisportMembershipWindow(message, ReadFromServer, SendToServer, userID);
+            }
+        });
     }
 }
