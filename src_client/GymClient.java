@@ -36,7 +36,8 @@ public class GymClient {
     private static void connect() {
         try {
             // Create client socket
-            clientSocket = new Socket("localhost", 5000);
+            String host = "192.168.0.129";
+            clientSocket = new Socket(InetAddress.getByName(host), 5000);
             System.out.println("Client connected to server");
 
             // Close the reconnect window

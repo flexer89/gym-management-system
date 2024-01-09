@@ -24,7 +24,7 @@ public class GymServer {
 
         // Create server socket
         try {
-            serverSocket = new ServerSocket(SERVER_PORT);
+            serverSocket = new ServerSocket(SERVER_PORT, 0, InetAddress.getByName("192.168.0.129"));
             CustomLogger.logInfo("Server started on port " + SERVER_PORT);
         } catch (IOException e) {
             CustomLogger.logError("Could not start server: " + e.getMessage());
